@@ -1,0 +1,93 @@
+extends layout
+
+block body
+	#mainContainer
+
+	#teaser
+		.teaser
+			h1 ostroterra
+			p умный поиск и планирование путешествий
+			div(style="margin-bottom: -100px")
+				.pluso.pluso-theme-color.pluso-round
+					a.pluso-facebook
+					a.pluso-vkontakte
+					a.pluso-twitter
+					a.pluso-google
+					
+					script(type='text/javascript')
+						if(!window.pluso){pluso={version:'0.9.1',url:'http://share.pluso.ru/'};h=document.getElementsByTagName('head')[0];l=document.createElement('link');l.href=pluso.url+'pluso.css';l.type='text/css';l.rel='stylesheet';s=document.createElement('script');s.src=pluso.url+'pluso.js';s.charset='UTF-8';h.appendChild(l);h.appendChild(s)}
+
+	#loading(style="display: none")
+		.center
+			.ball
+			.ball1
+
+	div(class="row dest-item")
+		#addItem(class="span6")
+			div(class="plus") 
+				p ❖
+		.span8
+
+	div(id="searchRowTemplate", style="display: none")
+		div(class="row dest-item")
+			
+			div(class="shadow span6")
+				.image
+					div
+						input.geo_autocomplete(type='text')
+					div
+						input.calendar(type='text')
+			.span6
+				div(style="display: none", class="stats")
+					
+
+		.row
+			div(class="shadow span6", style="display: none")
+				div(class="results flights")
+
+			div(class="shadow span6", style="display: none")
+				div(class="results hotels")
+
+	#stats(style="display:none")
+		.inner-stats
+			h1 Варианты путешествия
+			p дешевый 
+				span.cheep 
+				span.rur &nbsp;&#8399;
+			p средний 
+				span.average 
+				span.rur &nbsp;&#8399;
+			p цена/качество 		
+				span.bestValue 
+				span.rur &nbsp;&#8399;
+			p лучший 
+				span.best
+				span.rur &nbsp;&#8399; 
+
+	#hotelItem(style="display:none")
+		.match
+			.price 
+				div(class="btn-group btn-group-vertical")
+					a(href='%url%', class="btn btn-small btn-success", target="_blank") 
+						span Купить за %price% 
+						span.rur &#8399;
+					span(class="btn btn-small disabled") %description%
+			
+			div(class="description centered")
+				.hotel %name% 
+				.stars %stars%
+
+	#flightItem(style="display:none")
+		.match
+			.price 
+				div(class="btn-group btn-group-vertical")
+					a(href='%url%', class="btn btn-small btn-success", target="_blank") 
+						span Купить за %price% 
+						span.rur &#8399;
+					span(class="btn btn-small disabled") %description%
+			
+			.description 
+				div Вся дорога ~ %timeSpan%
+				div %transferNumber%
+				div Прибывает %arrival%
+		
