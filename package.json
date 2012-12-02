@@ -1,17 +1,17 @@
 {
-    "name": "ostroterra"
+    "name": "oxye"
   , "version": "0.0.2"
   , "private": true
   , "dependencies": {
       "dateformat": "*",
-      "express": "3.0.0rc4",
+      "express": "*",
       "jade": "*",
       "moment": "*",
       "mongolian": "*",
-      "request": "2.11.0",
+      "request": "*",
       "socket.io": "*",
       "sync": "*",
-      "markdown.js" : "*",
-      "xml2js": "0.1.14"
+      "xml2js": "*",
+      "markdown-js": "*"
   }
 }
