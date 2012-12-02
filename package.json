@@ -12,6 +12,7 @@
       "socket.io": "*",
       "sync": "*",
       "xml2js": "*",
-      "markdown-js": "*"
+      "markdown-js": "*",
+      "async": "*"
   }
 }
