@@ -1,18 +1,19 @@
 {
     "name": "oxye"
-  , "version": "0.0.2"
+  , "version": "0.0.3"
   , "private": true
   , "dependencies": {
+      "asset-rack": "*",
+      "async": "*",
       "dateformat": "*",
       "express": "*",
       "jade": "*",
+      "markdown-js": "*",
       "moment": "*",
       "mongolian": "*",
       "request": "*",
       "socket.io": "*",
       "sync": "*",
-      "xml2js": "*",
-      "markdown-js": "*",
-      "async": "*"
+      "xml2js": "*"
   }
 }

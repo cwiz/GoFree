@@ -1,52 +1,64 @@
-
 // Dependencies
-
 var express = require('express')
-  , routes  = require('./routes')
+  , routes  = require('./server')
   , http    = require('http')
   , socket  = require('socket.io')
-  , path    = require('path');
+  , path    = require('path')
+  , rack    = require('asset-rack');
 
 // Globals
-
 var app     = express();
 var server  = http.createServer(app);
 var io      = socket.listen(server);
-var io      = socket.listen(1488);
 
-// Configuration
+// Assets-Rack
+var assets = new rack.AssetRack([
+    new rack.BrowserifyAsset({
+        url: '/app.js',
+        filename: __dirname + '/client/main.coffee'
+    }),
+    new rack.JadeAsset({
+        url: '/templates.js',
+        dirname: __dirname + '/views/client'
+    })
+]);
 
-app.configure(function(){
-  app.set('port', process.env.PORT || 3000);
-  app.set('views', __dirname + '/views');
-  app.set('view engine', 'jade');
-  app.use(express.favicon('favicon.ico'));
-  app.use(express.logger('dev'));
-  app.use(express.bodyParser());
-  app.use(express.methodOverride());
-  app.use(app.router);
-  app.use(express.compress());
-  app.use(express.static(path.join(__dirname, 'public')));
+assets.on('complete', function() {
+
+  // Configuration
+  app.configure(function() {
+    app.set('port', process.env.PORT || 3000);
+    app.set('views', __dirname + '/views');
+    app.set('view engine', 'jade');
+    
+    app.use(assets);
+    //app.use(express.favicon('favicon.ico'));
+    app.use(express.bodyParser());
+    app.use(express.methodOverride());
+    app.use(app.router);
+    app.use(express.compress());
+    app.use(express.static(path.join(__dirname, 'public')));  
+  });
+
+  app.configure('development', function(){
+    app.use(express.errorHandler());
+    //app.use(express.logger('dev'));
+  });
+
+  // Routes
+  app.get('/', routes.index);
+  app.get('/about', routes.about);
+  app.get('/api/v1/autocomplete/:query', routes.autocomplete);
+  app.get('/api/v1/image/:query', routes.image);
+
+  // Stuff
+  
+  server.listen(app.get('port'), function(){
+    console.log("Express server listening on port " + app.get('port'));
+  });
+  io.set('log level', 0); 
+  io.sockets.on('connection', routes.search);
 });
 
-app.configure('development', function(){
-  app.use(express.errorHandler());
-});
-
-// app.configure('production', function(){
-//   app.use(express.errorHandler());
-// });
-
-// Routes
-
-app.get('/', routes.index);
-app.get('/about', routes.about);
-app.get('/api/v1/autocomplete/:query', routes.autocomplete);
-app.get('/api/v1/image/:query', routes.image);
-
-server.listen(app.get('port'), function(){
-  console.log("Express server listening on port " + app.get('port'));
-});
-io.sockets.on('connection', routes.search);
 
 
