@@ -1,6 +1,7 @@
 # requires
 require './jquery-ui'
 require './bootstrap'
+require './jade-runtime'
 
 _       = require './underscore'
 utils   = require './utils'
