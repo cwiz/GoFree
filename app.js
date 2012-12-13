@@ -15,7 +15,7 @@ var io      = socket.listen(server);
 var assets = new rack.AssetRack([
     new rack.BrowserifyAsset({
         url: '/app.js',
-        filename: __dirname + '/client/main.coffee'
+        filename: __dirname + '/public/js/main.coffee'
     }),
     new rack.JadeAsset({
         url: '/templates.js',
