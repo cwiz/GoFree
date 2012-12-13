@@ -1,7 +1,7 @@
 Mongolian = require "mongolian"
 
 # Database stuff
-server        			= new Mongolian
+server        			= new Mongolian("78.46.187.179")
 db            			= server.db "ostroterra"
 
 # Collections
