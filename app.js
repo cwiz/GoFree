@@ -28,7 +28,7 @@ var assets = new rack.AssetRack([
         url: '/views.js',
         dirname: __dirname + '/public/views',
         separator: '_',
-        clientVariable: 'A.tmpl',
+        clientVariable: 'app.templates',
         compress: false
     })
 ]);
