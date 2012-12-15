@@ -5,9 +5,12 @@
   , "dependencies": {
       "asset-rack": "*",
       "async": "*",
+      "backbone-browserify": "*",
+      "csv": "*",
       "dateformat": "*",
       "express": "*",
       "jade": "*",
+      "jquery-browserify": "*",
       "markdown-js": "*",
       "moment": "*",
       "mongolian": "*",
