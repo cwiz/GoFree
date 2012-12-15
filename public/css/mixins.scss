@@ -1,0 +1,133 @@
+// ===========================================================================
+// Vendor madness mixins
+// ===========================================================================
+
+// Border Radius
+@mixin border-radius($radius: 0) {
+  -webkit-border-radius: $radius;
+     -moz-border-radius: $radius;
+          border-radius: $radius;
+}
+
+// Drop shadows
+@mixin box-shadow($shadow...) {
+  -webkit-box-shadow: $shadow;
+     -moz-box-shadow: $shadow;
+          box-shadow: $shadow;
+}
+
+// Transitions
+@mixin transition($transition...) {
+  -webkit-transition: $transition;
+     -moz-transition: $transition;
+      -ms-transition: $transition;
+       -o-transition: $transition;
+          transition: $transition;
+}
+
+// Background clipping
+@mixin background-clip($clip: border) {
+  -webkit-background-clip: $clip;
+     -moz-background-clip: $clip;
+          background-clip: $clip;
+}
+
+// Transforms
+@mixin transform($value) {
+    -webkit-transform: $value;
+            transform: $value;
+}
+
+// Gradients
+@mixin horizontal-gradient($startColor: #000, $endColor: #fff) {
+    background-color: $startColor;
+    background-image: -webkit-gradient(linear, left top, right top, from($startColor), to($endColor)); /* Saf4+, Chrome */
+    background-image: -webkit-linear-gradient(left, $startColor, $endColor); /* Chrome 10+, Saf5.1+, iOS 5+ */
+    background-image:    -moz-linear-gradient(left, $startColor, $endColor); /* FF3.6 */
+    background-image:     -ms-linear-gradient(left, $startColor, $endColor); /* IE10 */
+    background-image:      -o-linear-gradient(left, $startColor, $endColor); /* Opera 11.10+ */
+    background-image:         linear-gradient(to right, $startColor, $endColor);
+    
+}
+@mixin vertical-gradient($startColor: #000, $endColor: #fff) {
+    background-color: $startColor;
+    background-image: -webkit-gradient(linear, left top, left bottom, from($startColor), to($endColor)); /* Saf4+, Chrome */
+    background-image: -webkit-linear-gradient(top, $startColor, $endColor); /* Chrome 10+, Saf5.1+, iOS 5+ */
+    background-image:    -moz-linear-gradient(top, $startColor, $endColor); /* FF3.6 */
+    background-image:     -ms-linear-gradient(top, $startColor, $endColor); /* IE10 */
+    background-image:      -o-linear-gradient(top, $startColor, $endColor); /* Opera 11.10+ */
+    background-image:         linear-gradient(to bottom, $startColor, $endColor);
+}
+
+// Background size
+@mixin background-size($value: auto auto) {
+    -webkit-background-size: $value;
+            background-size: $value;
+}
+
+// Box model
+@mixin box-sizing($value: content-box) {
+    -webkit-box-sizing: $value;
+       -moz-box-sizing: $value;
+            box-sizing: $value;
+}
+
+// EXPERIMENTAL: Text selectability
+@mixin user-select($value: all) {
+    -webkit-user-select: $value;
+       -moz-user-select: $value;
+         -o-user-select: $value;
+            user-select: $value;
+}
+
+// MOBILE SPECIFIC: Links callout
+@mixin touch-callout($value: default) {
+    -webkit-touch-callout: $value;
+            touch-callout: $value;
+}
+
+// EXPERIMENTAL: text hyphenation
+@mixin hyphens($value: manual) {
+    -webkit-hyphens: $value;
+       -moz-hyphens: $value;
+            hyphens: $value;
+}
+
+// Opacity
+@mixin opacity($opacity: 100) {
+  filter: alpha(opacity=$opacity);
+  -khtml-opacity: $opacity / 100;
+    -moz-opacity: $opacity / 100;
+         opacity: $opacity / 100;
+}
+
+// EXPERIMENTAL: placeholder color
+@mixin placeholder-color($value: inherit) {
+    &::-webkit-input-placeholder {
+        color: $value;
+    }
+    &:-ms-input-placeholder {
+        color: $value;
+    }
+    &:-moz-placeholder {
+        color: $value;
+    }
+}
+@mixin placeholder-text-shadow($value: inherit) {
+    &::-webkit-input-placeholder {
+        text-shadow: $value;
+    }
+    &:-ms-input-placeholder {
+        text-shadow: $value;
+    }
+    &:-moz-placeholder {
+        text-shadow: $value;
+    }
+}
+// ===========================================================================
+// Utility mixins
+// ===========================================================================
+@mixin helper_noselect() {
+    @include user-select(none);
+    cursor: default;
+}

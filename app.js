@@ -15,15 +15,21 @@ var io      = socket.listen(server);
 var assets = new rack.AssetRack([
     new rack.LessAsset({
         url: '/app.css',
-        filename: __dirname + '/public/css/app.less'
+        filename: __dirname + '/public/css/app.less',
+        // paths: /public/includes/,
+        compress: false
     }),
     new rack.BrowserifyAsset({
         url: '/app.js',
-        filename: __dirname + '/public/js/app.coffee'
+        filename: __dirname + '/public/js/app.coffee',
+        compress: false
     }),
     new rack.JadeAsset({
-        url: '/templates.js',
-        dirname: __dirname + '/views/client'
+        url: '/views.js',
+        dirname: __dirname + '/public/views',
+        separator: '_',
+        clientVariable: 'A.tmpl',
+        compress: false
     })
 ]);
 
@@ -34,10 +40,11 @@ assets.on('complete', function() {
     app.set('port', process.env.PORT || 3000);
     app.set('views', __dirname + '/views');
     app.set('view engine', 'jade');
-    app.set('view options', { pretty: false });
+    app.set('view options', { pretty: true, compress: false });
     
     app.use(assets);
     //app.use(express.favicon('favicon.ico'));
+    app.use(express.static(__dirname + '/public/root'));
     app.use(express.bodyParser());
     app.use(express.methodOverride());
     app.use(app.router);
