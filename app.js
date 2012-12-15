@@ -13,9 +13,13 @@ var io      = socket.listen(server);
 
 // Assets-Rack
 var assets = new rack.AssetRack([
+    new rack.LessAsset({
+        url: '/app.css',
+        filename: __dirname + '/public/css/app.less'
+    }),
     new rack.BrowserifyAsset({
         url: '/app.js',
-        filename: __dirname + '/public/js/main.coffee'
+        filename: __dirname + '/public/js/app.coffee'
     }),
     new rack.JadeAsset({
         url: '/templates.js',
@@ -30,6 +34,7 @@ assets.on('complete', function() {
     app.set('port', process.env.PORT || 3000);
     app.set('views', __dirname + '/views');
     app.set('view engine', 'jade');
+    app.set('view options', { pretty: false });
     
     app.use(assets);
     //app.use(express.favicon('favicon.ico'));
