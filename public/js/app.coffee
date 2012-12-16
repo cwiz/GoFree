@@ -5,7 +5,6 @@ $ = jQuery 	= require "jquery-browserify"
 Backbone 	= require "backbone-browserify"
 
 
-
 # actual code shit
 
 MyView = Backbone.View.extend
@@ -18,3 +17,5 @@ MyView = Backbone.View.extend
 
 $(document).ready () -> 
 	myView = new MyView()
+
+#
