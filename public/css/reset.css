@@ -22,7 +22,6 @@ time, mark, audio, video {
   margin: 0;
   padding: 0;
   border: 0;
-  font-size: 100%;
   vertical-align: baseline;
 }
 
@@ -34,10 +33,10 @@ time, mark, audio, video {
  *    www.456bereastreet.com/archive/201012/controlling_text_size_in_safari_for_ios_without_disabling_user_zoom/
  */
 html {
-    overflow-y: scroll; /* 1 */
-    -webkit-tap-highlight-color: rgba(0,0,0,0); /* 2 */
-    -webkit-text-size-adjust: 100%; /* 3 */
-    -ms-text-size-adjust: 100%; /* 3 */
+  overflow-y: scroll; /* 1 */
+  -webkit-tap-highlight-color: rgba(0,0,0,0); /* 2 */
+  -webkit-text-size-adjust: 100%; /* 3 */
+  -ms-text-size-adjust: 100%; /* 3 */
 }
 
 article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary {
@@ -56,7 +55,7 @@ video { display: inline-block; }
 /*
  * Prevents modern browsers from displaying 'audio' without controls
  */
-audio:not([controls]) { display: none; }
+audio:not([controls]) { height: 0; display: none; }
 
 /*
  * Addresses styling not present IE6/7/8/9, FF3, S4
@@ -65,10 +64,9 @@ audio:not([controls]) { display: none; }
 [hidden] { display: none; }
 
 /*
- * 1. Improve image quality when scaled in IE7: h5bp.com/d
- * 2. Remove the gap between images and borders on image containers: h5bp.com/e 
+ * Remove the gap between images and borders on image containers: h5bp.com/e 
  */
-img { -ms-interpolation-mode: bicubic; vertical-align: middle; }
+img { vertical-align: middle; }
 
 /*
  * Correct overflow not hidden in IE9 
@@ -89,7 +87,6 @@ mark { background-color: #ff9; color: #000; font-style: italic; font-weight: bol
 del { text-decoration: line-through; }
 
 abbr[title], dfn[title] { border-bottom: 1px dotted; cursor: help; }
-dfn { font-style: italic; }
 
 table { border-collapse: collapse; border-spacing: 0; }
 td { vertical-align: top; }
@@ -103,7 +100,7 @@ body { font: 13px/1.231 sans-serif; }
 
 /* Normalize monospace sizing:
    en.wikipedia.org/wiki/MediaWiki_talk:Common.css/Archive_11#Teletype_style_fix_for_Chrome */
-pre, code, kbd, samp { font-family: monospace, serif; }
+pre, code, kbd, samp { font-family: monospace, serif; font-size: 1em; }
 pre {
   /* www.pathf.com/blogs/2008/05/formatting-quoted-code-in-blog-posts-css21-white-space-pre-wrap/ */
   white-space: pre; white-space: pre-wrap; word-wrap: break-word;
@@ -136,6 +133,7 @@ textarea { overflow: auto; vertical-align: top; resize: vertical; }
 
 /* Hand cursor on clickable input elements */
 label[for], input[type="button"], input[type="submit"], input[type="image"], button { cursor: pointer; }
+button[disabled], input[disabled] { cursor: default; }
 
 /*
  * Corrects inability to style clickable 'input' types in iOS
@@ -147,6 +145,13 @@ button, html input[type="button"], input[type="reset"], input[type="submit"] { -
  * 2. Correct inner spacing displayed oddly in IE6/7
  */
 button, input { line-height: normal; }
+
+/*
+ * Addresses style set to `bolder` in Firefox 3+, Safari 4/5, and Chrome.
+ */
+b, strong { font-weight: bold; }
+
+i, em, dfn { font-style: italic; }
 
 /*
  * Addresses box sizing set to content-box in IE8/9
