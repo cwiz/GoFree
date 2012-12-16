@@ -14,7 +14,7 @@ MyView = Backbone.View.extend
 		@render()
 
 	render: () ->
-		$(@el).html '<h1>PITUSHOK</h1>'
+		$(@el).html '<h1>PITUSHOK KUD KUDA</h1>'
 
 $(document).ready () -> 
 	myView = new MyView()
