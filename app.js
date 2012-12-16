@@ -54,7 +54,7 @@ assets.on('complete', function() {
 
   app.configure('development', function(){
     app.use(express.errorHandler());
-    //app.use(express.logger('dev'));
+    app.use(express.logger('dev'));
   });
 
   // Routes

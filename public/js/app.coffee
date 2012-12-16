@@ -1,8 +1,10 @@
 # require shit
 
-jadeRuntime = require './libs/runtime' # Jade templates utils
+jadeRuntime = require "./libs/runtime" # Jade templates utils
 $ = jQuery 	= require "jquery-browserify"
 Backbone 	= require "backbone-browserify"
+
+
 
 # actual code shit
 
