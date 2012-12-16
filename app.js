@@ -16,7 +16,7 @@ var assets = new rack.AssetRack([
     new rack.LessAsset({
         url: '/app.css',
         filename: __dirname + '/public/css/app.less',
-        // paths: /public/includes/,
+        paths: ['/public/css/includes', '/public/css/lib', '/public/css/'],
         compress: false
     }),
     new rack.BrowserifyAsset({
