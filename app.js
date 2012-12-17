@@ -26,7 +26,7 @@ var assets = new rack.AssetRack([
     // }),
     new rack.JadeAsset({
         url: '/views.js',
-        dirname: __dirname + '/public/views',
+        dirname: __dirname + '/public/src/views',
         separator: '_',
         clientVariable: 'app.templates',
         compress: false
@@ -44,12 +44,12 @@ assets.on('complete', function() {
     
     app.use(assets);
     //app.use(express.favicon('favicon.ico'));
-    app.use(express.static(__dirname + '/public/root'));
+    app.use(express.static(__dirname + '/public/assets'));
     app.use(express.bodyParser());
     app.use(express.methodOverride());
     app.use(app.router);
     app.use(express.compress());
-    app.use(express.static(path.join(__dirname, 'public')));  
+    // app.use(express.static(path.join(__dirname, 'public')));
   });
 
   app.configure('development', function(){

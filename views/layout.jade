@@ -3,9 +3,11 @@ html
   head
     meta(charset="utf-8")
     meta(http-equiv="X-UA-Compatible", content="IE=edge,chrome=1")
-    title=  'ostroterra'
+
+    title Ostroterra
     meta(name="description", content="Лучший планировщик путешествий в мире")
-    !=assets.tag('/app.css')
+
+    link(rel='stylesheet', href='/css/app.css') 
 
 body
   block content
@@ -15,5 +17,5 @@ body
 
   script(src='/socket.io/socket.io.js')
   !=assets.tag('/views.js')
-  !=assets.tag('/app.js')
+  script(src='/js/app-ck.js')
   
