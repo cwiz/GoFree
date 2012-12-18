@@ -19,6 +19,7 @@ var assets = new rack.AssetRack([
         paths: [__dirname + '/public/css'],
         compress: false
     }),
+
     new rack.SnocketsAsset({
         url: '/libs.js',
         filename: __dirname + '/public/js/libs.js',
@@ -29,6 +30,7 @@ var assets = new rack.AssetRack([
         filename: __dirname + '/public/js/app.coffee',
         compress: false
     }),
+
     new rack.JadeAsset({
         url: '/views.js',
         dirname: __dirname + '/public/views',

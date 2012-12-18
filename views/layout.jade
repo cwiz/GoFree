@@ -10,7 +10,14 @@ html
     !=assets.tag('/app.css')
 
   body
-    block content
+    block header
+      include includes/header
+
+    #l-content
+      block content
+    
+    block footer
+      include includes/footer
 
     script
       var app = {};
@@ -18,6 +25,7 @@ html
     script(src='/socket.io/socket.io.js')
     !=assets.tag('/views.js')
     !=assets.tag('/libs.js')
+
     !=assets.tag('/app.js')
 
-    include includes/analytics
+    //- include includes/analytics
