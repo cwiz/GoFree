@@ -1,6 +1,7 @@
-global = 'success'
-local = 'failure'
+console.log 'LIVE'
 
-@.test = global
+# FIXME: rewrite this as a normal app when start with JS fo real
+app.init = ->
+  $('#page-index .block-current').html(app.templates.searchform())
 
-console.log global, local
+app.init();

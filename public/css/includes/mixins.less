@@ -34,63 +34,63 @@
 
 // Transforms
 .transform(@value) {
-    -webkit-transform: @value;
-            transform: @value;
+  -webkit-transform: @value;
+          transform: @value;
 }
 
 // Gradients
 .horizontal-gradient(@startColor: #000, @endColor: #fff) {
-    background-color: @startColor;
-    background-image: -webkit-gradient(linear, left top, right top, from(@startColor), to(@endColor)); /* Saf4+, Chrome */
-    background-image: -webkit-linear-gradient(left, @startColor, @endColor); /* Chrome 10+, Saf5.1+, iOS 5+ */
-    background-image:    -moz-linear-gradient(left, @startColor, @endColor); /* FF3.6 */
-    background-image:     -ms-linear-gradient(left, @startColor, @endColor); /* IE10 */
-    background-image:      -o-linear-gradient(left, @startColor, @endColor); /* Opera 11.10+ */
-    background-image:         linear-gradient(to right, @startColor, @endColor);
+  background-color: @startColor;
+  background-image: -webkit-gradient(linear, left top, right top, from(@startColor), to(@endColor)); /* Saf4+, Chrome */
+  background-image: -webkit-linear-gradient(left, @startColor, @endColor); /* Chrome 10+, Saf5.1+, iOS 5+ */
+  background-image:    -moz-linear-gradient(left, @startColor, @endColor); /* FF3.6 */
+  background-image:     -ms-linear-gradient(left, @startColor, @endColor); /* IE10 */
+  background-image:      -o-linear-gradient(left, @startColor, @endColor); /* Opera 11.10+ */
+  background-image:         linear-gradient(to right, @startColor, @endColor);
     
 }
 .vertical-gradient(@startColor: #000, @endColor: #fff) {
-    background-color: @startColor;
-    background-image: -webkit-gradient(linear, left top, left bottom, from(@startColor), to(@endColor)); /* Saf4+, Chrome */
-    background-image: -webkit-linear-gradient(top, @startColor, @endColor); /* Chrome 10+, Saf5.1+, iOS 5+ */
-    background-image:    -moz-linear-gradient(top, @startColor, @endColor); /* FF3.6 */
-    background-image:     -ms-linear-gradient(top, @startColor, @endColor); /* IE10 */
-    background-image:      -o-linear-gradient(top, @startColor, @endColor); /* Opera 11.10+ */
-    background-image:         linear-gradient(to bottom, @startColor, @endColor);
+  background-color: @startColor;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(@startColor), to(@endColor)); /* Saf4+, Chrome */
+  background-image: -webkit-linear-gradient(top, @startColor, @endColor); /* Chrome 10+, Saf5.1+, iOS 5+ */
+  background-image:    -moz-linear-gradient(top, @startColor, @endColor); /* FF3.6 */
+  background-image:     -ms-linear-gradient(top, @startColor, @endColor); /* IE10 */
+  background-image:      -o-linear-gradient(top, @startColor, @endColor); /* Opera 11.10+ */
+  background-image:         linear-gradient(to bottom, @startColor, @endColor);
 }
 
 // Background size
 .background-size(@value: auto auto) {
-    -webkit-background-size: @value;
-            background-size: @value;
+  -webkit-background-size: @value;
+          background-size: @value;
 }
 
 // Box model
 .box-sizing(@value: content-box) {
-    -webkit-box-sizing: @value;
-       -moz-box-sizing: @value;
-            box-sizing: @value;
+  -webkit-box-sizing: @value;
+     -moz-box-sizing: @value;
+          box-sizing: @value;
 }
 
 // EXPERIMENTAL: Text selectability
 .user-select(@value: all) {
-    -webkit-user-select: @value;
-       -moz-user-select: @value;
-         -o-user-select: @value;
-            user-select: @value;
+  -webkit-user-select: @value;
+     -moz-user-select: @value;
+       -o-user-select: @value;
+          user-select: @value;
 }
 
 // MOBILE SPECIFIC: Links callout
 .touch-callout(@value: default) {
-    -webkit-touch-callout: @value;
-            touch-callout: @value;
+  -webkit-touch-callout: @value;
+          touch-callout: @value;
 }
 
 // EXPERIMENTAL: text hyphenation
 .hyphens(@value: manual) {
-    -webkit-hyphens: @value;
-       -moz-hyphens: @value;
-            hyphens: @value;
+  -webkit-hyphens: @value;
+     -moz-hyphens: @value;
+          hyphens: @value;
 }
 
 // Opacity
@@ -103,31 +103,31 @@
 
 // EXPERIMENTAL: placeholder color
 .placeholder-color(@value: inherit) {
-    &::-webkit-input-placeholder {
-        color: @value;
-    }
-    &:-ms-input-placeholder {
-        color: @value;
-    }
-    &:-moz-placeholder {
-        color: @value;
-    }
+  &::-webkit-input-placeholder {
+    color: @value;
+  }
+  &:-ms-input-placeholder {
+    color: @value;
+  }
+  &:-moz-placeholder {
+    color: @value;
+  }
 }
 .placeholder-text-shadow(@value: inherit) {
-    &::-webkit-input-placeholder {
-        text-shadow: @value;
-    }
-    &:-ms-input-placeholder {
-        text-shadow: @value;
-    }
-    &:-moz-placeholder {
-        text-shadow: @value;
-    }
+  &::-webkit-input-placeholder {
+    text-shadow: @value;
+  }
+  &:-ms-input-placeholder {
+    text-shadow: @value;
+  }
+  &:-moz-placeholder {
+    text-shadow: @value;
+  }
 }
 // ===========================================================================
 // Utility mixins
 // ===========================================================================
 .helper_noselect() {
-    .user-select(none);
-    cursor: default;
+  .user-select(none);
+  cursor: default;
 }
