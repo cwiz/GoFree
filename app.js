@@ -16,10 +16,15 @@ var assets = new rack.AssetRack([
     new rack.LessAsset({
         url: '/app.css',
         filename: __dirname + '/public/css/app.less',
-        paths: [__dirname + '/public/css/includes', __dirname + '/public/css/lib', __dirname + '/public/css/'],
+        paths: [__dirname + '/public/css'],
         compress: false
     }),
-    new rack.BrowserifyAsset({
+    new rack.SnocketsAsset({
+        url: '/libs.js',
+        filename: __dirname + '/public/js/libs.js',
+        compress: false
+    }),
+    new rack.SnocketsAsset({
         url: '/app.js',
         filename: __dirname + '/public/js/app.coffee',
         compress: false

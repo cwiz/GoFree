@@ -9,13 +9,15 @@ html
 
     !=assets.tag('/app.css')
 
-body
-  block content
+  body
+    block content
 
-  script
-    var app = {};
+    script
+      var app = {};
 
-  script(src='/socket.io/socket.io.js')
-  !=assets.tag('/views.js')
-  !=assets.tag('/app.js')
-  
+    script(src='/socket.io/socket.io.js')
+    !=assets.tag('/views.js')
+    !=assets.tag('/libs.js')
+    !=assets.tag('/app.js')
+
+    include includes/analytics
