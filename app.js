@@ -13,20 +13,20 @@ var io      = socket.listen(server);
 
 // Assets-Rack
 var assets = new rack.AssetRack([
-    // new rack.LessAsset({
-    //     url: '/app.css',
-    //     filename: __dirname + '/public/css/app.less',
-    //     paths: [__dirname + '/public/css/includes', __dirname + '/public/css/lib', __dirname + '/public/css/'],
-    //     compress: false
-    // }),
-    // new rack.BrowserifyAsset({
-    //     url: '/app.js',
-    //     filename: __dirname + '/public/js/app.coffee',
-    //     compress: false
-    // }),
+    new rack.LessAsset({
+        url: '/app.css',
+        filename: __dirname + '/public/css/app.less',
+        paths: [__dirname + '/public/css/includes', __dirname + '/public/css/lib', __dirname + '/public/css/'],
+        compress: false
+    }),
+    new rack.BrowserifyAsset({
+        url: '/app.js',
+        filename: __dirname + '/public/js/app.coffee',
+        compress: false
+    }),
     new rack.JadeAsset({
         url: '/views.js',
-        dirname: __dirname + '/public/src/views',
+        dirname: __dirname + '/public/views',
         separator: '_',
         clientVariable: 'app.templates',
         compress: false

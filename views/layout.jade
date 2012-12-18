@@ -7,7 +7,7 @@ html
     title Ostroterra
     meta(name="description", content="Лучший планировщик путешествий в мире")
 
-    link(rel='stylesheet', href='/css/app.css') 
+    !=assets.tag('/app.css')
 
 body
   block content
@@ -17,5 +17,5 @@ body
 
   script(src='/socket.io/socket.io.js')
   !=assets.tag('/views.js')
-  script(src='/js/app-ck.js')
+  !=assets.tag('/app.js')
   
