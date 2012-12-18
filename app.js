@@ -40,7 +40,7 @@ assets.on('complete', function() {
     app.set('port', process.env.PORT || 3000);
     app.set('views', __dirname + '/views');
     app.set('view engine', 'jade');
-    app.set('view options', { pretty: true, compress: false });
+    app.locals.pretty = true;
     
     app.use(assets);
     //app.use(express.favicon('favicon.ico'));

@@ -1,7 +1,7 @@
 (function(){
   var Mongolian, server, db, airports, suggest;
   Mongolian = require("mongolian");
-  server = new Mongolian("78.46.187.179");
+  server = new Mongolian();
   db = server.db("ostroterra");
   airports = db.collection('airports');
   suggest = db.collection('suggest');
