@@ -4,8 +4,8 @@ Router = Backbone.Router.extend(
 
   index: () ->
     new app.views.index({
-        model: new app.models.search
-      })
+      model: new app.models.search
+    })
 )
 
 app.router = Router

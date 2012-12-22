@@ -20,12 +20,12 @@ section.m-searchform
 
       .m-s-conditions
         .m-s-guests
-          input.m-s-adults(type="text")
-          input.m-s-children(type="text")
+          input.m-s-adults(type="text", value=adults)
+          input.m-s-children(type="text", value=children)
 
         .m-s-budget
           label Бюджет
-          input.m-s-amount(type="text")
+          input.m-s-amount(type="text", value=budget)
           small руб
 
       .m-s-submit

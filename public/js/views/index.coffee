@@ -4,7 +4,7 @@ Index = Backbone.View.extend(
     @
 
   render: ()->
-    $('#page-index .block-current').html(app.templates.searchform())
+    $('#page-index .block-current').html(app.templates.searchform(@model.toJSON()))
     @
 )
 
