@@ -1,0 +1,88 @@
+// button reset
+button,
+.button {
+  margin: 0;
+  padding: 0;
+  
+  overflow: visible;
+  
+  border: none;
+  outline: none;
+  background: none;
+  
+  .box-shadow(none);
+  .border-radius(0);
+  .helper_noselect();
+  .touch-callout(none);
+  .box-sizing(border-box);
+
+  .touch-callout(none);
+  -webkit-tap-highlight-color: transparent !important;
+          tap-highlight-color: transparent !important;
+
+  cursor: pointer;
+}
+
+// button styles
+.button {
+  height: 46px;
+  padding: 0 20px;
+
+  display: inline-block;
+  position: relative;
+
+  font-family: 'Open Sans';
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 46px;
+  color: #fff;
+
+  text-transform: uppercase;
+  text-decoration: none;
+  text-align: center;
+
+  text-shadow: 0 1px 0 rgba(0, 0, 0, .3);
+
+  &:before { // webkit drag while clicking fix
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+
+  &:hover {
+    text-decoration: none;
+  }
+  &:active {
+    position: relative;
+    top: 1px;
+  }
+
+  &[disabled]:active,
+  &.disabled:active {
+    .vertical-gradient(#d8d8d8, #a8a8a8);
+  }
+
+  &.small {
+      height: 30px;
+      padding: 0 10px;
+      font-size: 12px;
+      line-height: 30px;
+  }
+
+  // color styles
+  &.orange {
+    .border-radius(3px);
+    .vertical-gradient(#ffc01f, #ff8a11);
+    .box-shadow(0 0 0 2px rgba(0, 0, 0, .2), 0 1px 0 rgba(255, 255, 255, .6) inset, 0 1px 1px rgba(0, 0, 0, .5));
+
+    &:hover {
+      .vertical-gradient(#ffca45, #ff8a11);
+    }
+    &:active {
+      .box-shadow(0 0 0 2px rgba(0, 0, 0, .2), 0 1px 3px rgba(0, 0, 0, .4) inset);
+    }
+  }
+}

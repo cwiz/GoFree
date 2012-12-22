@@ -2,15 +2,42 @@ section.m-searchform
   .bg
 
   .l-wrap
-    h2 Создай свое путешествие
+    h2 Создай свое путешествие, сука
     form.m-s-form
-      | blya
+      .m-s-destinations
+        .m-s-destination.initial
+          .m-s-d-cities
+            input.m-s-d-from(type="text")
+            span.m-s-d-arrow
+            input.m-s-d-to(type="text")
+          .m-s-d-dates
+            input.m-s-d-from(type="text")
+            span.m-s-d-dash
+            input.m-s-d-to(type="text")
+
+      p.m-s-destinations-control
+        span.m-s-d-add &plus; добавить перелет
+
+      .m-s-conditions
+        .m-s-guests
+          input.m-s-adults(type="text")
+          input.m-s-children(type="text")
+
+        .m-s-budget
+          label Бюджет
+          input.m-s-amount(type="text")
+          small руб
+
+      .m-s-submit
+        button.button.orange 
+          span Найти отели и перелеты
+
 
     .m-s-description
       header.
-        Shazooo помогает вам искать
-        и бронировать перелёты, поезда, такси, отели, комнаты и многое другое действительно легко
-        и быстро!
+        Shazooo помогает вам искать и бронировать перелёты, поезда, такси, отели,
+        комнаты и многое другое действительно легко и быстро!
 
       p.
-        Составляйте маршрут своего путешествия, учитывая все детали, делитесь с друзьями, отдыхайте, мы позаботимся об остальном.
+        Составляйте маршрут своего путешествия, учитывая все детали, делитесь с друзьями,
+        отдыхайте, мы позаботимся об остальном.
