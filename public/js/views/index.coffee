@@ -1,6 +1,7 @@
 Index = Backbone.View.extend(
   initialize: () ->
     @render()
+    app.log('[app.views.Index]: initialize')
     @
 
   render: () ->
@@ -10,4 +11,4 @@ Index = Backbone.View.extend(
     @
 )
 
-app.views.index = Index
+app.views.Index = Index

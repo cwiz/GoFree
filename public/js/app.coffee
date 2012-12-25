@@ -24,7 +24,7 @@ app.dom.html.addClass('ie ie' + app.browser.isIE) if app.browser.isIE
 app.dom.html.addClass('ios ios' + app.browser.isIOS) if app.browser.isIOS
 app.dom.html.addClass('android android' + app.browser.isAndroid) if app.browser.isAndroid
 
-router = new app.router()
+router = new app.Router()
 Backbone.history.start(pushState: true);
 
 @app = app

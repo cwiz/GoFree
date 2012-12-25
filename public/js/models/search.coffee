@@ -3,9 +3,10 @@ Search = Backbone.Model.extend(
     adults: 1
     children: 0
     budget: 100000
+    trips: new app.collections.Trips()
 
   initialize: ()->
-    console.log('model ready bitchiz')
+    app.log('[app.models.Search]: initialize')
     @
 
   sync: ()->
@@ -13,4 +14,4 @@ Search = Backbone.Model.extend(
     @
 )
 
-app.models.search = Search
+app.models.Search = Search
