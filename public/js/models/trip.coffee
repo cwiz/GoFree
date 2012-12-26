@@ -1,4 +1,4 @@
-Search = Backbone.Model.extend(
+Trip = Backbone.Model.extend(
   defaults:
     from: ''
     from_id: ''

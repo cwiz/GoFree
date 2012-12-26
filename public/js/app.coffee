@@ -2,6 +2,7 @@
 
 #= require router.coffee
 #= require_tree models
+#= require_tree collections
 #= require_tree views
 
 app = _.extend(@app, Backbone.Events)
@@ -24,6 +25,7 @@ app.dom.html.addClass('ie ie' + app.browser.isIE)                if app.browser.
 app.dom.html.addClass('ios ios' + app.browser.isIOS)             if app.browser.isIOS
 app.dom.html.addClass('android android' + app.browser.isAndroid) if app.browser.isAndroid
 
+@socket = io.connect 'http://localhost/'
 router = new app.Router()
 Backbone.history.start(pushState: true);
 
