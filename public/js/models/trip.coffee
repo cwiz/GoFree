@@ -13,9 +13,9 @@ Trip = Backbone.Model.extend(
     app.log('[app.models.Trip]: initialize')
     @
 
-  sync: ()->
-    # socket magic goes here
-    @
+  # sync: ()->
+  #   # socket magic goes here
+  #   @
 )
 
 app.models.Trip = Trip
