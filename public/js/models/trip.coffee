@@ -1,20 +1,18 @@
 Trip = Backbone.Model.extend(
   defaults:
-    from: ''
-    from_id: ''
-
-    to: ''
-    to_id: ''
+    from:
+      name: ''
+      id: 0
+    to:
+      name: ''
+      id: 0
 
     departure: ''
     arrival: ''
+    index: 0
 
   initialize: ()->
     app.log('[app.models.Trip]: initialize')
-    @
-
-  sync: ()->
-    # socket magic goes here
     @
 )
 

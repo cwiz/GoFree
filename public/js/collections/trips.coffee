@@ -3,7 +3,7 @@ Trips = Backbone.Collection.extend(
       @on('add', @handleAdd)
       app.log('[app.collections.Trips]: initialize')
   handleAdd: (item)->
-      item.set('id', @length)
+      item.set('index', @length)
   model: app.models.Trip
 )
 

@@ -1,4 +1,6 @@
 Search = Backbone.Model.extend(
+  urlRoot: 'search'
+
   defaults:
     adults: 1
     children: 0
@@ -7,10 +9,6 @@ Search = Backbone.Model.extend(
 
   initialize: ()->
     app.log('[app.models.Search]: initialize')
-    @
-
-  sync: ()->
-    # socket magic goes here
     @
 )
 

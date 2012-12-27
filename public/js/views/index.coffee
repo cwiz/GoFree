@@ -1,13 +1,16 @@
 Index = Backbone.View.extend(
+  el: '#page-index .block-current'
   initialize: () ->
     @render()
+    # subview rendering
+    @tripsView = new app.views.Trips(collection: @model.get('trips'))
     app.log('[app.views.Index]: initialize')
     @
 
   render: () ->
-    $('#page-index .block-current').hide()
-    $('#page-index .block-current').html(app.templates.searchform(@model.toJSON()))
-    $('#page-index .block-current').fadeIn(500)
+    @$el.hide()
+    @$el.html(app.templates.searchform(@model.toJSON()))
+    @$el.fadeIn(500)
     @
 )
 
