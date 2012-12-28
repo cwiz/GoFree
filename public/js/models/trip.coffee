@@ -1,11 +1,10 @@
 Trip = Backbone.Model.extend(
   defaults:
-    from:
-      name: ''
-      id: 0
-    to:
-      name: ''
-      id: 0
+    from_name: ''
+    from_id: 0
+
+    to_name: ''
+    to_id: 0
 
     departure: ''
     arrival: ''
