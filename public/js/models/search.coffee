@@ -7,9 +7,16 @@ Search = Backbone.Model.extend(
     budget: 100000
     trips: null
 
+  url: 'search'
+
   initialize: ()->
     app.log('[app.models.Search]: initialize')
     @
+
+  # sync: ()->
+  #   # socket magic goes here
+  #   @
+
 )
 
 app.models.Search = Search
