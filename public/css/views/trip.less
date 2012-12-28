@@ -1,1 +1,67 @@
+.v-t-destination {
+  .v-t-d-inputwrap {
+    width: 230px;
+    display: inline-block;
+    vertical-align: middle;
 
+    input {
+      width: 100%;
+    }
+  }
+  .v-t-d-arrow {
+    width: 14px;
+    height: 10px;
+
+    margin: 0 4px;
+
+    display: inline-block;
+    vertical-align: middle;
+
+    background: url('/img/views/arrow.png') no-repeat;
+  }
+  .v-t-d-remove {
+    width: 18px;
+    height: 18px;
+
+    margin-left: 10px;
+
+    display: inline-block;
+    vertical-align: middle;
+
+    background: #e9f2f4 url('/img/views/dash.png') no-repeat center center;
+    .border-radius(3px);
+    .box-shadow(0 1px 1px rgba(0, 0, 0, .3));
+    cursor: pointer;
+
+    &:hover {
+      background-color: #fff;
+    }
+    &:active {
+      background-color: #e9f2f4;
+      .opacity(95);
+      .box-shadow(0 1px 0 rgba(0, 0, 0, .3) inset, 0 1px 0 rgba(255, 255, 255, .3));
+    }
+  }
+  .v-t-d-dates {
+    margin-top: 15px;
+
+    .v-t-d-inputwrap {
+      width: 130px;
+      display: inline-block;
+      vertical-align: middle;
+
+      input {
+        width: 100%;
+      }
+    }
+
+    .v-t-d-dash {
+      width: 10px;
+      height: 2px;
+      margin: 0 10px;
+      display: inline-block;
+      vertical-align: middle;
+      background: url('/img/views/dash2.png') no-repeat center center;
+    }
+  }
+}

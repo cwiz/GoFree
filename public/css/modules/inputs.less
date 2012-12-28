@@ -30,6 +30,7 @@ textarea {
 
   font-weight: 400;
   font-size: 18px;
+  line-height: 22px;
   color: #565d61;
 
   .box-sizing(border-box);
@@ -47,6 +48,12 @@ textarea {
   &[disabled] {
     .opacity(80%);
     background: darken(#fff, 5%);
+  }
+
+  &.small {
+    padding: 3px 8px;
+    font-size: 14px;
+    line-height: 18px;
   }
 }
 

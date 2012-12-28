@@ -1,15 +1,21 @@
 li.v-t-destination(data-index=index)
   .v-t-d-cities
     .v-t-d-inputwrap.m-input-suggest
-      input.v-t-d-from_name.m-i-s-input(type="text", name='from_name', value=from_name)
+      input.v-t-d-from_name.m-i-s-input(type="text", name='from_name', value=from_name, placeholder="Откуда", autocorrect="off", autocapitalize="off", x-webkit-speech="x-webkit-speech")
       input.v-t-d-from_id(type="hidden", name='from_id', value=from_id)
       ul.m-i-s-list
     span.v-t-d-arrow
     .v-t-d-inputwrap.m-input-suggest
-      input.v-t-d-to_name.m-i-s-input(type="text", name='to_name', value=to_name)
+      input.v-t-d-to_name.m-i-s-input(type="text", name='to_name', value=to_name, placeholder="Куда", autocorrect="off", autocapitalize="off", x-webkit-speech="x-webkit-speech")
       input.v-t-d-to_id(type="hidden", name='to_name', value=to_name)
       ul.m-i-s-list
+    if (index > 1)
+      span.v-t-d-remove
   .v-t-d-dates
-    input.v-t-d-from(type="text")
+    .v-t-d-inputwrap.m-input-date
+      input.v-t-d-from.small(type="text")
+      .m-i-d-calholder
     span.v-t-d-dash
-    input.v-t-d-to(type="text")
+    .v-t-d-inputwrap.m-input-date
+      input.v-t-d-to.small(type="text")
+      .m-i-d-calholder

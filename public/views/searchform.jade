@@ -6,17 +6,17 @@ section.v-searchform
     form.v-s-form
       ul.v-s-destinations
 
-      p.v-s-destinations-control
-        span.v-s-d-add &plus; добавить перелет
+      //- p.v-s-destinations-control
+      //-   span.v-s-d-add &plus; добавить перелет
 
       .v-s-conditions
         .v-s-guests
-          input.v-s-adults(type="text", value=adults)
-          input.v-s-children(type="text", value=children)
+          input.v-s-adults.small(type="text", value=adults)
+          input.v-s-children.small(type="text", value=children)
 
         .v-s-budget
           label Бюджет
-          input.v-s-amount(type="text", value=budget)
+          input.v-s-amount.small(type="text", value=budget)
           small руб
 
       .v-s-submit
