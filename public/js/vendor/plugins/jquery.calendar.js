@@ -276,17 +276,14 @@
     this.init();
   };
   DatesPicker.prototype.generateDOM = function() {
+    this.dates.start = new Date(this.options.start.getFullYear(), this.options.start.getMonth());
+    this.dates.end = new Date(this.options.end.getFullYear(), this.options.end.getMonth());
     this.dates.current = new Date(this.options.start.getFullYear(), this.options.start.getMonth());
 
     if (this.options.precompiled) {
-      this.dates.start = this.options.start;
-      this.dates.end = this.options.end;
       this.els.dateList = $($.calendar.compiled);
     }
     else {
-      this.dates.start = this.options.start;
-      this.dates.end = this.options.end;
-
       this.els.dateList = $($.calendar.generate({
         start: {
           month: this.dates.start.getMonth() + 1,
@@ -305,8 +302,8 @@
                       '<div class="m-i-c-calwrap">' +
                         '<div class="m-i-c-header">' +
                           '<div class="m-i-c-status">' +
-                            '<span class="m-i-c-control-up m-i-c-controls"><i></i></span>' +
-                            '<span class="m-i-c-control-down m-i-c-controls"><i></i></span>' +
+                            '<span class="m-i-c-control-up m-i-c-controls">&lt;</span>' +
+                            '<span class="m-i-c-control-down m-i-c-controls">&gt;</span>' +
                             '<strong class="m-i-c-month">' +
                               this.monthLabels[this.dates.start.getMonth()] +
                               ' ' +
@@ -314,13 +311,13 @@
                             '</strong>' +
                           '</div>' +
                           '<ul class="m-i-c-day-labels">' +
-                            '<li class="first">Пн</li>' +
+                            '<li>Пн</li>' +
                             '<li>Вт</li>' +
                             '<li>Ср</li>' +
                             '<li>Чт</li>' +
                             '<li>Пт</li>' +
-                            '<li>Сб</li>' +
-                            '<li>Вс</li>' +
+                            '<li class="weekend">Сб</li>' +
+                            '<li class="weekend">Вс</li>' +
                           '</ul>' +
                         '</div>' +
                         '<div class="m-i-c-datelistwrap"></div>' +
@@ -428,7 +425,7 @@
     var enext = +next,
         estart = +this.dates.start,
         eend = +this.dates.end;
-           
+
     if (this.isAnimated) {
       return false;
     }
@@ -440,7 +437,7 @@
       else {
         return false;
       }
-  }
+    }
     else if (enext <= estart) {
       if (enext === estart) {
         this.els.controlUp.addClass('disabled');
@@ -452,7 +449,7 @@
     else {
       this.els.controls.filter('.disabled').removeClass('disabled');
     }
-        
+    
     return true;
   };
 
