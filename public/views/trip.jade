@@ -12,10 +12,10 @@ li.v-t-destination(data-index=index)
     if (index > 1)
       span.v-t-d-remove
   .v-t-d-dates
-    .v-t-d-inputwrap.m-input-date
-      input.v-t-d-from.small(type="text")
-      .m-i-d-calholder
+    .v-t-d-inputwrap
+      - var from = new Date();
+      input.v-t-d-from.m-input-calendar.small(type="text", placeholder="дата вылета", value=app.utils.dateToYMD(from))
     span.v-t-d-dash
-    .v-t-d-inputwrap.m-input-date
-      input.v-t-d-to.small(type="text")
-      .m-i-d-calholder
+    .v-t-d-inputwrap
+      - var to = new Date(); to.setDate(to.getDate() + 2);
+      input.v-t-d-to.m-input-calendar.small(type="text", placeholder="дата прилета", value=app.utils.dateToYMD(to))

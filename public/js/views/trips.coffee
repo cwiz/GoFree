@@ -13,6 +13,7 @@ Trips = Backbone.View.extend(
       )
 
     @$el.html(fragment)
+    @$el.find('.m-input-calendar').m_inputCalendar();
     @
 )
 

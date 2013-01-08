@@ -11,12 +11,13 @@ section.v-searchform
 
       .v-s-conditions
         .v-s-guests
-          input.v-s-adults.small(type="text", value=adults)
-          input.v-s-children.small(type="text", value=children)
+          select.m-input-select(name="adults")
+            - for (var i = 1; i <= 10; i++)
+              option(value=i)= app.utils.choosePlural(i, ['гость', 'гостя', 'гостей'])
 
         .v-s-budget
           label Бюджет
-          input.v-s-amount.small(type="text", value=budget)
+          input.v-s-amount.small(type="text", name="budget", value=budget)
           small руб
 
       .v-s-submit

@@ -331,6 +331,12 @@ app.utils.getWeeksNum = function(year, month) {
 app.utils.getDaysNum = function(year, month) { // nMonth is 0 thru 11
     return 32 - new Date(year, month, 32).getDate();
 };
+app.utils.humanizeDate = function(date) {
+    if (typeof date === 'number') {
+        date = new Date(date);
+    }
+    return date.getDate() + ' ' + app.utils.monthLabelsAlt[date.getMonth()];
+};
 app.utils.getDaysDiff = function(date1, date2) {
     return Math.abs((+date1 - +date2) / (1000 * 60 * 60 * 24));
 };

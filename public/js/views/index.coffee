@@ -10,6 +10,9 @@ Index = Backbone.View.extend(
   render: () ->
     @$el.hide()
     @$el.html(app.templates.searchform(@model.toJSON()))
+
+    @$el.find('.m-input-select').m_inputSelect();
+
     @$el.fadeIn(500)
     @
 )
