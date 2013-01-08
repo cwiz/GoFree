@@ -135,7 +135,10 @@ div.m-input-calendar {
         line-height: 20px;
 
         color: #8f959e;
-        cursor: pointer;
+        
+        &[data-date] {
+          cursor: pointer;
+        }
 
         &.active {
           color: #303b47;

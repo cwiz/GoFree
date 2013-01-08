@@ -377,13 +377,24 @@
       that._handleCells.call(that, this);
     };
 
-    var activateCal = function() {
-      that.els.block.addClass('active');
+    var activateCal = function(e) {
+      that.els.block.toggleClass('active');
+    };
+
+    var handleBasicClick = function(e) {
+      var target = e.target,
+          $target = $(target),
+          factor = $target.parents('.m-input-calendar').is(that.els.block);
+
+      if (that.els.block.hasClass('active') && !factor) {
+        that.els.block.removeClass('active');
+      }
     };
     
     this.els.controls.on('click', handleControls);
-    this.els.dateList.on('click', 'li', proxyHandler);
+    this.els.dateList.on('click', 'li[data-date]', proxyHandler);
     this.els.selected.on('click', activateCal);
+    $(document).on('click', handleBasicClick);
 
     current && this._handleCells(this.els.cells.filter('[data-date="' + current + '"]')[0]);
   };
