@@ -22,14 +22,7 @@ SearchForm = Backbone.View.extend(
   events:
     'click .v-s-d-add'        : 'addStop'
     'click .v-t-s-removestop' : 'removeStop'
-
-  populateCollection: () ->
-    @lastDate.setDate(@lastDate.getDate() + 2)
-
-    @collection.add([
-      { date: app.utils.dateToYMD(@today) }
-      { date: app.utils.dateToYMD(@lastDate) }
-    ])
+    'submit form'             : 'handleSubmit'
 
   addStop: (e) ->
     @lastDate.setDate(@lastDate.getDate() + 2)
@@ -44,6 +37,20 @@ SearchForm = Backbone.View.extend(
 
     @collection.remove(item)
     stop.remove()
+
+  handleSubmit: (e) ->
+    app.e(e)
+
+    @model.save()
+
+  populateCollection: () ->
+    @lastDate.setDate(@lastDate.getDate() + 2)
+
+    @collection.add([
+      { date: app.utils.dateToYMD(@today) }
+      { date: app.utils.dateToYMD(@lastDate) }
+    ])
+
 
   renderStop: (item) ->
     newStop = $(app.templates.trips_stop(_.extend(item.toJSON(), id: item.cid, removable: true)))

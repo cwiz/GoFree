@@ -12,9 +12,10 @@ Search = Backbone.Model.extend(
     app.log('[app.models.Search]: initialize')
     @
 
-  # sync: ()->
-  #   # socket magic goes here
-  #   @
+  sync: ()->
+    # socket magic goes here
+    console.log(_.extend(@toJSON(), trips: @get('trips').toJSON()))
+    @
 
 )
 
