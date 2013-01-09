@@ -570,7 +570,7 @@
       end: end
     }, settings);
 
-    if (options.precompiled) {
+    if (options.precompiled && !$.calendar.compiled) {
       $.calendar.generate({
         start: {
           month: options.start.getMonth() + 1,
@@ -587,8 +587,15 @@
     }
 
     var iterate = function(i, elem) {
-      var el = $(elem);
-      el.data('module', new DatesPicker(el, options));
+      var el = $(elem),
+          instance = el.data('module');
+
+      if (!instance) {
+        instance = new DatesPicker(el, options);
+        el.data('module', instance);
+      }
+
+      return instance;
     };
 
     this.each(iterate);

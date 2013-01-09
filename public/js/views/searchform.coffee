@@ -10,8 +10,8 @@ SearchForm = Backbone.View.extend(
     @collection.on('add', @renderStop, @)
     @collection.on('remove', @unrenderStop, @)
 
-    @$el.find('.m-input-select').m_inputSelect()
-    @$el.find('.m-input-calendar').m_inputCalendar()
+    @$el.find('select.m-input-select').m_inputSelect()
+    @$el.find('input.m-input-calendar').m_inputCalendar()
 
     app.log('[app.views.Trips]: initialize')
     @
@@ -39,7 +39,9 @@ SearchForm = Backbone.View.extend(
     @collection.remove(@collection.at(index))
 
   renderStop: (item) ->
-    @destinations.append(app.templates.trips_stop(item.toJSON()))
+    newStop = $(app.templates.trips_stop(item.toJSON()))
+    @destinations.append(newStop)
+    newStop.find('input.m-input-calendar').m_inputCalendar()
 
   unrenderStop: (item) ->
     @destinations.find('.v-t-stop[data-index="' + item.get('index') + '"]').remove();
