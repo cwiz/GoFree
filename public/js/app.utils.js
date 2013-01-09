@@ -310,6 +310,9 @@ app.utils.monthLabelsAlt = ['января', 'февраля', 'марта', 'а�
                            'мая', 'июня', 'июля', 'августа', 'сентября',
                            'октября', 'ноября', 'декабря'];
 
+app.utils.pureDate = function(date) {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+};
 app.utils.dateToYMD = function(date) {
     return date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2);
 };

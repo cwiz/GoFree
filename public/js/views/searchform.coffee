@@ -1,5 +1,8 @@
 SearchForm = Backbone.View.extend(
   initialize: () ->
+    @today = app.utils.pureDate(app.now)
+    @lastDate = app.utils.pureDate(app.now)
+
     @populateCollection() unless @collection.length > 1
 
     @render()
@@ -8,7 +11,7 @@ SearchForm = Backbone.View.extend(
     @renderDestinations()
 
     @collection.on('add', @renderStop, @)
-    @collection.on('remove', @unrenderStop, @)
+    # @collection.on('remove', @unrenderStop, @)
 
     @$el.find('select.m-input-select').m_inputSelect()
     @$el.find('input.m-input-calendar').m_inputCalendar()
@@ -21,35 +24,36 @@ SearchForm = Backbone.View.extend(
     'click .v-t-s-removestop' : 'removeStop'
 
   populateCollection: () ->
-    today = new Date()
-    afterTomorrow = new Date()
-    afterTomorrow.setDate(today.getDate() + 2)
+    @lastDate.setDate(@lastDate.getDate() + 2)
 
     @collection.add([
-      { date: app.utils.dateToYMD(today) }
-      { date: app.utils.dateToYMD(afterTomorrow) }
+      { date: app.utils.dateToYMD(@today) }
+      { date: app.utils.dateToYMD(@lastDate) }
     ])
 
   addStop: (e) ->
-    today = new Date()
-    @collection.add(date: app.utils.dateToYMD(today))
+    @lastDate.setDate(@lastDate.getDate() + 2)
+    @collection.add(date: app.utils.dateToYMD(@lastDate))
 
   removeStop: (e) ->
-    index = +$(e.target).parents('.v-t-stop').data('index')
-    @collection.remove(@collection.at(index))
+    stop = $(e.target).parents('.v-t-stop')
+    item = @collection.get(stop.data('id'))
+
+    if (+app.utils.YMDToDate(item.get('date')) == +@lastDate)
+      @lastDate.setDate(@lastDate.getDate() - 2)
+
+    @collection.remove(item)
+    stop.remove()
 
   renderStop: (item) ->
-    newStop = $(app.templates.trips_stop(item.toJSON()))
+    newStop = $(app.templates.trips_stop(_.extend(item.toJSON(), id: item.cid, removable: true)))
     @destinations.append(newStop)
     newStop.find('input.m-input-calendar').m_inputCalendar()
-
-  unrenderStop: (item) ->
-    @destinations.find('.v-t-stop[data-index="' + item.get('index') + '"]').remove();
 
   renderDestinations: () ->
     fragment = ''
     @collection.forEach((model, index, collection)->
-      fragment += app.templates.trips_stop(model.toJSON());
+      fragment += app.templates.trips_stop(_.extend(model.toJSON(), id: model.cid, removable: false))
       )
 
     @destinations.html(fragment)
