@@ -14,7 +14,9 @@ Search = Backbone.Model.extend(
 
   sync: ()->
     # socket magic goes here
-    console.log(_.extend(@toJSON(), trips: @get('trips').toJSON()))
+    data = _.extend(@toJSON(), trips: @get('trips').toJSON())
+    console.log(data)
+    app.socket.emit('search', data)
     @
 
 )

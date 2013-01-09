@@ -25,7 +25,7 @@ app.dom.html.addClass('ie ie' + app.browser.isIE)                if app.browser.
 app.dom.html.addClass('ios ios' + app.browser.isIOS)             if app.browser.isIOS
 app.dom.html.addClass('android android' + app.browser.isAndroid) if app.browser.isAndroid
 
-@socket = io.connect 'http://localhost/'
+app.socket = io.connect(app.env.host)
 router = new app.Router()
 Backbone.history.start(pushState: true);
 
