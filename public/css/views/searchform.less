@@ -1,3 +1,5 @@
+@import 'trips_stop.less';
+
 .v-searchform {
   position: relative;
 
@@ -40,9 +42,21 @@
       .box-shadow(0 1px 3px rgba(0, 0, 0, .5));
 
       .v-s-destinations {
-        padding-bottom: 20px;
-        border-bottom: 1px solid #30a6bf;
+        .cf;
       }
+
+      .v-s-destinations-add {
+        margin-top: 10px;
+
+        padding-bottom: 10px;
+        border-bottom: 1px solid #30a6bf;
+
+        font-weight: 300;
+        font-size: 11px;
+
+        text-align: center;
+      }
+
       .v-s-conditions {
         padding: 20px 0;
         .cf;
@@ -57,11 +71,9 @@
         .v-s-adults {
           width: 100px;
         }
-        .v-s-children {
-          width: 66px;
-        }
         .v-s-amount {
           width: 66px;
+          margin: 0 5px;
         }
       }
 

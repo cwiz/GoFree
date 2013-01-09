@@ -1,10 +1,13 @@
 Trips = Backbone.Collection.extend(
+  model: app.models.TripsStop
+
   initialize: ()->
-      @on('add', @handleAdd)
-      app.log('[app.collections.Trips]: initialize')
+    @on('add', @handleAdd)
+    app.log('[app.collections.Trips]: initialize')
+
   handleAdd: (item)->
-      item.set('index', @length)
-  model: app.models.Trip
+    item.set('index', _.indexOf(@models, item))
+  
 )
 
 app.collections.Trips = Trips
