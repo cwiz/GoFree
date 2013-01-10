@@ -6,6 +6,8 @@ Search = Backbone.Model.extend(
     budget: 100000
     trips: null
 
+    signature: _.uniqueId('search_')
+
   url: 'search'
 
   initialize: ()->
@@ -15,8 +17,10 @@ Search = Backbone.Model.extend(
   sync: ()->
     # socket magic goes here
     data = _.extend(@toJSON(), trips: @get('trips').toJSON())
-    console.log(data)
+
     app.socket.emit('search', data)
+
+    app.log('[app.models.Search]: emit', data)
     @
 
 )
