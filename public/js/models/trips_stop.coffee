@@ -1,11 +1,8 @@
 TripsStop = Backbone.Model.extend(
   defaults:
-    place_name: null
-    place_id: null
-
-    date: app.utils.dateToYMD(app.now)
-
-    index: 0
+    place:
+      name: null
+    date: null
 
   initialize: ()->
     app.log('[app.models.TripsStop]: initialize')

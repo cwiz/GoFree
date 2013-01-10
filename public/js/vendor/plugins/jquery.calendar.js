@@ -390,13 +390,25 @@
         that.els.block.removeClass('active');
       }
     };
+
+    var handleDestroy = function() {
+      that.els.controls.off('click', handleControls);
+      that.els.dateList.off('click', 'li[data-date]', proxyHandler);
+      that.els.selected.off('click', activateCal);
+      $(document).off('click', handleBasicClick);
+    };
     
     this.els.controls.on('click', handleControls);
     this.els.dateList.on('click', 'li[data-date]', proxyHandler);
     this.els.selected.on('click', activateCal);
     $(document).on('click', handleBasicClick);
+    this.els.block.one('moddestroy', handleDestroy);
 
     current && this._handleCells(this.els.cells.filter('[data-date="' + current + '"]')[0]);
+  };
+
+  DatesPicker.prototype.destroy = function() {
+    this.els.block.trigger('moddestroy');
   };
       
   DatesPicker.prototype._handleCells = function(elem) {
@@ -552,6 +564,10 @@
   DatesPicker.prototype.lockDates = function(start, end) {
     if (!start) {
       start = this.dateToYMD(this.dates.start);
+    }
+    if (!end) {
+      end = new Date(this.dates.end.getFullYear(), this.dates.end.getMonth() + 1);
+      end.setDate(-1);
     }
 
     this.selectRange(start, end, 'locked');

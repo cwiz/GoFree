@@ -21,6 +21,8 @@ SearchForm = Backbone.View.extend(
 
   events:
     'click .v-s-d-add'        : 'addStop'
+    'change .m-i-s-select'    : 'adultsChanged'
+    'change .v-s-amount'      : 'budgetChanged'
     'submit form'             : 'handleSubmit'
 
   render: () ->
@@ -29,6 +31,12 @@ SearchForm = Backbone.View.extend(
   addStop: (e) ->
     @lastDate.setDate(@lastDate.getDate() + 2)
     @collection.add(date: app.utils.dateToYMD(@lastDate), removable: true)
+
+  adultsChanged: (e) ->
+    @model.set('adults', e.target.value)
+
+  budgetChanged: (e) ->
+    @model.set('budget', parseInt(e.target.value, 10))
 
   handleSubmit: (e) ->
     app.e(e)
