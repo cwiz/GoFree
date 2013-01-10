@@ -1,42 +1,34 @@
 SearchForm = Backbone.View.extend(
+  stops: {}
+
   initialize: () ->
+    @render()
+
+    @stopsEl = @$el.find('.v-s-destinations')
+
+    @collection.on('add', @initStop, @)
+    @collection.on('destroy', @destroyStop, @)
+
+    @$el.find('select.m-input-select').m_inputSelect()
+
     @today = app.utils.pureDate(app.now)
     @lastDate = app.utils.pureDate(app.now)
 
     @populateCollection() unless @collection.length > 1
 
-    @render()
-
-    @destinations = @$el.find('.v-s-destinations')
-    @renderDestinations()
-
-    @collection.on('add', @renderStop, @)
-    # @collection.on('remove', @unrenderStop, @)
-
-    @$el.find('select.m-input-select').m_inputSelect()
-    @$el.find('input.m-input-calendar').m_inputCalendar()
-
-    app.log('[app.views.Trips]: initialize')
+    app.log('[app.views.SearchForm]: initialize')
     @
 
   events:
     'click .v-s-d-add'        : 'addStop'
-    'click .v-t-s-removestop' : 'removeStop'
     'submit form'             : 'handleSubmit'
+
+  render: () ->
+    @$el.html(app.templates.searchform(@model.toJSON()))
 
   addStop: (e) ->
     @lastDate.setDate(@lastDate.getDate() + 2)
-    @collection.add(date: app.utils.dateToYMD(@lastDate))
-
-  removeStop: (e) ->
-    stop = $(e.target).parents('.v-t-stop')
-    item = @collection.get(stop.data('id'))
-
-    if (+app.utils.YMDToDate(item.get('date')) == +@lastDate)
-      @lastDate.setDate(@lastDate.getDate() - 2)
-
-    @collection.remove(item)
-    stop.remove()
+    @collection.add(date: app.utils.dateToYMD(@lastDate), removable: true)
 
   handleSubmit: (e) ->
     app.e(e)
@@ -47,27 +39,22 @@ SearchForm = Backbone.View.extend(
     @lastDate.setDate(@lastDate.getDate() + 2)
 
     @collection.add([
-      { date: app.utils.dateToYMD(@today) }
-      { date: app.utils.dateToYMD(@lastDate) }
+      { date: app.utils.dateToYMD(@today), removable: false }
+      { date: app.utils.dateToYMD(@lastDate), removable: false }
     ])
 
+  initStop: (item) ->
+    @stops[item.cid] = new app.views.TripsStop(
+      list: @stopsEl
+      model: item
+    )
 
-  renderStop: (item) ->
-    newStop = $(app.templates.trips_stop(_.extend(item.toJSON(), id: item.cid, removable: true)))
-    @destinations.append(newStop)
-    newStop.find('input.m-input-calendar').m_inputCalendar()
+  destroyStop: (item) ->
+    if (+app.utils.YMDToDate(item.get('date')) == +@lastDate)
+      @lastDate.setDate(@lastDate.getDate() - 2)
 
-  renderDestinations: () ->
-    fragment = ''
-    @collection.forEach((model, index, collection)->
-      fragment += app.templates.trips_stop(_.extend(model.toJSON(), id: model.cid, removable: false))
-      )
-
-    @destinations.html(fragment)
-
-  render: () ->
-    @$el.html(app.templates.searchform(@model.toJSON()))
-
+    @collection.remove(item)
+    delete @stops[item.cid]
 )
 
 app.views.SearchForm = SearchForm

@@ -268,7 +268,7 @@
                            'мая', 'июня', 'июля', 'августа', 'сентября',
                            'октября', 'ноября', 'декабря'];
     
-    this.els.input = el;
+    this.els.input = $(el);
 
     this.selected = null;
 
@@ -587,15 +587,8 @@
     }
 
     var iterate = function(i, elem) {
-      var el = $(elem),
-          instance = el.data('module');
-
-      if (!instance) {
-        instance = new DatesPicker(el, options);
-        el.data('module', instance);
-      }
-
-      return instance;
+      if (elem.tagName.toUpperCase() !== 'INPUT') return;
+      return new DatesPicker(elem, options);
     };
 
     this.each(iterate);
