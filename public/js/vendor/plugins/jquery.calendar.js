@@ -298,7 +298,7 @@
       }));
     }
 
-    this.els.body = $('<span class="m-i-c-selected"></span>' +
+    this.els.body = $('<span class="m-i-c-selected placeholder" data-placeholder="Дата">Дата</span>' +
                       '<div class="m-i-c-calwrap">' +
                         '<div class="m-i-c-header">' +
                           '<div class="m-i-c-status">' +
@@ -433,15 +433,31 @@
       this.scrollCalendarTo(mdate.getFullYear(), mdate.getMonth(), true);
     }
 
+    this.selectDate(ymd);
+    this.els.block.removeClass('active');
+    this.els.block.trigger('modchange');
+
+  };
+  DatesPicker.prototype.selectDate = function(ymd) {
+    var date = this.YMDToDate(ymd);
+
     this.els.cells.filter('.selected').removeClass('selected');
-    el.addClass('selected');
+    this.els.cells.filter('[data-date="' + ymd + '"]').addClass('selected');
 
     this.selected = ymd;
     this.els.input.val(ymd).trigger('change');
-    this.els.selected.html(date.getDate() + ' ' + this.monthLabelsAlt[date.getMonth()]);
 
-    this.els.block.removeClass('active');
-    this.els.block.trigger('modchange');
+    this.els.selected.removeClass('placeholder');
+    this.els.selected.html(date.getDate() + ' ' + this.monthLabelsAlt[date.getMonth()]);
+  };
+  DatesPicker.prototype.deselectDate = function() {
+    this.els.cells.filter('.selected').removeClass('selected');
+
+    this.selected = null;
+    this.els.input.val('').trigger('change');
+
+    this.els.selected.addClass('placeholder');
+    this.els.selected.html(this.els.selected.data('placeholder'));
   };
 
   DatesPicker.prototype.checkScrollability = function(next) {
@@ -561,21 +577,71 @@
     }
   };
 
-  DatesPicker.prototype.lockDates = function(start, end) {
+  DatesPicker.prototype.lockDates = function(date1, date2) {
+    var start = date1,
+        end = date2;
+
     if (!start) {
       start = this.dateToYMD(this.dates.start);
     }
     if (!end) {
-      end = new Date(this.dates.end.getFullYear(), this.dates.end.getMonth() + 1);
-      end.setDate(-1);
+      var tmp = new Date(this.dates.end.getFullYear(), this.dates.end.getMonth() + 1);
+      tmp.setDate(-1);
+      end = this.dateToYMD(tmp);
     }
+
+    if (this.selected) {
+      var startDate = this.YMDToDate(start),
+          endDate = this.YMDToDate(end),
+          currentDate = this.YMDToDate(this.selected),
+
+          tsStart = +startDate,
+          tsEnd = +endDate,
+          tsCurrent = +currentDate;
+
+      // selected date is in the locked area, have to deselect
+      if ((tsCurrent > tsStart) && (tsCurrent < tsEnd)) {
+        this.deselectDate();
+      }
+    }
+
+    // if (date1 && date2) {
+    //   if ((tsCurrent > tsStart) && (tsCurrent < tsEnd)) {
+    //     this.deselectDate(); // uncertain what to pick
+    //   }
+    // }
+    // if (!date1) {
+    //   if (tsCurrent < tsEnd) {
+    //     endDate.setDate(endDate.getDate() + 1);
+    //     this.selectDate(this.dateToYMD(endDate));
+    //   }
+    // }
+
+    // if (!date2) {
+    //   if (tsCurrent > tsStart) {
+    //     startDate.setDate(startDate.getDate() - 1);
+    //     this.selectDate(this.dateToYMD(startDate));
+    //   }
+    // }
 
     this.selectRange(start, end, 'locked');
   };
 
+  DatesPicker.prototype.unlockDates = function() {
+    this.els.cells.filter('.locked').removeClass('locked');
+  };
+
+  DatesPicker.prototype.setAvailable = function(start, end) {
+    this.unlockDates();
+
+    this.lockDates(null, start);
+    this.lockDates(end, null);
+  };
+
   $.fn.m_inputCalendar = function(settings) {
     var start = new Date(),
-          end = new Date();
+        end = new Date(),
+        instances = [];
 
     end.setFullYear(start.getFullYear() + 1);
 
@@ -604,9 +670,11 @@
 
     var iterate = function(i, elem) {
       if (elem.tagName.toUpperCase() !== 'INPUT') return;
-      return new DatesPicker(elem, options);
+      instances.push(new DatesPicker(elem, options));
     };
 
     this.each(iterate);
+
+    return instances;
   };
 })(jQuery);
