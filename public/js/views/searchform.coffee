@@ -7,14 +7,11 @@ SearchForm = Backbone.View.extend(
     @stopsEl = @$el.find('.v-s-destinations')
 
     @collection.on('add', @initStop, @)
-    @collection.on('destroy', @destroyStop, @)
+    @collection.on('delete', @deleteStop, @)
     @collection.on('change:date', @dateChanged, @)
 
     @$el.find('select.m-input-select').m_inputSelect()
     @restrictBudget()
-
-    @today = app.utils.pureDate(app.now)
-    @lastDate = app.utils.pureDate(app.now)
 
     @populateCollection() unless @collection.length > 1
 
@@ -38,10 +35,8 @@ SearchForm = Backbone.View.extend(
     @$el.find('.v-s-amount').on('keypress input', validate)
 
   populateCollection: () ->
-    @lastDate.setDate(@lastDate.getDate() + 2)
-
     @collection.add([
-      { date: app.utils.dateToYMD(@today), removable: false }
+      { date: app.utils.dateToYMD(app.now), removable: false }
       { date: null, removable: false }
     ])
 
@@ -55,16 +50,22 @@ SearchForm = Backbone.View.extend(
       minDate: if prev then prev.get('date') else null
     )
 
-  destroyStop: (item) ->
-    if (+app.utils.YMDToDate(item.get('date')) == +@lastDate)
-      @lastDate.setDate(@lastDate.getDate() - 2)
+  deleteStop: (item) ->
+    index = @collection.indexOf(item)
+    prev = @collection.at(index - 1)
+    next = @collection.at(index + 1)
+
+    if (prev and next)
+      @stops[prev.cid].setMaxDate(next.get('date'))
+      @stops[next.cid].setMinDate(prev.get('date'))
+    else
+      @stops[prev.cid].setMaxDate(null)
 
     @collection.remove(item)
     delete @stops[item.cid]
 
   addStop: (e) ->
-    @lastDate.setDate(@lastDate.getDate() + 2)
-    @collection.add(date: app.utils.dateToYMD(@lastDate), removable: true)
+    @collection.add(date: null, removable: true)
 
   dateChanged: (model, date) ->
     index = @collection.indexOf(model)
@@ -73,7 +74,6 @@ SearchForm = Backbone.View.extend(
 
     if (prev) then @stops[prev.cid].setMaxDate(date)
     if (next) then @stops[next.cid].setMinDate(date)
-
 
   adultsChanged: (e) ->
     @model.set('adults', e.target.value)
@@ -85,7 +85,6 @@ SearchForm = Backbone.View.extend(
     app.e(e)
 
     @model.save()
-
 )
 
 app.views.SearchForm = SearchForm

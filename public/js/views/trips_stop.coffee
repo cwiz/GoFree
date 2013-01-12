@@ -88,7 +88,7 @@ TripsStop = Backbone.View.extend(
     @calendar.destroy()
     delete @calendar
 
-    @model.trigger('destroy', @model)
+    @model.trigger('delete', @model)
     @remove()
 )
 
