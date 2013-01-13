@@ -1,8 +1,11 @@
 SearchForm = Backbone.View.extend(
   stops: {}
+  maxDate: app.utils.pureDate(app.now)
 
   initialize: () ->
     @render()
+
+    @maxDate.setDate(@maxDate.getDate() + 1) # shift it to tomorrow
 
     @stopsEl = @$el.find('.v-s-destinations')
 
@@ -36,18 +39,19 @@ SearchForm = Backbone.View.extend(
 
   populateCollection: () ->
     @collection.add([
-      { date: app.utils.dateToYMD(app.now), removable: false }
+      { date: app.utils.dateToYMD(@maxDate), removable: false }
       { date: null, removable: false }
     ])
 
   initStop: (item) ->
     index = @collection.indexOf(item)
-    prev = @collection.at(index - 1)
+    prevDate = @collection.at(index - 1)?.get('date')
+    minDate = if prevDate then prevDate else app.utils.dateToYMD(@maxDate)
 
     @stops[item.cid] = new app.views.TripsStop(
       list: @stopsEl
       model: item
-      minDate: if prev then prev.get('date') else null
+      minDate: if index == 0 then null else minDate
     )
 
   deleteStop: (item) ->
@@ -74,6 +78,9 @@ SearchForm = Backbone.View.extend(
 
     if (prev) then @stops[prev.cid].setMaxDate(date)
     if (next) then @stops[next.cid].setMinDate(date)
+
+    dateObj = app.utils.YMDToDate(date)
+    if (+dateObj > +@maxDate) then @maxDate = dateObj
 
   adultsChanged: (e) ->
     @model.set('adults', e.target.value)

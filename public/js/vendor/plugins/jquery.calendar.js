@@ -563,23 +563,23 @@
       this.dates.current = next;
     }
   };
-  DatesPicker.prototype.selectRange = function(ymd1, ymd2, selection_class) {
+  DatesPicker.prototype.selectRange = function(ymd1, ymd2, selection_class, addOnly) {
     var d1_arr = ymd1.split('-'),
         d2_arr = ymd2.split('-'),
         date1 = new Date(+d1_arr[0], +d1_arr[1] - 1, +d1_arr[2] - 1),// offset this so we can increment in while loop straight away
         date2 = +(new Date(+d2_arr[0], +d2_arr[1] - 1, +d2_arr[2])),
         curr_cell;
 
-    this.els.cells.filter('.' + selection_class).removeClass(selection_class);
+    addOnly || this.els.cells.filter('.' + selection_class).removeClass(selection_class);
     while (+date1 < date2) {
       date1.setDate(date1.getDate() + 1);
       curr_cell = this.els.cells.filter('[data-date="' + this.dateToYMD(date1) + '"]').addClass(selection_class);
     }
   };
 
-  DatesPicker.prototype.lockDates = function(date1, date2) {
-    var start = date1,
-        end = date2;
+  DatesPicker.prototype.lockDates = function(ymd1, ymd2) {
+    var start = ymd1,
+        end = ymd2;
 
     if (!start) {
       start = this.dateToYMD(this.dates.start);
@@ -600,31 +600,31 @@
           tsCurrent = +currentDate;
 
       // selected date is in the locked area, have to deselect
-      if ((tsCurrent > tsStart) && (tsCurrent < tsEnd)) {
+      if ((tsCurrent >= tsStart) && (tsCurrent <= tsEnd)) {
         this.deselectDate();
       }
     }
 
-    // if (date1 && date2) {
+    // if (ymd1 && ymd2) {
     //   if ((tsCurrent > tsStart) && (tsCurrent < tsEnd)) {
     //     this.deselectDate(); // uncertain what to pick
     //   }
     // }
-    // if (!date1) {
+    // if (!ymd1) {
     //   if (tsCurrent < tsEnd) {
     //     endDate.setDate(endDate.getDate() + 1);
     //     this.selectDate(this.dateToYMD(endDate));
     //   }
     // }
 
-    // if (!date2) {
+    // if (!ymd2) {
     //   if (tsCurrent > tsStart) {
     //     startDate.setDate(startDate.getDate() - 1);
     //     this.selectDate(this.dateToYMD(startDate));
     //   }
     // }
 
-    this.selectRange(start, end, 'locked');
+    this.selectRange(start, end, 'locked', true);
   };
 
   DatesPicker.prototype.unlockDates = function() {
