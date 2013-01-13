@@ -23,18 +23,18 @@ var assets = new rack.AssetRack([
 
     new rack.SnocketsAsset({
         url: '/libs.js',
-        filename: __dirname + '/public/js/libs.js',
+        filename: __dirname + '/app/client/libs.js',
         compress: false
     }),
     new rack.SnocketsAsset({
         url: '/app.js',
-        filename: __dirname + '/public/js/app.coffee',
+        filename: __dirname + '/app/client/app.coffee',
         compress: false
     }),
 
     new rack.JadeAsset({
         url: '/views.js',
-        dirname: __dirname + '/public/views',
+        dirname: __dirname + '/views/client',
         separator: '_',
         clientVariable: 'app.templates',
         compress: false
@@ -45,12 +45,12 @@ assets.on('complete', function() {
   // Configuration
   app.configure(function() {
     app.set('port', process.env.PORT || 3000);
-    app.set('views', __dirname + '/views');
+    app.set('views', __dirname + '/views/server');
     app.set('view engine', 'jade');
     app.locals.pretty = true;
     
     app.use(assets);
-    app.use(express.static(__dirname + '/public/assets'));
+    app.use(express.static(__dirname + '/public'));
     app.use(express.bodyParser());
     app.use(express.methodOverride());
     app.use(app.router);
