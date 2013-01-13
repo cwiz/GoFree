@@ -3,9 +3,9 @@ database    = require "./database.js"
 async       = require "async"
 
 # providers
-ostrovok    = require "./providers/ostrovok.js"
-eviterra    = require "./providers/eviterra.js"
-travelmenu  = require "./providers/travelmenu-hotels.js"
+ostrovok    = require "./providers/ostrovok"
+eviterra    = require "./providers/eviterra"
+#travelmenu  = require "./providers/travelmenu-hotels"
 
 exports.autocomplete = (req, res) ->
   

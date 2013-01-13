@@ -45,4 +45,4 @@ csv().from.path "airports.csv",
 	console.log ">> Airports insert"
 	airports.insert objects
 	console.log ">> END"
-	process.exit()
+	#process.exit()

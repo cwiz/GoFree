@@ -2,7 +2,7 @@
 
 {exec} = require "child_process"
 
-REPORTER = "nyan"
+REPORTER = "spec"
 
 task "test", "run tests", ->
   exec "NODE_ENV=test 
@@ -11,6 +11,7 @@ task "test", "run tests", ->
     --require coffee-script 
     --require test/test_helper.coffee
     --colors
+    --reporter #{REPORTER}
     --timeout 5000
   ", (err, output) ->
     if err

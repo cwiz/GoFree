@@ -1,6 +1,6 @@
 // Dependencies
 var express = require('express')
-  , routes  = require('./server')
+  , routes  = require('./app/server')
   , http    = require('http')
   , socket  = require('socket.io')
   , path    = require('path')
@@ -10,6 +10,7 @@ var express = require('express')
 var app     = express();
 var server  = http.createServer(app);
 var io      = socket.listen(server);
+var io      = socket.listen(1488);
 
 // Assets-Rack
 var assets = new rack.AssetRack([
@@ -41,7 +42,6 @@ var assets = new rack.AssetRack([
 ]);
 
 assets.on('complete', function() {
-
   // Configuration
   app.configure(function() {
     app.set('port', process.env.PORT || 3000);
@@ -50,13 +50,11 @@ assets.on('complete', function() {
     app.locals.pretty = true;
     
     app.use(assets);
-    //app.use(express.favicon('favicon.ico'));
     app.use(express.static(__dirname + '/public/assets'));
     app.use(express.bodyParser());
     app.use(express.methodOverride());
     app.use(app.router);
     app.use(express.compress());
-    // app.use(express.static(path.join(__dirname, 'public')));
   });
 
   app.configure('development', function(){
@@ -71,7 +69,6 @@ assets.on('complete', function() {
   app.get('/api/v1/image/:query', routes.image);
 
   // Stuff
-  
   server.listen(app.get('port'), function(){
     console.log("Express server listening on port " + app.get('port'));
   });

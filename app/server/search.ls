@@ -17,58 +17,64 @@ exports.search = (socket) ->
         iata: data.rows[data.rows.length-1].destination.iata
         date: data.rows[data.rows.length-1].destination.date
     }
+
+    signature      = data.extra.signature
+    providersReady = 0
+    totalProviders = data.rows.length * providers.flightProviders.length + (data.rows.length - 1) * providers.flightProviders.length
    
+    # --- start helper functions ---
+    
+    flightReady = (error, flights) ->
+      providersReady += 1 if flights.complete or error
+      percentage      = providersReady.toFixed(2) / totalProviders
+      
+      if error
+        items         = [] 
+      else
+        items         = flights.results
+
+      console.log "Flight Ready! Percentage: #{percentage}: #{providersReady} / #{totalProviders}| #{flights.complete}"
+        
+      socket.emit \flights_ready ,
+        error     : error
+        flights   : items
+        progress  : percentage
+        rowNumber : rowNumber
+        signature : signature
+
+    hotelReady = (error, hotels) ->
+      providersReady += 1 if hotels.complete or error
+      percentage      = providersReady.toFixed(2) / totalProviders
+      
+      if error
+        items         = [] 
+      else
+        items         = hotels.results
+
+      console.log "Hotel Ready! Percentage: #{percentage}: #{providersReady} / #{totalProviders} | #{hotels.complete}"
+
+      socket.emit \hotels_ready ,
+        error     : error
+        hotels    : items
+        progress  : percentage
+        rowNumber : rowNumber
+        signature : signature
+    
+    # --- end helper functions ---  
+
     for row, rowNumber in data.rows
       destination = row.destination
       origin      = row.origin
-
-      extra       =
+      extra       = {
         adults: data.extra.adults
         page: 1
-
-      providersReady = 0
-      totalProviders = providers.flightProviders.length + providers.hotelProviders.length
+      }
 
       for flightProvider in providers.flightProviders
         let rowNumber = rowNumber, signature = data.signature
-          error, result <- flightProvider.search origin, destination, extra
-
-          if result.complete or error
-            providersReady += 1
-
-          if error
-            socket.emit \flights_ready ,
-              flights   : []
-              rowNumber : rowNumber
-              signature : signature
-              progress  : float(providersReady) / totalProviders
-          
-          else
-            socket.emit \flights_ready ,
-              flights   : result.results
-              rowNumber : rowNumber
-              signature : signature
-              progress  : float(providersReady) / totalProviders
+          flightProvider.search origin, destination, extra, flightReady
 
       for hotelProvider in providers.hotelProviders
         let rowNumber = rowNumber, signature = data.signature
           if not (rowNumber is (data.rows.length - 1))
-            error, result <- hotelProvider.search origin, destination, extra
-
-            if result.complete or error
-              providersReady += 1
-
-            if error
-              socket.emit \hotels_ready ,
-                hotels:     []
-                rowNumber:  rowNumber
-                signature:  signature
-                progress  : float(providersReady) / totalProviders
-
-            else
-              socket.emit \hotels_ready ,
-                hotels:     result.results
-                rowNumber:  rowNumber
-                signature:  signature
-                progress  : float(providersReady) / totalProviders
-         
+            hotelProvider.search origin, destination, extra, hotelReady

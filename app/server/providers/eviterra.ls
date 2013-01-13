@@ -1,17 +1,13 @@
 async       = require "async"
-database    = require "../database.js"
+database    = require "./../database"
 moment      = require "moment"
 request     = require "request"
-Sync        = require "sync"
 xml2js      = require "xml2js"
+_           = require "underscore"
 
 # Globals
 parser = new xml2js.Parser(xml2js.defaults["0.1"])
 moment.lang('ru')
-
-# Helper functions
-getAirportDetails = (iata, callback) ->
-  database.airports.findOne { iata: iata }, callback
 
 # Providers
 exports.name = "eviterra"
@@ -20,71 +16,76 @@ exports.query = (origin, destination, extra, cb) ->
   evUrl = "http://api.eviterra.com/avia/v1/variants.xml?from=#{origin.iata}&to=#{destination.iata}&date1=#{origin.date}&adults=#{extra.adults}"
 
   (error, response, body) <- request evUrl
-  console.log ">>> queried eviterra serp | #{evUrl} | status #{response.statusCode}"
+  console.log ">>> Queried Eviterra serp | #{evUrl} | status #{response.statusCode}"
   return cb(error, null) if error
 
   (error, json) <- parser.parseString response.body
   return cb(error, null) if error
-  
+
   cb null, json
 
 exports.process = (flights, cb) -> 
-  console.log ">>> processing eviterra serp"
+  console.log ">>> Processing Eviterra serp"
 
   if not flights or not flights.variant
     return cb('no flights', null)
 
-  Sync ->
-
-    newFlights = []
+  for variant in flights.variant
+    if variant.segment.flight.length?
+      variant.transferNumber  = variant.segment.flight.length
+      variant.firstFlight     = variant.segment.flight[0]
+      variant.lastFlight      = variant.segment.flight[variant.transferNumber-1]
     
-    for variant in flights.variant
+    else
+      variant.transferNumber  = 1
+      variant.firstFlight     = variant.segment.flight
+      variant.lastFlight      = variant.firstFlight    
 
-      if variant.segment.flight.length?
-        transferNumber  = variant.segment.flight.length
-        firstFlight     = variant.segment.flight[0]
-        lastFlight      = variant.segment.flight[transferNumber-1]
-      
-      else
-        transferNumber  = 1
-        firstFlight     = variant.segment.flight
-        lastFlight      = firstFlight               
+  allAirports   = []
+  for variant in flights.variant
+    allAirports.push variant.firstFlight.departure
+    allAirports.push variant.lastFlight.arrival
 
-      arrivalDestinationDate  = moment lastFlight.arrivalDate     + 'T' + lastFlight.arrivalTime
-      departureOriginDate     = moment firstFlight.departureDate  + 'T' + firstFlight.departureTime
-      
-      departureAirport  = getAirportDetails.sync null, firstFlight.departure
-      arrivalAirport    = getAirportDetails.sync null, lastFlight.arrival
+  allAirports = _.uniq(allAirports)
 
-      # UTC massage
-      utcArrivalDate    = arrivalDestinationDate.clone().subtract 'hours', arrivalAirport.timezone  
-      utcDepartureDate  = departureOriginDate.clone().subtract    'hours', departureAirport.timezone
+  (err, airportsInfo) <- database.airports.find({iata:{$in:allAirports}}).toArray
+  newFlights = []
+  for variant in flights.variant
+    
+    arrivalDestinationDate  = moment variant.lastFlight.arrivalDate     + 'T' + variant.lastFlight.arrivalTime
+    departureOriginDate     = moment variant.firstFlight.departureDate  + 'T' + variant.firstFlight.departureTime
 
-      flightTimeSpan    = utcArrivalDate.diff utcDepartureDate,   'hours'
-        
-      flightTimeSpan    = 1 if (flightTimeSpan is 0)
+    departureAirport        = _.filter(airportsInfo, (el) -> el.iata is variant.firstFlight.departure)[0]
+    arrivalAirport          = _.filter(airportsInfo, (el) -> el.iata is variant.lastFlight.arrival)[0]
 
-      newFlight = 
-        arrival:        arrivalDestinationDate.format('LL')
-        departure:      departureOriginDate.format('LL')
-        price:          parseInt(variant.price)
-        timeSpan:       flightTimeSpan
-        transferNumber: transferNumber - 1
-        url:            variant.url + "ostroterra"
-        provider:       "eviterra"
+    # UTC massage
+    utcArrivalDate          = arrivalDestinationDate.clone().subtract 'hours', arrivalAirport.timezone  
+    utcDepartureDate        = departureOriginDate.clone().subtract    'hours', departureAirport.timezone
 
-      newFlights.push newFlight
+    flightTimeSpan          = utcArrivalDate.diff utcDepartureDate,   'hours'
+    flightTimeSpan          = 1 if (flightTimeSpan is 0)
 
-    cb null, {
-      results: newFlights,
-      complete: true
-    }
+    newFlight = 
+      arrival:        arrivalDestinationDate.format('LL')
+      departure:      departureOriginDate.format('LL')
+      price:          parseInt(variant.price)
+      timeSpan:       flightTimeSpan
+      transferNumber: variant.transferNumber - 1
+      url:            variant.url + "ostroterra"
+      provider:       "eviterra"
+
+    newFlights.push newFlight
+
+  cb null, {
+    results: newFlights,
+    complete: true
+  }
     
 exports.search = (origin, destination, extra, cb) ->
-  error, json     <- exports.query origin, destination, extra, cb
+  (error, json)     <-! exports.query origin, destination, extra
   return cb(error, null) if error
-
-  error, results  <- exports.process json
+  
+  (error, results)  <-! exports.process json
   return cb(error, null) if error
 
   cb null, results
@@ -99,7 +100,6 @@ exports.autocomplete = (query, callback) ->
   finalJson = []
   
   for item in json.data when item.type is 'city'
-
     name        = item.name
     country     = item.area
     iata        = item.iata
@@ -117,5 +117,3 @@ exports.autocomplete = (query, callback) ->
     }
 
   callback null, finalJson
-
-

@@ -1,24 +1,19 @@
 (function(){
-  var async, database, moment, request, Sync, xml2js, parser, getAirportDetails;
+  var async, database, moment, request, xml2js, _, parser;
   async = require("async");
-  database = require("../database.js");
+  database = require("./../database");
   moment = require("moment");
   request = require("request");
-  Sync = require("sync");
   xml2js = require("xml2js");
+  _ = require("underscore");
   parser = new xml2js.Parser(xml2js.defaults["0.1"]);
   moment.lang('ru');
-  getAirportDetails = function(iata, callback){
-    return database.airports.findOne({
-      iata: iata
-    }, callback);
-  };
   exports.name = "eviterra";
   exports.query = function(origin, destination, extra, cb){
     var evUrl;
     evUrl = "http://api.eviterra.com/avia/v1/variants.xml?from=" + origin.iata + "&to=" + destination.iata + "&date1=" + origin.date + "&adults=" + extra.adults;
     return request(evUrl, function(error, response, body){
-      console.log(">>> queried eviterra serp | " + evUrl + " | status " + response.statusCode);
+      console.log(">>> Queried Eviterra serp | " + evUrl + " | status " + response.statusCode);
       if (error) {
         return cb(error, null);
       }
@@ -31,28 +26,43 @@
     });
   };
   exports.process = function(flights, cb){
-    console.log(">>> processing eviterra serp");
+    var i$, ref$, len$, variant, allAirports;
+    console.log(">>> Processing Eviterra serp");
     if (!flights || !flights.variant) {
       return cb('no flights', null);
     }
-    return Sync(function(){
-      var newFlights, i$, ref$, len$, variant, transferNumber, firstFlight, lastFlight, arrivalDestinationDate, departureOriginDate, departureAirport, arrivalAirport, utcArrivalDate, utcDepartureDate, flightTimeSpan, newFlight;
+    for (i$ = 0, len$ = (ref$ = flights.variant).length; i$ < len$; ++i$) {
+      variant = ref$[i$];
+      if (variant.segment.flight.length != null) {
+        variant.transferNumber = variant.segment.flight.length;
+        variant.firstFlight = variant.segment.flight[0];
+        variant.lastFlight = variant.segment.flight[variant.transferNumber - 1];
+      } else {
+        variant.transferNumber = 1;
+        variant.firstFlight = variant.segment.flight;
+        variant.lastFlight = variant.firstFlight;
+      }
+    }
+    allAirports = [];
+    for (i$ = 0, len$ = (ref$ = flights.variant).length; i$ < len$; ++i$) {
+      variant = ref$[i$];
+      allAirports.push(variant.firstFlight.departure);
+      allAirports.push(variant.lastFlight.arrival);
+    }
+    allAirports = _.uniq(allAirports);
+    return database.airports.find({
+      iata: {
+        $in: allAirports
+      }
+    }).toArray(function(err, airportsInfo){
+      var newFlights, i$, ref$, len$, variant, arrivalDestinationDate, departureOriginDate, departureAirport, arrivalAirport, utcArrivalDate, utcDepartureDate, flightTimeSpan, newFlight;
       newFlights = [];
       for (i$ = 0, len$ = (ref$ = flights.variant).length; i$ < len$; ++i$) {
         variant = ref$[i$];
-        if (variant.segment.flight.length != null) {
-          transferNumber = variant.segment.flight.length;
-          firstFlight = variant.segment.flight[0];
-          lastFlight = variant.segment.flight[transferNumber - 1];
-        } else {
-          transferNumber = 1;
-          firstFlight = variant.segment.flight;
-          lastFlight = firstFlight;
-        }
-        arrivalDestinationDate = moment(lastFlight.arrivalDate + 'T' + lastFlight.arrivalTime);
-        departureOriginDate = moment(firstFlight.departureDate + 'T' + firstFlight.departureTime);
-        departureAirport = getAirportDetails.sync(null, firstFlight.departure);
-        arrivalAirport = getAirportDetails.sync(null, lastFlight.arrival);
+        arrivalDestinationDate = moment(variant.lastFlight.arrivalDate + 'T' + variant.lastFlight.arrivalTime);
+        departureOriginDate = moment(variant.firstFlight.departureDate + 'T' + variant.firstFlight.departureTime);
+        departureAirport = _.filter(airportsInfo, fn$)[0];
+        arrivalAirport = _.filter(airportsInfo, fn1$)[0];
         utcArrivalDate = arrivalDestinationDate.clone().subtract('hours', arrivalAirport.timezone);
         utcDepartureDate = departureOriginDate.clone().subtract('hours', departureAirport.timezone);
         flightTimeSpan = utcArrivalDate.diff(utcDepartureDate, 'hours');
@@ -64,7 +74,7 @@
           departure: departureOriginDate.format('LL'),
           price: parseInt(variant.price),
           timeSpan: flightTimeSpan,
-          transferNumber: transferNumber - 1,
+          transferNumber: variant.transferNumber - 1,
           url: variant.url + "ostroterra",
           provider: "eviterra"
         };
@@ -74,18 +84,24 @@
         results: newFlights,
         complete: true
       });
+      function fn$(el){
+        return el.iata === variant.firstFlight.departure;
+      }
+      function fn1$(el){
+        return el.iata === variant.lastFlight.arrival;
+      }
     });
   };
   exports.search = function(origin, destination, extra, cb){
-    return exports.query(origin, destination, extra, cb, function(error, json){
+    return exports.query(origin, destination, extra, function(error, json){
       if (error) {
         return cb(error, null);
       }
-      return exports.process(json, function(error, results){
+      exports.process(json, function(error, results){
         if (error) {
           return cb(error, null);
         }
-        return cb(null, results);
+        cb(null, results);
       });
     });
   };

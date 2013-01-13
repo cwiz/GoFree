@@ -92,26 +92,32 @@ describe 'Search API', ->
 		it 'should work without errors', (done) ->
 			client = io.connect(socketURL, socketOptions)
 			
-			client.on 'connect', ()->
-				console.log('connected')
-				done()
-			
-			destination =
-				oid: 2395
-				date: '2013-02-07'
-				iata: 'LED'
-			
-			origin = 
-				iata: 'MOW'
-				date: '2013-02-01'
-			
-			extra =
-				page: 1
-				adults: 2
+			data = 
+				rows: [
+					destination:
+						oid: 2395
+						date: '2013-02-07'
+						iata: 'LED'
+					
+					origin: 
+						iata: 'MOW'
+						date: '2013-02-01'
+						oid: 2395
+					]
+				extra:
+					page: 1
+					adults: 2
 
-			#search.search origin, destination, extra, (err, results) ->
-			#	expect(err).to.be.equal null
-			#	done()
+			client.emit 'start_search', data
+
+			client.on 'hotels_ready', (hotels) ->
+				console.log
+				if hotels.progress is 1.0
+					done()
+
+			client.on 'flights_ready', (flights) ->
+				if flights.progress is 1.0
+					done()
 
 
 
