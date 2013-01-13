@@ -4,12 +4,19 @@ TripsStop = Backbone.View.extend(
 
   initialize: (options) ->
     @list = options.list
+    @minDate = if options.minDate then options.minDate else null
+    @maxDate = if options.maxDate then options.maxDate else null
+
     @render()
 
     @suggestEl = @$el.find('.v-t-s-p-suggestions')
     @placeInput = @$el.find('.v-t-s-p-name')
 
-    @calendar = @$el.find('input.m-input-calendar').m_inputCalendar()
+    @calendar = @$el.find('input.m-input-calendar').m_inputCalendar()[0]
+
+    @updateCalendar()
+
+    window.test = @calendar
 
     app.log('[app.views.TripsStop]: initialize')
     @
@@ -24,6 +31,20 @@ TripsStop = Backbone.View.extend(
 
   dateChanged: (e) ->
     @model.set('date', e.target.value)
+
+  setMinDate: (date) ->
+    @minDate = date
+    @updateCalendar()
+
+  setMaxDate: (date) ->
+    @maxDate = date
+    @updateCalendar()
+
+  updateCalendar: () ->
+    @calendar.unlockDates()
+
+    if @minDate then @calendar.lockDates(null, @minDate)
+    if @maxDate then @calendar.lockDates(@maxDate, null)
 
   placeSelected: (e) ->
     place = @suggestions[+e.target.getAttribute('index')]
@@ -62,12 +83,12 @@ TripsStop = Backbone.View.extend(
     @list.append(@$el)
 
   removeStop: () ->
-    @model.trigger('destroy', @model)
     @undelegateEvents()
 
     @calendar.destroy()
     delete @calendar
 
+    @model.trigger('delete', @model)
     @remove()
 )
 
