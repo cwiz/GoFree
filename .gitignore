@@ -5,6 +5,8 @@ lib-cov
 *.out
 *.pid
 *.gz
+Cakefile.js
+package.js
 
 pids
 logs
