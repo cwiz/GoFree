@@ -1,0 +1,11 @@
+//- li.v-t-stop
+.v-t-s-place
+  input.v-t-s-p-name(type="text", name='place', value=place.name, placeholder="Город", autocorrect="off", autocapitalize="off", x-webkit-speech="x-webkit-speech")
+  ul.v-t-s-p-suggestions
+
+.v-t-s-date
+  input.m-input-calendar(type="hidden", name="date", value=date)
+
+  if removable
+  .v-t-s-remove
+    span.v-t-s-removestop.pointy &ndash; удалить из маршрута
