@@ -1,10 +1,11 @@
 (function(){
-  var request, database, async, ostrovok, eviterra, glueAutocompleteResults;
+  var request, database, async, ostrovok, eviterra, travelmenu, glueAutocompleteResults;
   request = require("request");
   database = require("./database.js");
   async = require("async");
   ostrovok = require("./providers/ostrovok");
   eviterra = require("./providers/eviterra");
+  travelmenu = require("./providers/travelmenu-hotels");
   exports.autocomplete = function(req, res){
     var emitResults, query, x$;
     emitResults = function(results){

@@ -5,7 +5,7 @@ async       = require "async"
 # providers
 ostrovok    = require "./providers/ostrovok"
 eviterra    = require "./providers/eviterra"
-#travelmenu  = require "./providers/travelmenu-hotels"
+travelmenu  = require "./providers/travelmenu-hotels"
 
 exports.autocomplete = (req, res) ->
   
