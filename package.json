@@ -19,6 +19,6 @@
       "socket.io": "0.9.11",
       "sync": "0.2.1",
       "xml2js": "0.2.2",
-      "underscore": "*",
+      "underscore": "*"
   }
 }
