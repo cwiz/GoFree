@@ -118,6 +118,3 @@ describe 'Search API', ->
 			client.on 'flights_ready', (flights) ->
 				if flights.progress is 1.0
 					done()
-
-
-
