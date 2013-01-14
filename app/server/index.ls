@@ -1,10 +1,7 @@
-api 		= require "./api.js"
-search 		= require "./search.js"
-staticPages	= require "./static.js"
+about 		= require "./about"
+api 		= require "./api"
+database 	= require './database'
 
-exports.index 			= (req, res) -> res.render "index", { title: "Index Page" }
-
-exports.autocomplete 	= api.autocomplete
-exports.search        	= search.search
-exports.image 		  	= api.image
-exports.about 			= staticPages.about
+exports.about		= about
+exports.api 		= api
+exports.database	= database

@@ -18,7 +18,7 @@ Search = Backbone.Model.extend(
     # socket magic goes here
     data = _.extend(@toJSON(), trips: @get('trips').toJSON())
 
-    app.socket.emit('search', data)
+    app.socket.emit('start_search', data)
 
     app.log('[app.models.Search]: emit', data)
     @

@@ -1,15 +1,9 @@
 (function(){
-  var api, search, staticPages;
-  api = require("./api.js");
-  search = require("./search.js");
-  staticPages = require("./static.js");
-  exports.index = function(req, res){
-    return res.render("index", {
-      title: "Index Page"
-    });
-  };
-  exports.autocomplete = api.autocomplete;
-  exports.search = search.search;
-  exports.image = api.image;
-  exports.about = staticPages.about;
+  var about, api, database;
+  about = require("./about");
+  api = require("./api");
+  database = require('./database');
+  exports.about = about;
+  exports.api = api;
+  exports.database = database;
 }).call(this);

@@ -4,7 +4,7 @@
   exports.name = "ostrovok";
   exports.query = function(origin, destination, extra, cb){
     var ostUrl;
-    ostUrl = "http://ostrovok.ru/api/v1/search/page/" + extra.page + "/?region_id=" + destination.oid + "&arrivalDate=" + origin.date + "&departureDate=" + destination.date + "&room1_numberOfAdults=" + extra.adults;
+    ostUrl = "http://ostrovok.ru/api/v1/search/page/" + extra.page + "/?region_id=" + destination.place.oid + "&arrivalDate=" + origin.date + "&departureDate=" + destination.date + "&room1_numberOfAdults=" + extra.adults;
     return request(ostUrl, function(error, response, body){
       var json, page;
       console.log(">>> queried ostrovok serp | " + ostUrl + " | status " + response.statusCode);

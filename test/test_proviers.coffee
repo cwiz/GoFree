@@ -1,76 +1,80 @@
 chai 		= require 'chai'
 io 			= require('socket.io-client')
 
-chai.should() 
+eviterra 	= require './../app/server/api/providers/eviterra'
+ostrovok 	= require './../app/server/api/providers/ostrovok'
+#socket 		= require './../app/server/api/socket'
+
+# globals
 expect = chai.expect
 
-ostrovok 	= require './../app/server/providers/ostrovok'
+socketURL = 'http://localhost:1488'
+socketOptions =
+	transports: ['websocket']
+	'force new connection': true
+
 
 describe 'Ostrovok', ->
-
 	describe '#autocomplete',  ->
 		it 'should work with "Москва" input', (done) -> 
+
+			moscowOutput = 
+				name: 'Москва'
+				oid: 2395
+				country: 'Россия'
+				displayName: 'Москва'
+				provider: 'ostrovok'
+
 			ostrovok.autocomplete "Москва", (err, result) ->
-				expect(err).to.be.equal null
-				
-				result.length.should.equal 3
-				
-				expect(result[0]).to.be.deep.equal	
-					name: 'Москва', 
-					oid: 2395,
-					country: 'Россия',
-					displayName: 'Москва',
-					provider: 'ostrovok' 
-				
+				expect(err).to.be.equal 			null
+				expect(result.length).to.be.equal 	3
+				expect(result[0]).to.be.deep.equal 	moscowOutput	
 				done()
 
 	describe '#search', ->
 		it 'should find something in Moscow', (done) ->
-			
 			destination =
-				oid: 2395
+				place:
+					oid: 2395
 				date: '2013-02-07'
-			
 			origin = 
 				date: '2013-02-01'
-			
 			extra =
 				page: 1
 				adults: 2
 			
 			ostrovok.search origin, destination, extra, (error, hotels) ->
-				expect(error).to.be.equal null
-
-				expect(hotels.results.length).to.be.above 0
-
-				if hotels.complete
-					done()
-
-eviterra 	= require './../app/server/providers/eviterra' 
+				expect(error).to.be.equal 					null
+				expect(hotels.results.length).to.be.above 	0
+				done() if hotels.complete
+					
 
 describe 'Eviterra', ->
 	describe '#autocomplete',  ->
 		it 'should work with "Москва" input', (done) -> 
+			
+			moscowOutput = 
+				name: 'Москва'
+				iata: 'MOW'
+				country: 'Россия'
+				displayName: 'Москва'
+				provider: 'eviterra' 
+
 			eviterra.autocomplete "Москва", (err, result) ->
 				expect(err).to.be.equal null
-				
-				expect(result[0]).to.be.deep.equal	
-					name: 'Москва', 
-					iata: 'MOW',
-					country: 'Россия',
-					displayName: 'Москва',
-					provider: 'eviterra' 
-				
+				expect(result[0]).to.be.deep.equal moscowOutput	
 				done()
 
 	describe '#search',  ->
 		it 'should find MOW -> LED flights', (done) ->
 
 			destination =
-				iata: 'LED'
+				place:
+					iata: 'LED'
 			
 			origin = 
-				iata: 'MOW'
+				place:
+					iata: 'MOW'
 				date: '2013-02-07'
 			
 			extra =
@@ -80,12 +84,6 @@ describe 'Eviterra', ->
 				expect(err).to.be.equal null
 				done()
 
-search 		= require './../app/server/search'
-
-socketURL = 'http://localhost:1488'
-socketOptions =
-	transports: ['websocket']
-	'force new connection': true
 
 describe 'Search API', ->
 	describe '#search', ->
@@ -93,28 +91,35 @@ describe 'Search API', ->
 			client = io.connect(socketURL, socketOptions)
 			
 			data = 
-				rows: [
-					destination:
-						oid: 2395
-						date: '2013-02-07'
-						iata: 'LED'
-					
-					origin: 
-						iata: 'MOW'
-						date: '2013-02-01'
-						oid: 2395
+				trips: 
+					[
+						{
+							date: "2013-01-15"
+							removable: false
+							place: 
+								oid: 2395
+								iata: "MOW"
+								name: "Москва°"
+						}
+						{
+							date: "2013-01-18"
+							removable: false
+							place: 
+								oid: 2114
+								iata: "LON"
+								name: "Лондон"	
+						}
+						
 					]
-				extra:
-					page: 1
-					adults: 2
-
+				adults: 1
+				budget: 100000
+				signature: "search_1"
+			
 			client.emit 'start_search', data
 
 			client.on 'hotels_ready', (hotels) ->
-				console.log
-				if hotels.progress is 1.0
-					done()
-
+				done() if hotels.progress is 1.0
+					
 			client.on 'flights_ready', (flights) ->
-				if flights.progress is 1.0
-					done()
+				done() if flights.progress is 1.0
+					

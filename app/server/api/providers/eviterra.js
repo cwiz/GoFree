@@ -1,7 +1,7 @@
 (function(){
   var async, database, moment, request, xml2js, _, parser;
   async = require("async");
-  database = require("./../database");
+  database = require("./../../database");
   moment = require("moment");
   request = require("request");
   xml2js = require("xml2js");
@@ -11,7 +11,7 @@
   exports.name = "eviterra";
   exports.query = function(origin, destination, extra, cb){
     var evUrl;
-    evUrl = "http://api.eviterra.com/avia/v1/variants.xml?from=" + origin.iata + "&to=" + destination.iata + "&date1=" + origin.date + "&adults=" + extra.adults;
+    evUrl = "http://api.eviterra.com/avia/v1/variants.xml?from=" + origin.place.iata + "&to=" + destination.place.iata + "&date1=" + origin.date + "&adults=" + extra.adults;
     return request(evUrl, function(error, response, body){
       console.log(">>> Queried Eviterra serp | " + evUrl + " | status " + response.statusCode);
       if (error) {
@@ -97,11 +97,11 @@
       if (error) {
         return cb(error, null);
       }
-      exports.process(json, function(error, results){
+      return exports.process(json, function(error, results){
         if (error) {
           return cb(error, null);
         }
-        cb(null, results);
+        return cb(null, results);
       });
     });
   };

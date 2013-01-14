@@ -1,24 +1,23 @@
 {
     "name": "oxye"
-  , "version": "0.0.4"
+  , "version": "0.0.5"
   , "private": true
   , "dependencies": {
-      "asset-rack": "1.1.6",
-      "async": "0.1.22",
-      "backbone-browserify": "*",
-      "coffee-script": "1.4.0",
-      "csv": "0.2.4",
-      "express": "3.0.3",
-      "jade": "0.27.7", 
-      "jquery-browserify": "*",
-      "markdown-js": "0.0.3",
-      "moment": "1.7.2",
-      "mongolian": "0.1.18",
-      "node-csv": "0.1.2",
-      "request": "2.12.0",
-      "socket.io": "0.9.11",
-      "sync": "0.2.1",
-      "xml2js": "0.2.2",
-      "underscore": "*"
+      "asset-rack":           "1.1.6",
+      "async":                "0.1.22",
+      "chai":                 "*",
+      "coffee-script":        "1.4.0",
+      "csv":                  "0.2.4",
+      "express":              "3.0.3",
+      "jade":                 "0.27.7", 
+      "JSV":                  "*",
+      "markdown-js":          "0.0.3",
+      "moment":               "1.7.2",
+      "mongolian":            "0.1.18",
+      "request":              "2.12.0",
+      "socket.io":            "0.9.11",
+      "socket.io-client":     "*",
+      "underscore":           "*",
+      "xml2js":               "0.2.2"
   }
 }

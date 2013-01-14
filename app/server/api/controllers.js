@@ -1,7 +1,7 @@
 (function(){
   var request, database, async, ostrovok, eviterra, travelmenu, glueAutocompleteResults;
   request = require("request");
-  database = require("./database.js");
+  database = require("./../database");
   async = require("async");
   ostrovok = require("./providers/ostrovok");
   eviterra = require("./providers/eviterra");

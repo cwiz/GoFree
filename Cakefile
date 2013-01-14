@@ -12,7 +12,7 @@ task "test", "run tests", ->
     --require test/test_helper.coffee
     --colors
     --reporter #{REPORTER}
-    --timeout 5000
+    --timeout 7000
   ", (err, output) ->
     if err
         console.log err

@@ -4,7 +4,7 @@ url		= require "url"
 exports.name = "travelmenu"
 
 exports.autocomplete = (query, callback) ->
-	query = query.replace(' ', '-')
+	query 				= query.replace(' ', '-')
 	tmUrl 				= url.parse "http://www.travelmenu.ru/a_search/hotel.loadLocations?limit=10&language=ru", true
 	tmUrl.query['text']	= query
 	tmUrl.search 		= null

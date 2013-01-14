@@ -3,7 +3,7 @@ request = require "request"
 exports.name = "ostrovok"
 
 exports.query = (origin, destination, extra, cb) ->
-  ostUrl = "http://ostrovok.ru/api/v1/search/page/#{extra.page}/?region_id=#{destination.oid}&arrivalDate=#{origin.date}&departureDate=#{destination.date}&room1_numberOfAdults=#{extra.adults}"
+  ostUrl = "http://ostrovok.ru/api/v1/search/page/#{extra.page}/?region_id=#{destination.place.oid}&arrivalDate=#{origin.date}&departureDate=#{destination.date}&room1_numberOfAdults=#{extra.adults}"
 
   (error, response, body) <-! request ostUrl
   console.log ">>> queried ostrovok serp | #{ostUrl} | status #{response.statusCode}"
@@ -58,7 +58,7 @@ exports.search = (origin, destination, extra, cb) ->
   error, hotelResult <- exports.query origin, destination, extra
   cb(error, null) if error
   
-  error, hotels      <- exports.process hotelResult 
+  error, hotels <- exports.process hotelResult 
   return cb(error, null) if error
 
   cb null, hotels

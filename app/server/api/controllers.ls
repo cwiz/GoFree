@@ -1,5 +1,5 @@
 request     = require "request"
-database    = require "./database.js"
+database    = require "./../database"
 async       = require "async"
 
 # providers

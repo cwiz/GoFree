@@ -1,5 +1,5 @@
 async       = require "async"
-database    = require "./../database"
+database    = require "./../../database"
 moment      = require "moment"
 request     = require "request"
 xml2js      = require "xml2js"
@@ -13,7 +13,7 @@ moment.lang('ru')
 exports.name = "eviterra"
 
 exports.query = (origin, destination, extra, cb) ->
-  evUrl = "http://api.eviterra.com/avia/v1/variants.xml?from=#{origin.iata}&to=#{destination.iata}&date1=#{origin.date}&adults=#{extra.adults}"
+  evUrl = "http://api.eviterra.com/avia/v1/variants.xml?from=#{origin.place.iata}&to=#{destination.place.iata}&date1=#{origin.date}&adults=#{extra.adults}"
 
   (error, response, body) <- request evUrl
   console.log ">>> Queried Eviterra serp | #{evUrl} | status #{response.statusCode}"
@@ -82,10 +82,10 @@ exports.process = (flights, cb) ->
   }
     
 exports.search = (origin, destination, extra, cb) ->
-  (error, json)     <-! exports.query origin, destination, extra
+  (error, json)     <- exports.query origin, destination, extra
   return cb(error, null) if error
   
-  (error, results)  <-! exports.process json
+  (error, results)  <- exports.process json
   return cb(error, null) if error
 
   cb null, results
