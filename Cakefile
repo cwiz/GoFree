@@ -6,6 +6,10 @@ spawn           = child_process.spawn
 
 REPORTER = "spec"
 
+RED   = '\u001b[31m'
+BLUE  = '\u001b[34m'
+RESET = '\u001b[0m'
+
 commandOutput = (error, output) ->
     if error
         console.log error.message
@@ -28,5 +32,11 @@ task "db:populateAirports", 'populate airports', ->
     exec "coffee scripts/airports/populateAirports.coffee", commandOutput
 
 task "devserver", 'development server w/ autoreload', ->
-    ls = exec "nodemon -w public/ -w app/ -w views/cleint/ app.js & livescript -wc app/server/*"
+    exec "npm install ."
+
+    ls = exec "livescript -wc app/server/*"
     ls.stdout.on 'data', (data) -> console.log data
+
+    nodemon = exec "nodemon -w public/ -w app/ -w views/cleint/ app.js"
+    nodemon.stdout.on 'data', (data) -> console.log data
+
