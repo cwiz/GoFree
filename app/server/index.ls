@@ -1,7 +1,3 @@
-about 		= require "./about"
-api 		= require "./api"
-database 	= require './database'
-
-exports.about		= about
-exports.api 		= api
-exports.database	= database
+exports.about		= require "./about"
+exports.api 		= require "./api"
+exports.database	= require './database'

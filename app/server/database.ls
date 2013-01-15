@@ -4,6 +4,7 @@ Mongolian = require "mongolian"
 server        			= new Mongolian()
 db            			= server.db "ostroterra"
 
+
 # Collections
 exports.airports 		= db.collection 'airports'
 exports.suggest 		= db.collection 'suggest'
