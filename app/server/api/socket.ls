@@ -1,5 +1,5 @@
 providers = require "./providers"
-JSV       = require("jsv").JSV
+JSV       = require("JSV").JSV
 
 validate = (data, cb) ->
 	schema = 
@@ -93,12 +93,12 @@ exports.search = (socket) ->
 
 			console.log "Emitting #{eventName} Percentage: #{percentage}: #{providersReady} / #{totalProviders}| #{items.complete}"
 			
-			socket.emit \flights_ready ,
-				error     : error
-				flights   : if error then [] else items.results
-				progress  : percentage
-				rowNumber : rowNumber
-				signature : signature
+			socket.emit eventName ,
+				error     	: error
+				items   	: if error then [] else items.results
+				progress  	: percentage
+				rowNumber 	: rowNumber
+				signature 	: signature
 
 		flightsReady 	= (error, items) -> resultReady error, items, 'flights_ready'
 		hotelsReady		= (error, items) -> resultReady error, items, 'hotels_ready'	

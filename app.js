@@ -8,7 +8,7 @@
   rack = require("asset-rack");
   app = express();
   server = http.createServer(app);
-  io = socket.listen(1488);
+  io = socket.listen(server);
   assets = new rack.AssetRack([
     new rack.LessAsset({
       url: "/app.css",

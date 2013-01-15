@@ -9,7 +9,7 @@ rack    = require "asset-rack"
 # Globals
 app     = express()
 server  = http.createServer app
-io      = socket.listen 1488
+io      = socket.listen server
 
 # Assets-Rack
 assets = new rack.AssetRack([

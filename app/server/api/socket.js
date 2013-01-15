@@ -1,7 +1,7 @@
 (function(){
   var providers, JSV, validate, convertToRows;
   providers = require("./providers");
-  JSV = require("jsv").JSV;
+  JSV = require("JSV").JSV;
   validate = function(data, cb){
     var schema, env, report;
     schema = {
@@ -104,9 +104,9 @@
           }
           percentage = providersReady.toFixed(2) / totalProviders;
           console.log("Emitting " + eventName + " Percentage: " + percentage + ": " + providersReady + " / " + totalProviders + "| " + items.complete);
-          return socket.emit('flights_ready', {
+          return socket.emit(eventName, {
             error: error,
-            flights: error
+            items: error
               ? []
               : items.results,
             progress: percentage,

@@ -18,6 +18,9 @@ SearchForm = Backbone.View.extend(
 
     @populateCollection() unless @collection.length > 1
 
+    @bg = @$el.find('.bg')
+    @bg.css('min-height', app.dom.win.height() - app.dom.header.height())
+
     app.log('[app.views.SearchForm]: initialize')
     @
 
@@ -44,9 +47,9 @@ SearchForm = Backbone.View.extend(
     ])
 
   initStop: (item) ->
-    index = @collection.indexOf(item)
-    prevDate = @collection.at(index - 1)?.get('date')
-    minDate = if prevDate then prevDate else app.utils.dateToYMD(@maxDate)
+    index     = @collection.indexOf item
+    prevDate  = @collection.at(index - 1)?.get('date')
+    minDate   = if prevDate then prevDate else app.utils.dateToYMD(@maxDate)
 
     @stops[item.cid] = new app.views.TripsStop(
       list: @stopsEl
