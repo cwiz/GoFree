@@ -8,7 +8,7 @@ ostrovok 	= require './../app/server/api/providers/ostrovok'
 # globals
 expect = chai.expect
 
-socketURL = 'http://localhost:1488'
+socketURL = 'http://localhost:3000'
 socketOptions =
 	transports: ['websocket']
 	'force new connection': true

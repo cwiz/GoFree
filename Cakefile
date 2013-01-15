@@ -10,33 +10,38 @@ RED   = '\u001b[31m'
 BLUE  = '\u001b[34m'
 RESET = '\u001b[0m'
 
-commandOutput = (error, output) ->
-    if error
-        console.log error.message
-    
-    console.log output
-
 task "test", "run tests", ->
-  exec "NODE_ENV=test 
-    mocha 
-    --compilers coffee:coffee-script
-    --require coffee-script 
-    --require test/test_helper.coffee
-    --colors
-    --reporter #{REPORTER}
-    --timeout 7000
-    ", commandOutput
-    
+	test = exec "NODE_ENV=test 
+		mocha 
+		--compilers coffee:coffee-script
+		--require coffee-script 
+		--require test/test_helper.coffee
+		--colors
+		--reporter #{REPORTER}
+		--timeout 7000
+		"
+
+	test.stdout.on 'data', console.log
+	test.stderr.on 'data', console.log
 
 task "db:populateAirports", 'populate airports', ->
-    exec "coffee scripts/airports/populateAirports.coffee", commandOutput
+	airports = exec "coffee scripts/airports/populateAirports.coffee"
+
+	airports.stdout.on 'data', console.log
+	airports.stderr.on 'data', console.log
 
 task "devserver", 'development server w/ autoreload', ->
-    exec "npm install ."
+	exec "npm install ."
 
-    ls = exec "livescript -wc app/server/*"
-    ls.stdout.on 'data', (data) -> console.log data
+	ls = exec "livescript -wc app/server/*"
+	ls.stdout.on 'data',  console.log
+	ls.stderr.on 'error', console.log
 
-    nodemon = exec "nodemon -w public/ -w app/ -w views/cleint/ app.js"
-    nodemon.stdout.on 'data', (data) -> console.log data
+	setTimeout ( ->
+		nodemon = exec "nodemon -w public/ -w app/ -w views/cleint/ app.js"
+		nodemon.stdout.on 'data', console.log
+		nodemon.stderr.on 'data', console.log
+	), 1000
+
+	
 

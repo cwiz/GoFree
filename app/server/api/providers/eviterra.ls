@@ -16,7 +16,7 @@ exports.query = (origin, destination, extra, cb) ->
   evUrl = "http://api.eviterra.com/avia/v1/variants.xml?from=#{origin.place.iata}&to=#{destination.place.iata}&date1=#{origin.date}&adults=#{extra.adults}"
 
   (error, response, body) <- request evUrl
-  console.log ">>> Queried Eviterra serp | #{evUrl} | status #{response.statusCode}"
+  console.log "Queried Eviterra serp | #{evUrl} | status #{response.statusCode}"
   return cb(error, null) if error
 
   (error, json) <- parser.parseString response.body
@@ -25,10 +25,10 @@ exports.query = (origin, destination, extra, cb) ->
   cb null, json
 
 exports.process = (flights, cb) -> 
-  console.log ">>> Processing Eviterra serp"
+  console.log "Processing Eviterra serp"
 
   if not flights or not flights.variant
-    return cb('no flights', null)
+    return cb({message: 'No flights found'}, null)
 
   for variant in flights.variant
     if variant.segment.flight.length?
@@ -48,8 +48,9 @@ exports.process = (flights, cb) ->
 
   allAirports = _.uniq(allAirports)
 
-  (err, airportsInfo) <- database.airports.find({iata:{$in:allAirports}}).toArray
+  (err, airportsInfo) <- database.airports.find({iata:{$in:allAirports}}).toArray()
   newFlights = []
+
   for variant in flights.variant
     
     arrivalDestinationDate  = moment variant.lastFlight.arrivalDate     + 'T' + variant.lastFlight.arrivalTime
@@ -57,6 +58,9 @@ exports.process = (flights, cb) ->
 
     departureAirport        = _.filter(airportsInfo, (el) -> el.iata is variant.firstFlight.departure)[0]
     arrivalAirport          = _.filter(airportsInfo, (el) -> el.iata is variant.lastFlight.arrival)[0]
+
+    if not(departureAirport and arrivalAirport)
+      return cb {message: "No airport found | departure: #{departureAirport} | arrival: #{arrivalAirport}"}, null
 
     # UTC massage
     utcArrivalDate          = arrivalDestinationDate.clone().subtract 'hours', arrivalAirport.timezone  
@@ -93,7 +97,7 @@ exports.search = (origin, destination, extra, cb) ->
 exports.autocomplete = (query, callback) ->
   eviterraUrl = "https://eviterra.com/complete.json?val=#{query}"
   (error, response, body) <-! request eviterraUrl
-  console.log ">>> queried eviterra autocomplete | #{eviterraUrl} | status #{response.statusCode}"
+  console.log "Queried eviterra autocomplete | #{eviterraUrl} | status #{response.statusCode}"
   return callback(error, null) if error
 
   json = JSON.parse(response.body)  

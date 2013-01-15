@@ -91,11 +91,17 @@ exports.search = (socket) ->
 			providersReady += 1 if (error or items.complete)
 			percentage      = providersReady.toFixed(2) / totalProviders
 
-			console.log "Emitting #{eventName} Percentage: #{percentage}: #{providersReady} / #{totalProviders}| #{items.complete}"
+			results = if error then [] else items.results
+
+			console.log "socket.emit #{eventName} 
+			| Percentage: #{percentage}: #{providersReady} / #{totalProviders} 
+			| Complete: #{items.complete or ''} 
+			| Error: #{error?.message or ''}
+			| \# results: #{results.length}"
 			
 			socket.emit eventName ,
 				error     	: error
-				items   	: if error then [] else items.results
+				items   	: results
 				progress  	: percentage
 				rowNumber 	: rowNumber
 				signature 	: signature

@@ -6,7 +6,7 @@ exports.query = (origin, destination, extra, cb) ->
   ostUrl = "http://ostrovok.ru/api/v1/search/page/#{extra.page}/?region_id=#{destination.place.oid}&arrivalDate=#{origin.date}&departureDate=#{destination.date}&room1_numberOfAdults=#{extra.adults}"
 
   (error, response, body) <-! request ostUrl
-  console.log ">>> queried ostrovok serp | #{ostUrl} | status #{response.statusCode}"
+  console.log "Queried ostrovok serp | #{ostUrl} | status #{response.statusCode}"
   return cb(error, null) if error
 
   json = JSON.parse(response.body)
@@ -19,9 +19,10 @@ exports.query = (origin, destination, extra, cb) ->
     exports.query origin, destination, extra, cb
 
 exports.process = (json, cb) ->
-  console.log ">>> processing ostrovok serp"
+  console.log "ostrovok.process"
 
   if not json or not json.hotels?
+    console.log "ostrovok.process" 
     cb 'empty json', null
 
   hotels = json.hotels
@@ -67,7 +68,7 @@ exports.search = (origin, destination, extra, cb) ->
 exports.autocomplete = (query, callback) ->
   ostUrl = "http://ostrovok.ru/api/site/multicomplete.json?query=#{query}&regions_ver=v5"
   (error, response, body) <-! request ostUrl
-  console.log ">>> queried ostrovok autocomplete | #{ostUrl} | status #{response.statusCode}"
+  console.log "ostrovok.autocomplete | #{ostUrl} | status #{response.statusCode}"
   return callback error, null if error
   
   json      = JSON.parse(response.body)

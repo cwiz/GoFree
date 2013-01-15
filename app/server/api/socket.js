@@ -93,7 +93,7 @@
         providersReady = 0;
         totalProviders = rows.length * providers.flightProviders.length + (rows.length - 1) * providers.flightProviders.length;
         resultReady = function(error, items, eventName){
-          var percentage;
+          var percentage, results;
           if (error) {
             items = {
               complete: true
@@ -103,12 +103,13 @@
             providersReady += 1;
           }
           percentage = providersReady.toFixed(2) / totalProviders;
-          console.log("Emitting " + eventName + " Percentage: " + percentage + ": " + providersReady + " / " + totalProviders + "| " + items.complete);
+          results = error
+            ? []
+            : items.results;
+          console.log("socket.emit " + eventName + " | Percentage: " + percentage + ": " + providersReady + " / " + totalProviders + " | Complete: " + (items.complete || '') + " | Error: " + ((error != null ? error.message : void 8) || '') + "| # results: " + results.length);
           return socket.emit(eventName, {
             error: error,
-            items: error
-              ? []
-              : items.results,
+            items: results,
             progress: percentage,
             rowNumber: rowNumber,
             signature: signature

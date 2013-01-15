@@ -7,7 +7,7 @@
     ostUrl = "http://ostrovok.ru/api/v1/search/page/" + extra.page + "/?region_id=" + destination.place.oid + "&arrivalDate=" + origin.date + "&departureDate=" + destination.date + "&room1_numberOfAdults=" + extra.adults;
     return request(ostUrl, function(error, response, body){
       var json, page;
-      console.log(">>> queried ostrovok serp | " + ostUrl + " | status " + response.statusCode);
+      console.log("Queried ostrovok serp | " + ostUrl + " | status " + response.statusCode);
       if (error) {
         return cb(error, null);
       }
@@ -22,8 +22,9 @@
   };
   exports.process = function(json, cb){
     var hotels, rates, newHotels, i$, len$, hotel, rating, ref$, count, price, stars, newHotel;
-    console.log(">>> processing ostrovok serp");
+    console.log("ostrovok.process");
     if (!json || json.hotels == null) {
+      console.log("ostrovok.process");
       cb('empty json', null);
     }
     hotels = json.hotels;
@@ -78,7 +79,7 @@
     ostUrl = "http://ostrovok.ru/api/site/multicomplete.json?query=" + query + "&regions_ver=v5";
     return request(ostUrl, function(error, response, body){
       var json, finalJson, i$, ref$, len$, obj, country, name, id, displayName;
-      console.log(">>> queried ostrovok autocomplete | " + ostUrl + " | status " + response.statusCode);
+      console.log("ostrovok.autocomplete | " + ostUrl + " | status " + response.statusCode);
       if (error) {
         return callback(error, null);
       }

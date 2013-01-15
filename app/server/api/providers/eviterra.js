@@ -13,7 +13,7 @@
     var evUrl;
     evUrl = "http://api.eviterra.com/avia/v1/variants.xml?from=" + origin.place.iata + "&to=" + destination.place.iata + "&date1=" + origin.date + "&adults=" + extra.adults;
     return request(evUrl, function(error, response, body){
-      console.log(">>> Queried Eviterra serp | " + evUrl + " | status " + response.statusCode);
+      console.log("Queried Eviterra serp | " + evUrl + " | status " + response.statusCode);
       if (error) {
         return cb(error, null);
       }
@@ -27,9 +27,11 @@
   };
   exports.process = function(flights, cb){
     var i$, ref$, len$, variant, allAirports;
-    console.log(">>> Processing Eviterra serp");
+    console.log("Processing Eviterra serp");
     if (!flights || !flights.variant) {
-      return cb('no flights', null);
+      return cb({
+        message: 'No flights found'
+      }, null);
     }
     for (i$ = 0, len$ = (ref$ = flights.variant).length; i$ < len$; ++i$) {
       variant = ref$[i$];
@@ -63,6 +65,11 @@
         departureOriginDate = moment(variant.firstFlight.departureDate + 'T' + variant.firstFlight.departureTime);
         departureAirport = _.filter(airportsInfo, fn$)[0];
         arrivalAirport = _.filter(airportsInfo, fn1$)[0];
+        if (!(departureAirport && arrivalAirport)) {
+          return cb({
+            message: "No airport found | departure: " + departureAirport + " | arrival: " + arrivalAirport
+          }, null);
+        }
         utcArrivalDate = arrivalDestinationDate.clone().subtract('hours', arrivalAirport.timezone);
         utcDepartureDate = departureOriginDate.clone().subtract('hours', departureAirport.timezone);
         flightTimeSpan = utcArrivalDate.diff(utcDepartureDate, 'hours');
@@ -110,7 +117,7 @@
     eviterraUrl = "https://eviterra.com/complete.json?val=" + query;
     return request(eviterraUrl, function(error, response, body){
       var json, finalJson, i$, ref$, len$, item, name, country, iata, displayName;
-      console.log(">>> queried eviterra autocomplete | " + eviterraUrl + " | status " + response.statusCode);
+      console.log("Queried eviterra autocomplete | " + eviterraUrl + " | status " + response.statusCode);
       if (error) {
         return callback(error, null);
       }
