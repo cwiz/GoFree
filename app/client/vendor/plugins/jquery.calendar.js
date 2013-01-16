@@ -570,11 +570,15 @@
         date2 = +(new Date(+d2_arr[0], +d2_arr[1] - 1, +d2_arr[2])),
         curr_cell;
 
+    this.els.dateList.detach();
+
     addOnly || this.els.cells.filter('.' + selection_class).removeClass(selection_class);
     while (+date1 < date2) {
       date1.setDate(date1.getDate() + 1);
       curr_cell = this.els.cells.filter('[data-date="' + this.dateToYMD(date1) + '"]').addClass(selection_class);
     }
+
+    this.els.datelistHolder.append(this.els.dateList);
   };
 
   DatesPicker.prototype.lockDates = function(ymd1, ymd2) {
@@ -628,7 +632,9 @@
   };
 
   DatesPicker.prototype.unlockDates = function() {
+    this.els.dateList.detach();
     this.els.cells.filter('.locked').removeClass('locked');
+    this.els.datelistHolder.append(this.els.dateList);
   };
 
   DatesPicker.prototype.setAvailable = function(start, end) {
@@ -643,7 +649,7 @@
         end = new Date(),
         instances = [];
 
-    end.setFullYear(start.getFullYear() + 1);
+    end.setMonth(start.getMonth() + 6);
 
     var options = $.extend({
       lazy: false,
