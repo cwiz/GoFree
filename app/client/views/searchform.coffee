@@ -1,4 +1,4 @@
-SearchForm = Backbone.View.extend(
+SearchForm = Backbone.View.extend
   stops: {}
   maxDate: app.utils.pureDate(app.now)
 
@@ -17,9 +17,6 @@ SearchForm = Backbone.View.extend(
     @restrictBudget()
 
     @populateCollection() unless @collection.length > 1
-
-    @bg = @$el.find('.bg')
-    @bg.css('min-height', app.dom.win.height() - app.dom.header.height())
 
     app.log('[app.views.SearchForm]: initialize')
     @
@@ -51,11 +48,10 @@ SearchForm = Backbone.View.extend(
     prevDate  = @collection.at(index - 1)?.get('date')
     minDate   = if prevDate then prevDate else app.utils.dateToYMD(@maxDate)
 
-    @stops[item.cid] = new app.views.TripsStop(
+    @stops[item.cid] = new app.views.TripsStop
       list: @stopsEl
       model: item
       minDate: if index == 0 then null else minDate
-    )
 
   deleteStop: (item) ->
     index = @collection.indexOf(item)
@@ -95,6 +91,5 @@ SearchForm = Backbone.View.extend(
     app.e(e)
 
     @model.save()
-)
 
 app.views.SearchForm = SearchForm

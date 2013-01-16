@@ -3,9 +3,9 @@ Index = Backbone.View.extend
   
   initialize: () ->
     @searchFormView = new app.views.SearchForm
-      el        : @el
-      model     : @model
-      collection: @model.get 'trips'
+      el : @el
+      model : @model
+      collection : @model.get('trips')
 
     @render()
     
@@ -13,6 +13,6 @@ Index = Backbone.View.extend
 
   render: () ->
     @$el.hide()
-    @$el.fadeIn 500    
+    @$el.fadeIn(500)
 
 app.views.Index = Index

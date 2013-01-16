@@ -8,13 +8,13 @@
 app = _.extend @app, Backbone.Events
 
 # Precached DOM elements
-app.dom 		= {}
-app.dom.win 	= $ window
-app.dom.doc 	= $ document
-app.dom.html 	= $ 'html'
-app.dom.body 	= $ 'body'
-app.dom.header 	= $ '#l-header'
-app.dom.content = $ '#l-content'
+app.dom = {}
+app.dom.win = $(window)
+app.dom.doc = $(document)
+app.dom.html = $('html')
+app.dom.body = $('body')
+app.dom.header = $('#l-header')
+app.dom.content = $('#l-content')
 
 app.modules = {}
 
@@ -25,8 +25,8 @@ app.dom.html.addClass('ie ie' + app.browser.isIE)                if app.browser.
 app.dom.html.addClass('ios ios' + app.browser.isIOS)             if app.browser.isIOS
 app.dom.html.addClass('android android' + app.browser.isAndroid) if app.browser.isAndroid
 
-app.socket 	= io.connect(app.env.host)
-router 		= new app.Router()
+app.socket = io.connect(app.env.host)
+router = new app.Router()
 Backbone.history.start(pushState: true);
 
 @app = app

@@ -1,4 +1,4 @@
-TripsStop = Backbone.View.extend(
+TripsStop = Backbone.View.extend
   tagName: 'li'
   className: 'v-t-stop'
 
@@ -83,12 +83,12 @@ TripsStop = Backbone.View.extend(
   placeChanged: _.debounce((e) ->
     place = $.trim(e.target.value)
 
-    $.ajax(
+    $.ajax
       url: app.api.places + place
       success: @renderSuggest
       error: @clearSuggest
       context: @
-      )
+
   , 100)
 
   render: () ->
@@ -103,6 +103,6 @@ TripsStop = Backbone.View.extend(
 
     @model.trigger('delete', @model)
     @remove()
-)
+
 
 app.views.TripsStop = TripsStop
