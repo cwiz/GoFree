@@ -44,7 +44,7 @@ SearchForm = Backbone.View.extend
     ])
 
   initStop: (item) ->
-    index     = @collection.indexOf item
+    index     = @collection.indexOf(item)
     prevDate  = @collection.at(index - 1)?.get('date')
     minDate   = if prevDate then prevDate else app.utils.dateToYMD(@maxDate)
 

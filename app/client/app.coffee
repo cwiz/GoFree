@@ -5,7 +5,7 @@
 #= require_tree collections
 #= require_tree views
 
-app = _.extend @app, Backbone.Events
+app = _.extend(@app, Backbone.Events)
 
 # Precached DOM elements
 app.dom = {}
