@@ -3,17 +3,41 @@
 .v-searchform {
   position: relative;
 
-  .bg {
+  .v-s-bg-wrap {
     width: 100%;
     height: 100%;
 
     position: absolute;
-    left: 0;
     top: 0;
+    left: 0;
 
-    background: #2c3d5b url('img/views/searchform.jpg') no-repeat center center;
-    background-size: cover;
+    overflow: hidden;
+
+    .v-s-bg-container {
+      width: 200%;
+      height: 200%;
+
+      position: absolute;
+      left: -50%;
+      top: -50%;
+
+      background: #2c3d5b;
+
+      .v-s-bg-img {
+        min-width: 50%;
+        min-height: 50%;
+
+        margin: auto; 
+
+        position: absolute; 
+        left: 0; 
+        top: 0; 
+        right: 0; 
+        bottom: 0; 
+      }
+    }
   }
+  
 
   .l-wrap {
     padding: 30px 0;

@@ -52,19 +52,6 @@ TripsStop = Backbone.View.extend
     @model.set('place', place)
     @placeInput.val(place.name)
 
-    # так?
-    $.ajax {
-      url     :  app.api.images + place.name
-      success : (resp) ->
-        # how to access searchform variable?
-
-        # pre-fetch image #@todo: refactor to utils
-        img = new Image()
-        img.src = resp.value.image
-        img.onload = () -> 
-            $('.bg').css('background-image', "url('#{resp.value.image}')")    
-    }
-
     @clearSuggest()
 
   renderSuggest: (resp) ->
