@@ -7,16 +7,20 @@ TripsStop = Backbone.View.extend
     @minDate = if options.minDate then options.minDate else null
     @maxDate = if options.maxDate then options.maxDate else null
 
+    @manageKeypress = _.bind(@manageKeypress, @)
+    @manageClick = _.bind(@manageClick, @)
+
     @render()
 
+    @suggestActive = false
     @suggestEl = @$el.find('.v-t-s-p-suggestions')
     @placeInput = @$el.find('.v-t-s-p-name')
+    @suggestSelected = null
+    @lastQuery = null
 
     @calendar = @$el.find('input.m-input-calendar').m_inputCalendar()[0]
 
     @updateCalendar()
-
-    window.test = @calendar
 
     app.log('[app.views.TripsStop]: initialize')
     @
@@ -46,8 +50,50 @@ TripsStop = Backbone.View.extend
     if @minDate then @calendar.lockDates(null, @minDate)
     if @maxDate then @calendar.lockDates(@maxDate, null)
 
+  manageKeypress: (e) ->
+    switch e.keyCode
+      #up
+      when 38, 40
+        if not @suggestSelected
+          @suggestSelected = @suggestEl.find(if e.keyCode == 38 then 'li:last-child' else 'li:first-child')
+          @suggestSelected.addClass('selected')
+        else
+          next = if e.keyCode == 38 then @suggestSelected.prev('li') else @suggestSelected.next('li')
+          @suggestSelected.removeClass('selected')
+
+          if next.length            
+            @suggestSelected = next
+            @suggestSelected.addClass('selected')
+          else
+            @suggestSelected = null
+
+      #enter
+      when 13
+        app.e(e)
+
+        if @suggestSelected
+          place = @suggestions[+@suggestSelected.data('index')]
+
+          @model.set('place', place)
+          @placeInput.val(place.name)
+
+          @suggestSelected = null
+
+          @clearSuggest()
+
+      when 27
+        @suggestSelected = null
+        @clearSuggest()
+              
+
+  manageClick: (e) ->
+    $target = $(e.target)
+
+    if (@suggestActive and not $target.is(@suggestEl) and not $target.is(@placeInput))
+      @clearSuggest()
+
   placeSelected: (e) ->
-    place = @suggestions[+e.target.getAttribute('index')]
+    place = @suggestions[+e.target.getAttribute('data-index')]
 
     @model.set('place', place)
     @placeInput.val(place.name)
@@ -62,19 +108,36 @@ TripsStop = Backbone.View.extend
 
     @suggestEl.html(list.join(''))
     @suggestEl.addClass('active')
+    @suggestActive = true
+
+    @suggestSelected = null
+
+    app.dom.doc.on('keydown', @manageKeypress);
+    app.dom.doc.on('click', @manageClick);
+
+  # hideSuggest: () ->
+  #   @suggestEl.removeClass('active');
+  #   @suggestActive = false
     
   clearSuggest: () ->
     @suggestEl.removeClass('active');
+    @suggestActive = false
     @suggestEl.html('')
+
+    app.dom.doc.off('keydown', @manageKeypress);
+    app.dom.doc.off('click', @manageClick);
 
   placeChanged: _.debounce((e) ->
     place = $.trim(e.target.value)
 
-    $.ajax
-      url: app.api.places + place
-      success: @renderSuggest
-      error: @clearSuggest
-      context: @
+    if @model.get('place').name != place and (@lastQuery != place or not @suggestActive)
+      $.ajax
+        url: app.api.places + place
+        success: @renderSuggest
+        error: @clearSuggest
+        context: @
+
+      @lastQuery = place
 
   , 100)
 
