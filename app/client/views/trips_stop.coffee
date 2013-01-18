@@ -54,11 +54,14 @@ TripsStop = Backbone.View.extend
     switch e.keyCode
       #up
       when 38, 40
+        app.e(e)
+
         if not @suggestSelected
           @suggestSelected = @suggestEl.find(if e.keyCode == 38 then 'li:last-child' else 'li:first-child')
           @suggestSelected.addClass('selected')
         else
-          next = if e.keyCode == 38 then @suggestSelected.prev('li') else @suggestSelected.next('li')
+          next = if e.keyCode == 38 then @suggestSelected.prev() else @suggestSelected.next()
+          console.log(@suggestSelected.prev().html(), @suggestSelected.html(), @suggestSelected.next().html())
           @suggestSelected.removeClass('selected')
 
           if next.length            
@@ -81,9 +84,9 @@ TripsStop = Backbone.View.extend
 
           @clearSuggest()
 
-      when 27
-        @suggestSelected = null
-        @clearSuggest()
+      # when 27
+      #   @suggestSelected = null
+      #   @clearSuggest()
               
 
   manageClick: (e) ->
@@ -107,13 +110,15 @@ TripsStop = Backbone.View.extend
       '<li class="v-t-s-p-suggestion" data-index="' + i + '"">' + o.name + '</li>'
 
     @suggestEl.html(list.join(''))
-    @suggestEl.addClass('active')
-    @suggestActive = true
+
+    if not @suggestActive
+      @suggestEl.addClass('active')
+      @suggestActive = true
+
+      app.dom.doc.on('keydown', @manageKeypress)
+      app.dom.doc.on('click', @manageClick)
 
     @suggestSelected = null
-
-    app.dom.doc.on('keydown', @manageKeypress);
-    app.dom.doc.on('click', @manageClick);
 
   # hideSuggest: () ->
   #   @suggestEl.removeClass('active');
