@@ -24,6 +24,12 @@
         this.validation.external = this.options.validations;
 
         this.els.form = $(this.options.form);
+
+        this.scanElements();
+        return this;
+    };
+
+    FValidate.prototype.scanElements = function() {
         this.els.inputs = this.els.form.find('input[data-validate], select[data-validate], textarea[data-validate]');
         this.els.containers = this.els.form.find('.m-validate-container');
 
@@ -33,6 +39,7 @@
         }
 
         this.load();
+        return this;
     };
 
     FValidate.prototype.load = function() {
@@ -240,7 +247,7 @@
         this.each(function(index, elem) {
             instances.push(new FValidate({
                 form: elem,
-                debug: S.log,
+                debug: app.log,
                 validations: options.validations,
                 report: options.report,
                 isDisabled: options.isDisabled

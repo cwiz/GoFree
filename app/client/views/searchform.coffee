@@ -14,6 +14,7 @@ SearchForm = Backbone.View.extend
     @collection.on('change:date', @dateChanged, @)
 
     @$el.find('select.m-input-select').m_inputSelect()
+    @form = @$el.find('.v-s-form').m_formValidate()[0]
     @restrictBudget()
 
     @populateCollection() unless @collection.length > 1
@@ -52,6 +53,8 @@ SearchForm = Backbone.View.extend
       list: @stopsEl
       model: item
       minDate: if index == 0 then null else minDate
+
+    @form.scanElements()
 
   deleteStop: (item) ->
     index = @collection.indexOf(item)

@@ -14,7 +14,7 @@ section.v-searchform.l-wrap
 
         .v-s-budget.m-validate-container(data-for="budget")
           label Бюджет
-          input.v-s-amount.small(type="text", name="budget", value=budget, data-validate="true", data-error="Выберите бюджет", data-filter="number", required)
+          input.v-s-amount.small(type="text", name="budget", min=10000, value=budget, data-validate="true", data-error="Выберите бюджет", data-filter="number", required)
           small руб
 
       .v-s-submit
