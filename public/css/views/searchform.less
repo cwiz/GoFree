@@ -14,7 +14,7 @@
   }
 
   .v-s-form {
-    width: 450px;
+    width: 390px;
     padding: 10px;
 
     margin-top: 5px;
@@ -32,6 +32,12 @@
       font-size: 11px;
 
       text-align: center;
+
+      .v-s-d-add.disabled {
+        opacity: .5;
+        cursor: default;
+        .helper_noselect();
+      }
     }
 
     .v-s-conditions {
@@ -64,7 +70,7 @@
   }
 
   .v-s-description {
-    margin-left: 470px;
+    margin-left: 440px;
 
     header {
       font-weight: 300;
