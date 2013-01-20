@@ -2,51 +2,53 @@
 // Vendor madness mixins
 // ===========================================================================
 
+// FIXME: remove one-liners
 // Border Radius
-.border-radius(@radius: 0) {
-  -webkit-border-radius: @radius;
-     -moz-border-radius: @radius;
-          border-radius: @radius;
+.border-radius(@radius: 0) {  
+  border-radius: @radius;
 }
-
 // Drop shadows
 .box-shadow(@shadow) {
-  -webkit-box-shadow: @shadow;
-     -moz-box-shadow: @shadow;
-          box-shadow: @shadow;
+  box-shadow: @shadow;
 }
 .box-shadow(@shadow, @shadow2) {
-  -webkit-box-shadow: @shadow, @shadow2;
-     -moz-box-shadow: @shadow, @shadow2;
-          box-shadow: @shadow, @shadow2;
+  box-shadow: @shadow, @shadow2;
 }
 .box-shadow(@shadow, @shadow2, @shadow3) {
-  -webkit-box-shadow: @shadow, @shadow2, @shadow3;
-     -moz-box-shadow: @shadow, @shadow2, @shadow3;
-          box-shadow: @shadow, @shadow2, @shadow3;
+  box-shadow: @shadow, @shadow2, @shadow3;
 }
-
-// Transitions
-.transition(@transition) {
-  -webkit-transition: @transition;
-     -moz-transition: @transition;
-      -ms-transition: @transition;
-       -o-transition: @transition;
-          transition: @transition;
-}
-
 // Background clipping
 .background-clip(@clip: border) {
-  -webkit-background-clip: @clip;
-     -moz-background-clip: @clip;
-          background-clip: @clip;
+  background-clip: @clip;
+}
+// Background size
+.background-size(@value: auto auto) {
+  background-size: @value;
+}
+// Opacity
+.opacity(@opacity: 100) {
+  opacity: @opacity / 100;
 }
 
+
+
+// Box model
+.box-sizing(@value: content-box) {
+     -moz-box-sizing: @value;
+          box-sizing: @value;
+}
 // Transforms
 .transform(@value) {
   -webkit-transform: @value;
           transform: @value;
 }
+// Transitions
+.transition(@transition) {
+  -webkit-transition: @transition;
+          transition: @transition;
+}
+
+
 
 // Gradients
 .horizontal-gradient(@startColor: #000, @endColor: #fff) {
@@ -67,19 +69,6 @@
   background-image:         linear-gradient(to bottom, @startColor, @endColor);
 }
 
-// Background size
-.background-size(@value: auto auto) {
-  -webkit-background-size: @value;
-          background-size: @value;
-}
-
-// Box model
-.box-sizing(@value: content-box) {
-  -webkit-box-sizing: @value;
-     -moz-box-sizing: @value;
-          box-sizing: @value;
-}
-
 // EXPERIMENTAL: Text selectability
 .user-select(@value: all) {
   -webkit-user-select: @value;
@@ -98,15 +87,8 @@
 .hyphens(@value: manual) {
   -webkit-hyphens: @value;
      -moz-hyphens: @value;
+      -ms-hyphens: @value;
           hyphens: @value;
-}
-
-// Opacity
-.opacity(@opacity: 100) {
-  filter: alpha(opacity=@opacity);
-  -khtml-opacity: @opacity / 100;
-    -moz-opacity: @opacity / 100;
-         opacity: @opacity / 100;
 }
 
 // EXPERIMENTAL: placeholder color

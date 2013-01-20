@@ -18,9 +18,11 @@ div.m-input-calendar {
     font-size: 14px;
     line-height: 18px;
     color: #565d61;
+
+    border-radius: 3px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .2) inset;
+
     .box-sizing(border-box);
-    .border-radius(3px);
-    .box-shadow(0 1px 2px rgba(0, 0, 0, .2) inset);
 
     &.placeholder {
       color: #ccc;
@@ -37,11 +39,11 @@ div.m-input-calendar {
     top: 100%;
     z-index: 100;
 
-    .border-radius(0 3px 3px 3px);
+    border-radius: 0 3px 3px 3px;
   }
   &.active {
     .m-i-c-selected {
-      .border-radius(3px 3px 0 0);
+      border-radius: 3px 3px 0 0;
     }
     .m-i-c-calwrap {
       display: block;
@@ -54,7 +56,7 @@ div.m-input-calendar {
 
     text-align: center;
 
-    .border-radius(0 3px 0 0);
+    border-radius: 0 3px 0 0;
 
     .m-i-c-status {
       padding-top: 5px;
@@ -81,7 +83,7 @@ div.m-input-calendar {
           right: 0;
         }
         &.disabled {
-          .opacity(50);
+          opacity: .5;
         }
       }
     }
@@ -110,8 +112,8 @@ div.m-input-calendar {
 
     overflow: hidden;
       
-    .box-shadow(0 1px 2px rgba(0, 0, 0, .5));
-    .border-radius(0 0 3px 3px);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .5);
+    border-radius: 0 0 3px 3px;
       
     .transition(height 0.2s ease-in);
 

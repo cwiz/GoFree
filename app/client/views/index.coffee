@@ -1,9 +1,11 @@
 Index = Backbone.View.extend
-  el: '#page-index .block-current'
+  el: '#page-index'
   
   initialize: () ->
+    app.dom.html.addClass('fullscreen')
+
     @searchFormView = new app.views.SearchForm
-      el : @el
+      el : @$el.find('.block-form')[0]
       model : @model
       collection : @model.get('trips')
 
