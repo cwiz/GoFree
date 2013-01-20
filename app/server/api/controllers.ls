@@ -97,9 +97,10 @@ exports.image = (req, res) ->
   json          = JSON.parse(response.body)
   randomIndex   = Math.floor((Math.random()*(json.photos.photo.length-1)))
   photo         = json.photos.photo[randomIndex]
-  
-  res.json {
-    status: 'ok'
-    value: 
-      image: "http://farm#{photo.farm}.staticflickr.com/#{photo.server}/#{photo.id}_#{photo.secret}_b.jpg"
-  }
+
+  if photo
+    res.json {
+      status: 'ok'
+      value: 
+        image: "http://farm#{photo.farm}.staticflickr.com/#{photo.server}/#{photo.id}_#{photo.secret}_b.jpg"
+    }
