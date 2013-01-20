@@ -216,10 +216,10 @@ app.utils.translate = function() {
     }
 }();
 
-app.utils.scroll = function(pos, duration) {
+app.utils.scroll = function(pos, duration, callback) {
     $('html, body').animate({
         scrollTop: pos || 0
-    }, duration || 300);
+    }, duration || 300, callback || void 0);
 };
 
 app.utils.isPopupBlocked = function (poppedWindow) {

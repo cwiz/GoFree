@@ -1,29 +1,32 @@
 Index = Backbone.View.extend
-  el: '#page-index'
+  el: '#l-content'
 
   initialize: () ->
-    @bg = @$el.find('.p-i-bg-img')
+    @searchPart = @$el.find('#part-search')
+    @serpPart = @$el.find('#part-serp')
+
+    @bg = @searchPart.find('.p-i-bg-img')
     @preloader = $('<img/>')
 
     @collection = @model.get('trips')
 
     @updatePageHeight()
-
     @render()
     
     @searchFormView = new app.views.SearchForm
-      el : @$el.find('.block-form')[0]
+      el : @searchPart.find('.block-form')[0]
       model : @model
       collection : @collection
 
     app.dom.win.on('resize', _.bind(@updatePageHeight, @))
     @collection.on('change:place', @placeChanged, @)
     @preloader.on('load', _.bind(@updateBG, @))
+    app.on('start_search', @searchStarted, @)
 
     app.log('[app.views.Index]: initialize')
 
   updatePageHeight: () ->
-    @$el.css(height: app.dom.win.height())
+    @searchPart.css(height: app.dom.win.height())
 
   updateBG: (e)->
     @bg.fadeOut(200, () =>
@@ -37,8 +40,15 @@ Index = Backbone.View.extend
       success: (resp) =>
         @preloader.attr('src', resp.value.image)
 
+  searchStarted: () ->
+    height = app.dom.win.height()
+    @serpPart.css(height: height, display: 'block')
+    app.utils.scroll(height, 300, () =>
+      @searchPart.hide()
+      )
+
   render: () ->
-    @$el.hide()
-    @$el.fadeIn(500)
+    @searchPart.hide()
+    @searchPart.fadeIn(500)
 
 app.views.Index = Index

@@ -13,5 +13,6 @@ Search = Backbone.Model.extend
     app.socket.emit('start_search', data)
     
     app.log('[app.models.Search]: emit', data)
+    app.trigger('start_search')
 
 app.models.Search = Search
