@@ -12,9 +12,9 @@ section.v-searchform.l-wrap
             - for (var i = 1; i <= 10; i++)
               option(value=i)= app.utils.choosePlural(i, ['гость', 'гостя', 'гостей'])
 
-        .v-s-budget
+        .v-s-budget.m-validate-container(data-for="budget")
           label Бюджет
-          input.v-s-amount.small(type="text", name="budget", value=budget)
+          input.v-s-amount.small(type="text", name="budget", value=budget, data-validate="true", data-error="Выберите бюджет", data-filter="number", required)
           small руб
 
       .v-s-submit

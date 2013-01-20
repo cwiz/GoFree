@@ -5,6 +5,8 @@ Index = Backbone.View.extend
     @bg = @$el.find('.p-i-bg-img')
     @preloader = $('<img/>')
 
+    @collection = @model.get('trips')
+
     @updatePageHeight()
 
     @render()
@@ -12,10 +14,10 @@ Index = Backbone.View.extend
     @searchFormView = new app.views.SearchForm
       el : @$el.find('.block-form')[0]
       model : @model
-      collection : @model.get('trips')
+      collection : @collection
 
     app.dom.win.on('resize', _.bind(@updatePageHeight, @))
-    @model.get('trips').on('change:place', @placeChanged, @)
+    @collection.on('change:place', @placeChanged, @)
     @preloader.on('load', _.bind(@updateBG, @))
 
     app.log('[app.views.Index]: initialize')
