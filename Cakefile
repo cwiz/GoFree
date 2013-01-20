@@ -38,7 +38,7 @@ task "devserver", 'development server w/ autoreload', ->
 	ls.stderr.on 'error', console.log
 
 	setTimeout ( ->
-		nodemon = exec "nodemon -w public/ -w app/ -w views/cleint/ app.js"
+		nodemon = exec "nodemon -w public/ -w app/ -w views/ app.js"
 		nodemon.stdout.on 'data', console.log
 		nodemon.stderr.on 'data', console.log
 	), 1000
