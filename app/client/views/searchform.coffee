@@ -54,8 +54,6 @@ SearchForm = Backbone.View.extend
       model: item
       minDate: if index == 0 then null else minDate
 
-    @form.scanElements()
-
   deleteStop: (item) ->
     index = @collection.indexOf(item)
     prev = @collection.at(index - 1)

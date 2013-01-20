@@ -6,6 +6,9 @@
     var FValidate = function(settings) {
         this.options = $.extend({
             form: 'form',
+            inputs: 'input[data-validate], select[data-validate], textarea[data-validate]',
+            containers: '.m-validate-container',
+            enablingInputs: 'input[data-enabling], select[data-enabling], textarea[data-enabling]',
             validations: {},
             report: false,
             isDisabled: false
@@ -25,24 +28,15 @@
 
         this.els.form = $(this.options.form);
 
+        if (this.options.isDisabled) {
+            this.els.button = this.els.form.find('button');
+        }
+
         this.scanElements();
         return this;
     };
 
     FValidate.prototype.scanElements = function() {
-        this.els.inputs = this.els.form.find('input[data-validate], select[data-validate], textarea[data-validate]');
-        this.els.containers = this.els.form.find('.m-validate-container');
-
-        if (this.options.isDisabled) {
-            this.els.enablingInputs = this.els.form.find('input[data-enabling], select[data-enabling], textarea[data-enabling]');
-            this.els.button = this.els.form.find('button');
-        }
-
-        this.load();
-        return this;
-    };
-
-    FValidate.prototype.load = function() {
         var that = this;
 
         var loadPattern = function(index, elem) {
@@ -54,7 +48,7 @@
         };
 
         // Load patterns from HTML
-        this.els.inputs.filter('[data-filter*="pattern"]').each(loadPattern);
+        this.els.form.find(this.options.inputs).filter('[data-filter*="pattern"]').each(loadPattern);
     };
 
     FValidate.prototype.logic = function() {
@@ -82,10 +76,10 @@
             if (relation && relation !== '__none__') {
                 this.parentNode.removeChild(this);
 
-                var input = that.els.inputs.filter('[name="' + relation + '"]');
+                var input = that.els.form.find(that.options.inputs).filter('[name="' + relation + '"]');
 
                 // to avoid bug when sometimes keyboard doesn't show up
-                $.os.ios && that.els.inputs.blur();
+                $.os.ios && that.els.form.find(that.options.inputs).blur();
 
                 input.length && input[0].focus();
             }
@@ -97,7 +91,7 @@
             };
 
             var inputsStateCheck = function() {
-                if (checkAllFilled(that.els.enablingInputs)) {
+                if (checkAllFilled(that.els.form.find(that.options.enablingInputs))) {
                     that.els.button.removeAttr('disabled');
                 }
                 else {
@@ -110,15 +104,15 @@
         this.els.form.attr('novalidate', 'novalidate');
 
         this.els.form.on('submit', handleSubmit);
-        this.els.inputs.on('focus', handleInputFocus);
-        this.els.containers.on('click', '.m-validate-error', handleErrorClick);
+        this.els.form.on('focus', this.options.inputs, handleInputFocus);
+        this.els.form.on('click', '.m-validate-error', handleErrorClick);
     };
 
     FValidate.prototype.handleErrors = function() {
         var field,
             error;
 
-        this.els.containers.find('.m-validate-error').remove();
+        this.els.form.find('.m-validate-error').remove();
 
         if (this.errorsNum) {
             for (field in this.errors) {
@@ -130,7 +124,7 @@
                             this.errors[field].error +
                         '</span>';
 
-                this.els.containers.filter('[data-for="' + field + '"]').append(error);
+                this.els.form.find(this.options.containers).filter('[data-for="' + field + '"]').append(error);
             }
 
             this.els.form.addClass('has_errors');
@@ -140,9 +134,8 @@
         }
     };
 
-    FValidate.prototype.validateInput = function(input) {
-        var el = $(input),
-            name = el.attr('name'),
+    FValidate.prototype.validateInput = function(el) {
+        var name = el.attr('name'),
             filters = el.data('filter') ? el.data('filter').split(' ') : [],
             failed = [],
             m, n;
@@ -152,7 +145,7 @@
 
             for (m = 0, n = filters.length; m < n; m++) {
                 if (typeof this.validation.rules[filters[m]] === 'function') {
-                    this.validation.rules[filters[m]].call(input, this) || (failed.push(name + ':' + filters[m]));
+                    this.validation.rules[filters[m]].call(el[0], this) || (failed.push(name + ':' + filters[m]));
                 }
                 else {
                     this.debug('[m_validate]: missing required filter: "' + filters[m] + '"');
@@ -160,7 +153,7 @@
             }
 
             if (typeof this.validation.external[name] === 'function') {
-                this.validation.external[name].call(input, this) || (failed.push(name + ':external'));
+                this.validation.external[name].call(el[0], this) || (failed.push(name + ':external'));
             }
         }
 
@@ -169,11 +162,11 @@
             el.addClass('valid');
         }
         else {
-            this.debug('[m_validate]: "' + input.value + '" failed validation: ' + failed.join(', '));
+            this.debug('[m_validate]: "' + el[0].value + '" failed validation: ' + failed.join(', '));
             el.addClass('invalid');
             el.removeClass('valid');
 
-            this.options.report && this.options.report.call(input, failed);
+            this.options.report && this.options.report.call(el[0], failed);
 
             this.errors[name] = { el: el, name: name, error: el.data('error'), errorpos: el.data('errorpos') || 'right' };
             this.errorsNum++;
@@ -182,12 +175,13 @@
 
     FValidate.prototype.validateForm = function() {
         var i, l;
+        var inputs = this.els.form.find(this.options.inputs);
 
         this.errors = {};
         this.errorsNum = 0;
 
-        for (i = 0, l = this.els.inputs.length; i < l; i++) {
-            this.validateInput(this.els.inputs[i]);
+        for (i = 0, l = inputs.length; i < l; i++) {
+            this.validateInput(inputs.eq(i));
         }
 
         this.handleErrors();
