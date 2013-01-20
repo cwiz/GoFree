@@ -5,9 +5,6 @@ SearchForm = Backbone.View.extend
   initialize: () ->
     @render()
 
-    @bg = @$el.find('.v-s-bg-img')
-    @preloader = $('<img/>')
-
     @maxDate.setDate(@maxDate.getDate() + 1) # shift it to tomorrow
 
     @stopsEl = @$el.find('.v-s-destinations')
@@ -15,9 +12,6 @@ SearchForm = Backbone.View.extend
     @collection.on('add', @initStop, @)
     @collection.on('delete', @deleteStop, @)
     @collection.on('change:date', @dateChanged, @)
-    @collection.on('change:place', @placeChanged, @)
-
-    @preloader.on('load', _.bind(@updateBG, @))
 
     @$el.find('select.m-input-select').m_inputSelect()
     @restrictBudget()
@@ -86,19 +80,6 @@ SearchForm = Backbone.View.extend
 
     dateObj = app.utils.YMDToDate(date)
     if (+dateObj > +@maxDate) then @maxDate = dateObj
-
-  updateBG: (e)->
-    @bg.fadeOut(200, () =>
-      @bg.attr('src', e.target.src)
-      @bg.fadeIn(200)
-      )
-    
-
-  placeChanged: (model, place) ->
-    $.ajax
-      url     :  app.api.images + place.name
-      success : (resp) =>
-        @preloader.attr('src', resp.value.image)
 
   adultsChanged: (e) ->
     @model.set('adults', e.target.value)

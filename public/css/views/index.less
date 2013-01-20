@@ -1,6 +1,43 @@
 @import 'searchform.less';
 
 #page-index {
+  position: relative;
+
+  .p-i-bg-wrap {
+    width: 100%;
+    height: 100%;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    overflow: hidden;
+
+    .p-i-bg-container {
+      width: 200%;
+      height: 200%;
+
+      position: absolute;
+      left: -50%;
+      top: -50%;
+
+      background: #2c3d5b;
+
+      .p-i-bg-img {
+        min-width: 50%;
+        min-height: 50%;
+
+        margin: auto; 
+
+        position: absolute; 
+        left: 0; 
+        top: 0; 
+        right: 0; 
+        bottom: 0; 
+      }
+    }
+  }
+
   .block-form {
     .loading {
       height: 300px;

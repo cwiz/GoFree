@@ -2,123 +2,83 @@
 
 .v-searchform {
   position: relative;
+  padding: 30px 0;
+  .cf;
 
-  .v-s-bg-wrap {
-    width: 100%;
-    height: 100%;
+  color: #fff;
 
-    position: absolute;
-    top: 0;
-    left: 0;
+  h2 {
+    font-weight: 600;
+    font-size: 23px;
+    text-transform: uppercase;
+  }
 
-    overflow: hidden;
+  .v-s-form {
+    width: 550px;
 
-    .v-s-bg-container {
-      width: 200%;
-      height: 200%;
+    margin-top: 5px;
 
-      position: absolute;
-      left: -50%;
-      top: -50%;
+    float: left;
 
-      background: #2c3d5b;
+    background: #199cb8;
+    border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .5);
 
-      .v-s-bg-img {
-        min-width: 50%;
-        min-height: 50%;
+    .v-s-destinations {
+      .cf;
+    }
 
-        margin: auto; 
+    .v-s-destinations-add {
+      margin-top: 20px;
 
-        position: absolute; 
-        left: 0; 
-        top: 0; 
-        right: 0; 
-        bottom: 0; 
+      font-weight: 300;
+      font-size: 11px;
+
+      text-align: center;
+    }
+
+    .v-s-conditions {
+      margin-top: 10px;
+      padding: 20px;
+      border-top: 1px solid #30a6bf;
+
+      .cf;
+
+      .v-s-guests {
+        float: left;
       }
+      .v-s-budget {
+        float: right;
+      }
+
+      .v-s-adults {
+        width: 100px;
+      }
+      .v-s-amount {
+        width: 66px;
+        margin: 0 5px;
+      }
+    }
+
+    .v-s-submit {
+      padding: 20px;
+      text-align: center;
     }
   }
-  
 
-  .l-wrap {
-    padding: 30px 0;
-    position: relative;
-    .cf;
+  .v-s-description {
+    margin-left: 570px;
 
-    color: #fff;
-
-    h2 {
-      font-weight: 600;
-      font-size: 23px;
-      text-transform: uppercase;
+    header {
+      font-weight: 300;
+      font-size: 24px;
+      line-height: 32px;
     }
 
-    .v-s-form {
-      width: 550px;
-
-      margin-top: 5px;
-
-      float: left;
-
-      background: #199cb8;
-      border-radius: 3px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, .5);
-
-      .v-s-destinations {
-        .cf;
-      }
-
-      .v-s-destinations-add {
-        margin-top: 20px;
-
-        font-weight: 300;
-        font-size: 11px;
-
-        text-align: center;
-      }
-
-      .v-s-conditions {
-        margin-top: 10px;
-        padding: 20px;
-        border-top: 1px solid #30a6bf;
-
-        .cf;
-
-        .v-s-guests {
-          float: left;
-        }
-        .v-s-budget {
-          float: right;
-        }
-
-        .v-s-adults {
-          width: 100px;
-        }
-        .v-s-amount {
-          width: 66px;
-          margin: 0 5px;
-        }
-      }
-
-      .v-s-submit {
-        padding: 20px;
-        text-align: center;
-      }
-    }
-
-    .v-s-description {
-      margin-left: 570px;
-
-      header {
-        font-weight: 300;
-        font-size: 24px;
-        line-height: 32px;
-      }
-
-      p {
-        margin-top: 20px;
-        font-size: 16px;
-        line-height: 22px;
-      }
+    p {
+      margin-top: 20px;
+      font-size: 16px;
+      line-height: 22px;
     }
   }
 }

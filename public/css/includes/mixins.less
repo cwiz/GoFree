@@ -2,36 +2,7 @@
 // Vendor madness mixins
 // ===========================================================================
 
-// FIXME: remove one-liners
-// Border Radius
-.border-radius(@radius: 0) {  
-  border-radius: @radius;
-}
-// Drop shadows
-.box-shadow(@shadow) {
-  box-shadow: @shadow;
-}
-.box-shadow(@shadow, @shadow2) {
-  box-shadow: @shadow, @shadow2;
-}
-.box-shadow(@shadow, @shadow2, @shadow3) {
-  box-shadow: @shadow, @shadow2, @shadow3;
-}
-// Background clipping
-.background-clip(@clip: border) {
-  background-clip: @clip;
-}
-// Background size
-.background-size(@value: auto auto) {
-  background-size: @value;
-}
-// Opacity
-.opacity(@opacity: 100) {
-  opacity: @opacity / 100;
-}
-
-
-
+// TODO: remove upon full cross browser support
 // Box model
 .box-sizing(@value: content-box) {
      -moz-box-sizing: @value;

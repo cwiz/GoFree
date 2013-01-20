@@ -1,6 +1,14 @@
 extends layout
 
+block header
+
 block content
   #page-index
+    include includes/header
+
+    .p-i-bg-wrap
+      .p-i-bg-container
+        img.p-i-bg-img(src="img/views/searchform.jpg")
+
     .block-form
       p.loading Загрузка...
