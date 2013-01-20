@@ -67,7 +67,9 @@
         };
 
         var handleInputFocus = function() {
-            $(this).removeClass('valid invalid');
+            var el = $(this);
+            el.removeClass('valid invalid');
+            that.els.form.find(that.options.containers).filter('[data-for="' + el.attr('name') + '"]').find('.m-validate-error').remove();
         };
 
         var handleErrorClick = function(e) {
