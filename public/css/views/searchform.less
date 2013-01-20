@@ -14,7 +14,8 @@
   }
 
   .v-s-form {
-    width: 550px;
+    width: 390px;
+    padding: 10px;
 
     margin-top: 5px;
 
@@ -24,10 +25,6 @@
     border-radius: 3px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, .5);
 
-    .v-s-destinations {
-      .cf;
-    }
-
     .v-s-destinations-add {
       margin-top: 20px;
 
@@ -35,6 +32,12 @@
       font-size: 11px;
 
       text-align: center;
+
+      .v-s-d-add.disabled {
+        opacity: .5;
+        cursor: default;
+        .helper_noselect();
+      }
     }
 
     .v-s-conditions {
@@ -67,7 +70,7 @@
   }
 
   .v-s-description {
-    margin-left: 570px;
+    margin-left: 440px;
 
     header {
       font-weight: 300;

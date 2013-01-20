@@ -59,12 +59,19 @@ button,
     top: 1px;
   }
 
-  // &.small {
-  //     height: 30px;
-  //     padding: 0 10px;
-  //     font-size: 12px;
-  //     line-height: 30px;
-  // }
+  &.small {
+      height: 30px;
+      padding: 0 10px;
+      font-size: 12px;
+      line-height: 30px;
+  }
+
+  &.tiny {
+      height: 20px;
+      padding: 0 5px;
+      font-size: 11px;
+      line-height: 20px;
+  }
 
   // color styles
   &.orange {
@@ -97,6 +104,23 @@ button,
       .vertical-gradient(#0f8fb0, #0e7a98);
       box-shadow: 0 1px 3px rgba(0, 0, 0, .4) inset, 0 1px 0 rgba(255, 255, 255, .7);
       color: #dbecf0;
+    }
+  }
+
+  // color styles
+  &.gray {
+    border-radius: 3px;
+    background: #e9f2f4;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .3);
+    color: #555;
+    text-shadow: 0 -1px 0 rgba(255, 255, 255, 1);
+
+    &:hover {
+      background: #fff;
+    }
+    &:active {
+      background: #e9f2f4;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, .4) inset, 0 1px 0 rgba(255, 255, 255, .7);
     }
   }
 

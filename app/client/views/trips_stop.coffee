@@ -35,6 +35,7 @@ TripsStop = Backbone.View.extend
 
   dateChanged: (e) ->
     @model.set('date', e.target.value)
+    @$el.find('.v-t-s-date').find('.m-validate-error').remove()
 
   setMinDate: (date) ->
     @minDate = date

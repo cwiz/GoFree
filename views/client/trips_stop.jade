@@ -1,12 +1,11 @@
 //- li.v-t-stop
 - var uniqueID = _.uniqueId('trip_');
 .v-t-s-place.m-validate-container(data-for="place_" + uniqueID)
-  input.v-t-s-p-name(type="text", name='place_' + uniqueID, value=place.name, placeholder="Город", autocorrect="off", autocapitalize="off", x-webkit-speech="x-webkit-speech", data-validate="true", data-error="Выберите город", required)
+  input.v-t-s-p-name(type="text", name='place_' + uniqueID, value=place.name, placeholder="Город", autocorrect="off", autocapitalize="off", x-webkit-speech="x-webkit-speech", data-validate="true", data-error="Выберите город", data-errorpos="bottom", required)
   ul.v-t-s-p-suggestions
 
 .v-t-s-date.m-validate-container(data-for="date_" + uniqueID)
   input.m-input-calendar(type="hidden", name="date_" + uniqueID, value=date, data-validate="true", data-error="Выберите дату", required)
 
 if removable
-.v-t-s-remove
-  span.v-t-s-removestop.pointy &ndash;
+  span.v-t-s-removestop.button.gray.tiny &ndash;

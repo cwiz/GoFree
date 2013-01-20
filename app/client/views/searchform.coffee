@@ -1,9 +1,11 @@
 SearchForm = Backbone.View.extend
   stops: {}
   maxDate: app.utils.pureDate(app.now)
+  canAddStop: false
 
   initialize: () ->
     @render()
+    @addStopEl = @$el.find('.v-s-d-add')
 
     @maxDate.setDate(@maxDate.getDate() + 1) # shift it to tomorrow
 
@@ -26,7 +28,7 @@ SearchForm = Backbone.View.extend
     'click .v-s-d-add'        : 'addStop'
     'change .m-i-s-select'    : 'adultsChanged'
     'change .v-s-amount'      : 'budgetChanged'
-    'submit form'             : 'handleSubmit'
+    'valid form'              : 'handleSubmit'
 
   render: () ->
     @$el.html(app.templates.searchform(@model.toJSON()))
@@ -54,8 +56,6 @@ SearchForm = Backbone.View.extend
       model: item
       minDate: if index == 0 then null else minDate
 
-    @form.scanElements()
-
   deleteStop: (item) ->
     index = @collection.indexOf(item)
     prev = @collection.at(index - 1)
@@ -71,9 +71,13 @@ SearchForm = Backbone.View.extend
     delete @stops[item.cid]
 
   addStop: (e) ->
+    return unless @canAddStop
     @collection.add(date: null, removable: true)
 
-  dateChanged: (model, date) ->
+    @addStopEl.addClass('disabled')
+    @canAddStop = false
+
+  dateChanged: (model, date, prevValue) ->
     index = @collection.indexOf(model)
     prev = @collection.at(index - 1)
     next = @collection.at(index + 1)
@@ -84,13 +88,17 @@ SearchForm = Backbone.View.extend
     dateObj = app.utils.YMDToDate(date)
     if (+dateObj > +@maxDate) then @maxDate = dateObj
 
+    if not prevValue
+      @addStopEl.removeClass('disabled')
+      @canAddStop = true
+
   adultsChanged: (e) ->
     @model.set('adults', e.target.value)
 
   budgetChanged: (e) ->
     @model.set('budget', parseInt(e.target.value, 10))
 
-  handleSubmit: (e) ->
+  handleSubmit: (evt, e) ->
     app.e(e)
 
     @model.save()

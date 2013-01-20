@@ -401,6 +401,7 @@
     this.els.controls.on('click', handleControls);
     this.els.dateList.on('click', 'li[data-date]', proxyHandler);
     this.els.selected.on('click', activateCal);
+    this.els.input.on('focus', activateCal);
     $(document).on('click', handleBasicClick);
     this.els.block.one('moddestroy', handleDestroy);
 
