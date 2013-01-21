@@ -5,6 +5,7 @@
 // TODO: remove upon full cross browser support
 // Box model
 .box-sizing(@value: content-box) {
+  -webkit-box-sizing: @value;
      -moz-box-sizing: @value;
           box-sizing: @value;
 }
@@ -20,24 +21,16 @@
           transition: @transition;
 }
 
-
-
 // Gradients
 .horizontal-gradient(@startColor: #000, @endColor: #fff) {
   background-color: @startColor;
   background-image: -webkit-linear-gradient(left, @startColor, @endColor); /* Chrome 10+, Saf5.1+, iOS 5+ */
-  background-image:    -moz-linear-gradient(left, @startColor, @endColor); /* FF3.6 */
-  background-image:     -ms-linear-gradient(left, @startColor, @endColor); /* IE10 */
-  background-image:      -o-linear-gradient(left, @startColor, @endColor); /* Opera 11.10+ */
   background-image:         linear-gradient(to right, @startColor, @endColor);
     
 }
 .vertical-gradient(@startColor: #000, @endColor: #fff) {
   background-color: @startColor;
   background-image: -webkit-linear-gradient(top, @startColor, @endColor); /* Chrome 10+, Saf5.1+, iOS 5+ */
-  background-image:    -moz-linear-gradient(top, @startColor, @endColor); /* FF3.6 */
-  background-image:     -ms-linear-gradient(top, @startColor, @endColor); /* IE10 */
-  background-image:      -o-linear-gradient(top, @startColor, @endColor); /* Opera 11.10+ */
   background-image:         linear-gradient(to bottom, @startColor, @endColor);
 }
 
