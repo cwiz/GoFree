@@ -3,14 +3,15 @@ TripsStop = Backbone.Model.extend(
     place:
       name: null
     date: null
+    signature: null
 
   initialize: ()->
+    @on('change', @sign, @)
     app.log('[app.models.TripsStop]: initialize')
     @
 
-  # sync: ()->
-  #   # socket magic goes here
-  #   @
+  sign: ->
+    @set('signature', md5(@toJSON()))
 
 )
 

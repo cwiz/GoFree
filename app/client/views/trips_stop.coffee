@@ -135,6 +135,7 @@ TripsStop = Backbone.View.extend
 
   placeChanged: _.debounce((e) ->
     place = $.trim(e.target.value)
+    return unless place.length
 
     if @model.get('place').name != place and (@lastQuery != place or not @suggestActive)
       $.ajax

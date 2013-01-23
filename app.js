@@ -49,6 +49,7 @@
       return app.use(express.logger("dev"));
     });
     app.get("/", backEnd.about.index);
+    app.get("/search/:query", backEnd.about.index);
     app.get("/about", backEnd.about.about);
     app.get("/api/v1/autocomplete/:query", backEnd.api.autocomplete);
     app.get("/api/v1/image/:query", backEnd.api.image);

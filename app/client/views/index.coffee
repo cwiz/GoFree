@@ -21,12 +21,12 @@ Index = Backbone.View.extend
     app.dom.win.on('resize', _.bind(@updatePageHeight, @))
     @collection.on('change:place', @placeChanged, @)
     @preloader.on('load', _.bind(@updateBG, @))
-    app.on('start_search', @searchStarted, @)
+    @model.on('save', @showSERP, @)
 
     app.log('[app.views.Index]: initialize')
 
   updatePageHeight: () ->
-    @searchPart.css(height: app.dom.win.height())
+    @searchPart.css('min-height': app.dom.win.height())
 
   updateBG: (e)->
     @bg.fadeOut(200, () =>
@@ -40,11 +40,22 @@ Index = Backbone.View.extend
       success: (resp) =>
         @preloader.attr('src', resp.value.image)
 
-  searchStarted: () ->
+  showSERP: () ->
     height = app.dom.win.height()
-    @serpPart.css(height: height, display: 'block')
+    @serpPart.css('min-height': height, display: 'block')
+
     app.utils.scroll(height, 300, () =>
-      @searchPart.hide()
+      app.router.navigate('search/' + @model.hash, trigger: true)
+      )
+
+  showForm: () ->
+    height = app.dom.win.height()
+
+    @searchPart.show()
+    app.utils.scroll(height, 0)
+
+    app.utils.scroll(0, 300, () =>
+      @serpPart.hide()
       )
 
   render: () ->
