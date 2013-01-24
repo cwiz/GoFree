@@ -7,7 +7,7 @@ Router = Backbone.Router.extend(
     '':                          'index'
     'search/:hash':              'search'
 
-  index: () ->
+  index: ->
     if views['index']
       views['index'].showForm()
     else

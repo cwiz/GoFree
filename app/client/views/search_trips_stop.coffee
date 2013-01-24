@@ -1,6 +1,6 @@
 SearchTripsStop = Backbone.View.extend
   tagName: 'li'
-  className: 'v-t-stop'
+  className: 'v-s-t-stop'
 
   initialize: (options) ->
     @list = options.list
@@ -13,8 +13,8 @@ SearchTripsStop = Backbone.View.extend
     @render()
 
     @suggestActive = false
-    @suggestEl = @$el.find('.v-t-s-p-suggestions')
-    @placeInput = @$el.find('.v-t-s-p-name')
+    @suggestEl = @$el.find('.v-s-t-s-p-suggestions')
+    @placeInput = @$el.find('.v-s-t-s-p-name')
     @suggestSelected = null
     @lastQuery = null
 
@@ -26,16 +26,16 @@ SearchTripsStop = Backbone.View.extend
     @
 
   events:
-    'click .v-t-s-removestop'                  : 'removeStop'
+    'click .v-s-t-s-removestop'                  : 'removeStop'
     'change .m-i-c-input'                      : 'dateChanged'
-    # 'input .v-t-s-p-name'                    : 'placeChanged'
-    'webkitspeechchange .v-t-s-p-name'         : 'placeChanged'
-    'keyup .v-t-s-p-name'                      : 'placeChanged'
-    'click .v-t-s-p-suggestion'                : 'placeSelected'
+    # 'input .v-s-t-s-p-name'                    : 'placeChanged'
+    'webkitspeechchange .v-s-t-s-p-name'         : 'placeChanged'
+    'keyup .v-s-t-s-p-name'                      : 'placeChanged'
+    'click .v-s-t-s-p-suggestion'                : 'placeSelected'
 
   dateChanged: (e) ->
     @model.set('date', e.target.value)
-    @$el.find('.v-t-s-date').find('.m-validate-error').remove()
+    @$el.find('.v-s-t-s-date').find('.m-validate-error').remove()
 
   setMinDate: (date) ->
     @minDate = date
@@ -45,7 +45,7 @@ SearchTripsStop = Backbone.View.extend
     @maxDate = date
     @updateCalendar()
 
-  updateCalendar: () ->
+  updateCalendar: ->
     @calendar.unlockDates()
 
     if @minDate then @calendar.lockDates(null, @minDate)
@@ -108,7 +108,7 @@ SearchTripsStop = Backbone.View.extend
     @suggestions = resp.value
     
     list = for o, i in @suggestions
-      '<li class="v-t-s-p-suggestion" data-index="' + i + '"">' + o.name + '</li>'
+      '<li class="v-s-t-s-p-suggestion" data-index="' + i + '"">' + o.name + '</li>'
 
     @suggestEl.html(list.join(''))
 
@@ -121,11 +121,11 @@ SearchTripsStop = Backbone.View.extend
 
     @suggestSelected = null
 
-  # hideSuggest: () ->
+  # hideSuggest: ->
   #   @suggestEl.removeClass('active');
   #   @suggestActive = false
     
-  clearSuggest: () ->
+  clearSuggest: ->
     @suggestEl.removeClass('active');
     @suggestActive = false
     @suggestEl.html('')
@@ -148,11 +148,11 @@ SearchTripsStop = Backbone.View.extend
 
   , 100)
 
-  render: () ->
-    @$el.html(app.templates.trips_stop(@model.toJSON()))
+  render: ->
+    @$el.html(app.templates.search_trips_stop(@model.toJSON()))
     @list.append(@$el)
 
-  removeStop: () ->
+  removeStop: ->
     @undelegateEvents()
 
     @calendar.destroy()

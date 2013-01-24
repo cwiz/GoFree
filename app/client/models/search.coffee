@@ -24,15 +24,25 @@ Search = Backbone.Model.extend
 
     @trigger('fetched')
 
+  isValid: ->
+    valid = true
+
+    iterator = (item) =>
+      valid = item.get('place').name
+
+    @get('trips').each(iterator)
+
+    !!valid
+
   save: ()->
     data = _.extend(@toJSON(), trips: @get('trips').toJSON())
-    @hash = md5(data)
+    data['hash'] = md5(data)
 
-    data['hash'] = @hash
+    @hash = data['hash']
 
     app.socket.emit('search', data)
-    @trigger('save')
-    
+    @trigger('save', data)
+
     app.log('[app.models.Search]: save', data)
 
 app.models.Search = Search

@@ -5,7 +5,7 @@ SearchTripsStop = Backbone.Model.extend(
     date: null
     signature: null
 
-  initialize: ()->
+  initialize: ->
     @on('change', @sign, @)
     app.log('[app.models.SearchTripsStop]: initialize')
     @

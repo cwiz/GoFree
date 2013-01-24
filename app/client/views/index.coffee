@@ -1,7 +1,7 @@
 Index = Backbone.View.extend
   el: '#l-content'
 
-  initialize: () ->
+  initialize: ->
     @searchPart = @$el.find('#part-search')
     @serpPart = @$el.find('#part-serp')
 
@@ -25,7 +25,7 @@ Index = Backbone.View.extend
 
     app.log('[app.views.Index]: initialize')
 
-  updatePageHeight: () ->
+  updatePageHeight: ->
     @searchPart.css('min-height': app.dom.win.height())
 
   updateBG: (e)->
@@ -40,15 +40,15 @@ Index = Backbone.View.extend
       success: (resp) =>
         @preloader.attr('src', resp.value.image)
 
-  showSERP: () ->
+  showSERP: (data) ->
     height = app.dom.win.height()
     @serpPart.css('min-height': height, display: 'block')
 
     app.utils.scroll(height, 300, () =>
-      app.router.navigate('search/' + @model.hash, trigger: true)
+      app.router.navigate('search/' + data.hash, trigger: true)
       )
 
-  showForm: () ->
+  showForm: ->
     height = app.dom.win.height()
 
     @searchPart.show()
@@ -58,7 +58,7 @@ Index = Backbone.View.extend
       @serpPart.hide()
       )
 
-  render: () ->
+  render: ->
     @searchPart.hide()
     @searchPart.fadeIn(500)
 

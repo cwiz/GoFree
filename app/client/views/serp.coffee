@@ -16,13 +16,13 @@ SERP = Backbone.View.extend
 
     app.log('[app.views.SERP]: initialize')
 
-  updatePageHeight: () ->
+  updatePageHeight: ->
     @serpPart.css('min-height': app.dom.win.height())
 
   paramsReady: ->
     @serpPart.html('LOADING SHITS!')
 
-  showSERP: () ->
+  showSERP: ->
     height = app.dom.win.height()
     @serpPart.css('min-height': height, display: 'block')
 
@@ -30,7 +30,7 @@ SERP = Backbone.View.extend
       @render()
       )
 
-  render: () ->
+  render: ->
     @searchPart.hide()
     @serpPart.show() # who knows might be loading from a link
 
