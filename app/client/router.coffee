@@ -11,7 +11,7 @@ Router = Backbone.Router.extend(
     if views['index']
       views['index'].showForm()
     else
-      models['search'] = new app.models.Search(trips: new app.collections.Trips())
+      models['search'] = new app.models.Search(trips: new app.collections.SearchTrips())
       views['index'] = new app.views.Index(
         model: models['search']
       )

@@ -1,4 +1,4 @@
-TripsStop = Backbone.View.extend
+SearchTripsStop = Backbone.View.extend
   tagName: 'li'
   className: 'v-t-stop'
 
@@ -22,7 +22,7 @@ TripsStop = Backbone.View.extend
 
     @updateCalendar()
 
-    app.log('[app.views.TripsStop]: initialize')
+    app.log('[app.views.SearchTripsStop]: initialize')
     @
 
   events:
@@ -162,4 +162,4 @@ TripsStop = Backbone.View.extend
     @remove()
 
 
-app.views.TripsStop = TripsStop
+app.views.SearchTripsStop = SearchTripsStop

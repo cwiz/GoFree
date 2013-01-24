@@ -19,7 +19,7 @@ Search = Backbone.Model.extend
     @set(
       adults: data.adults
       budget: data.budget
-      trips: new app.collections.Trips(data.trips)
+      trips: new app.collections.SearchTrips(data.trips)
       )
 
     @trigger('fetched')

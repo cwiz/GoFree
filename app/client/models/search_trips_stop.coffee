@@ -1,4 +1,4 @@
-TripsStop = Backbone.Model.extend(
+SearchTripsStop = Backbone.Model.extend(
   defaults:
     place:
       name: null
@@ -7,7 +7,7 @@ TripsStop = Backbone.Model.extend(
 
   initialize: ()->
     @on('change', @sign, @)
-    app.log('[app.models.TripsStop]: initialize')
+    app.log('[app.models.SearchTripsStop]: initialize')
     @
 
   sign: ->
@@ -15,4 +15,4 @@ TripsStop = Backbone.Model.extend(
 
 )
 
-app.models.TripsStop = TripsStop
+app.models.SearchTripsStop = SearchTripsStop
