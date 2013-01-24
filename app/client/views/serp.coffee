@@ -26,7 +26,7 @@ SERP = Backbone.View.extend
     height = app.dom.win.height()
     @serpPart.css('min-height': height, display: 'block')
 
-    app.utils.scroll(height, 300, () =>
+    app.utils.scroll(height, 300, =>
       @render()
       )
 

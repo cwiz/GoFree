@@ -29,7 +29,7 @@ Index = Backbone.View.extend
     @searchPart.css('min-height': app.dom.win.height())
 
   updateBG: (e)->
-    @bg.fadeOut(200, () =>
+    @bg.fadeOut(200, =>
       @bg.attr('src', e.target.src)
       @bg.fadeIn(200)
       )
@@ -44,7 +44,7 @@ Index = Backbone.View.extend
     height = app.dom.win.height()
     @serpPart.css('min-height': height, display: 'block')
 
-    app.utils.scroll(height, 300, () =>
+    app.utils.scroll(height, 300, =>
       app.router.navigate('search/' + data.hash, trigger: true)
       )
 
@@ -54,7 +54,7 @@ Index = Backbone.View.extend
     @searchPart.show()
     app.utils.scroll(height, 0)
 
-    app.utils.scroll(0, 300, () =>
+    app.utils.scroll(0, 300, =>
       @serpPart.hide()
       )
 
