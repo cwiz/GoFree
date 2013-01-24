@@ -62,7 +62,6 @@ SearchTripsStop = Backbone.View.extend
           @suggestSelected.addClass('selected')
         else
           next = if e.keyCode == 38 then @suggestSelected.prev() else @suggestSelected.next()
-          console.log(@suggestSelected.prev().html(), @suggestSelected.html(), @suggestSelected.next().html())
           @suggestSelected.removeClass('selected')
 
           if next.length            
@@ -160,6 +159,5 @@ SearchTripsStop = Backbone.View.extend
 
     @model.trigger('delete', @model)
     @remove()
-
 
 app.views.SearchTripsStop = SearchTripsStop

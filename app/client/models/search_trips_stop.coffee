@@ -1,4 +1,4 @@
-SearchTripsStop = Backbone.Model.extend(
+SearchTripsStop = Backbone.Model.extend
   defaults:
     place:
       name: null
@@ -12,7 +12,5 @@ SearchTripsStop = Backbone.Model.extend(
 
   sign: ->
     @set('signature', md5(@toJSON()))
-
-)
 
 app.models.SearchTripsStop = SearchTripsStop

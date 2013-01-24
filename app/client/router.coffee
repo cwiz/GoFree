@@ -2,7 +2,7 @@ models = {}
 collections = {}
 views = {}
 
-Router = Backbone.Router.extend(
+Router = Backbone.Router.extend
   routes:
     '':                          'index'
     'search/:hash':              'search'
@@ -29,6 +29,5 @@ Router = Backbone.Router.extend(
       )
 
     app.log('[app.Router.search]: match, hash: ' + hash)
-)
 
 app.Router = Router

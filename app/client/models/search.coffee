@@ -4,7 +4,7 @@ Search = Backbone.Model.extend
     budget: 100000
     trips: null
 
-  initialize: ()->
+  initialize: ->
     app.log('[app.models.Search]: initialize')
 
   fetch: (@hash)->
@@ -34,7 +34,7 @@ Search = Backbone.Model.extend
 
     !!valid
 
-  save: ()->
+  save: ->
     data = _.extend(@toJSON(), trips: @get('trips').toJSON())
     data['hash'] = md5(data)
 

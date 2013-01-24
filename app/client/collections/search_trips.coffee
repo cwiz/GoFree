@@ -1,7 +1,7 @@
 SearchTrips = Backbone.Collection.extend
   model: app.models.SearchTripsStop
 
-  initialize: ()->
+  initialize: ->
     app.log('[app.collections.SearchTrips]: initialize')
 
 app.collections.SearchTrips = SearchTrips
