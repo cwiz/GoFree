@@ -1,11 +1,12 @@
 (function(){
-  var providers, validation, database, md5, makePairs;
-  providers = require("./providers");
-  validation = require("./validation");
+  var _, database, md5, providers, validation, makePairs;
+  _ = require("underscore");
   database = require("./../database");
   md5 = require("MD5");
+  providers = require("./providers");
+  validation = require("./validation");
   makePairs = function(data){
-    var pairs, tripNumber, ref$, len$, trip, destinationIndex, pair;
+    var pairs, tripNumber, ref$, len$, trip, destinationIndex, pair, allSignatures;
     pairs = [];
     for (tripNumber = 0, len$ = (ref$ = data.trips).length; tripNumber < len$; ++tripNumber) {
       trip = ref$[tripNumber];
@@ -18,11 +19,24 @@
         destination: data.trips[destinationIndex],
         origin: data.trips[tripNumber]
       };
-      pair.flightSignature = md5(JSON.stringify(origin.place) + JSON.stringify(destination.place) + origin.date);
-      pair.hotelSignaure = md5(JSON.stringify(destination.place) + origin.date + destination.date);
+      pair.flightSignature = md5(JSON.stringify(pair.origin.place) + JSON.stringify(pair.destination.place) + pair.origin.date);
+      if (tripNumber !== data.trips.length - 1) {
+        pair.hotelSignature = md5(JSON.stringify(pair.destination.place) + pair.origin.date + pair.destination.date);
+      } else {
+        pair.hotelSignature = null;
+      }
       pairs.push(pair);
     }
-    return pairs;
+    allSignatures = _.map(pairs, function(pair){
+      return pair.flightSignature;
+    }).concat(_.map(pairs, function(pair){
+      return pair.hotelSignature;
+    }));
+    allSignatures.pop();
+    return {
+      pairs: pairs,
+      signatures: allSignatures
+    };
   };
   exports.search = function(socket){
     socket.on('search', function(data){
@@ -33,7 +47,7 @@
           });
         }
         database.search.insert(data);
-        return socket.emit('search_validation_ok', {});
+        return socket.emit('search_ok', {});
       });
     });
     return socket.on('search_start', function(data){
@@ -44,38 +58,41 @@
           });
         }
         return database.search.findOne(data, function(error, searchParams){
-          var pairs, providersReady, totalProviders, resultReady, flightsReady, hotelsReady, i$, ref$, len$, pair, lresult$, destination, origin, extra, counter, ref1$, len1$, flightProvider, hotelProvider, results$ = [];
+          var result, pairs, signatures, i$, ref$, len$, signature, resultReady, flightsReady, hotelsReady, pair, lresult$, destination, origin, extra, counter, len1$, flightProvider, hotelProvider, results$ = [];
           if (error) {
             return socket.emit('start_search_error', {
               error: error
             });
           }
           socket.emit('search_started', searchParams);
-          pairs = makePairs(searchParams);
-          providersReady = 0;
-          totalProviders = rows.length * providers.flightProviders.length + (rows.length - 1) * providers.flightProviders.length;
+          result = makePairs(searchParams);
+          pairs = result.pairs;
+          signatures = {};
+          for (i$ = 0, len$ = (ref$ = result.signatures).length; i$ < len$; ++i$) {
+            signature = ref$[i$];
+            signatures[signature] = false;
+          }
           resultReady = function(error, items, eventName, signature){
-            var percentage, results;
-            if (error) {
-              items = {
-                complete: true
-              };
-            }
-            if (error || items.complete) {
-              providersReady += 1;
-            }
-            percentage = providersReady.toFixed(2) / totalProviders;
+            var results, complete, total;
             results = error
               ? []
               : items.results;
-            console.log("socket.emit " + eventName + " | Percentage: " + percentage + ": " + providersReady + " / " + totalProviders + " | Complete: " + (items.complete || '') + " | Error: " + ((error != null ? error.message : void 8) || '') + "| # results: " + results.length);
+            console.log("socket.emit " + eventName + "| Complete: " + (items.complete || '') + " | Error: " + ((error != null ? error.message : void 8) || '') + "| # results: " + results.length);
             socket.emit(eventName, {
               error: error,
               items: results,
               signature: signature
             });
+            if (items.complete || error) {
+              signatures[signature] = true;
+            }
+            complete = _.filter(_.values(signatures), function(elem){
+              return elem === true;
+            }).length;
+            total = _.values(signatures).length;
+            console.log(complete + " / " + total);
             return socket.emit('progress', {
-              progress: percentage
+              progress: complete.toFixed(2) / total
             });
           };
           flightsReady = function(error, items, signature){
@@ -84,23 +101,23 @@
           hotelsReady = function(error, items, signature){
             return resultReady(error, items, 'hotels_ready', signature);
           };
-          for (i$ = 0, len$ = (ref$ = rows).length; i$ < len$; ++i$) {
-            pair = ref$[i$];
+          for (i$ = 0, len$ = pairs.length; i$ < len$; ++i$) {
+            pair = pairs[i$];
             lresult$ = [];
             destination = pair.destination;
             origin = pair.origin;
             extra = {
-              adults: data.adults,
+              adults: searchParams.adults,
               page: 1
             };
-            for (counter = 0, len1$ = (ref1$ = providers.flightProviders).length; counter < len1$; ++counter) {
-              flightProvider = ref1$[counter];
-              (fn$.call(this, data.flightSignature, pair, counter, flightProvider));
+            for (counter = 0, len1$ = (ref$ = providers.flightProviders).length; counter < len1$; ++counter) {
+              flightProvider = ref$[counter];
+              (fn$.call(this, pair.flightSignature, pair, counter, flightProvider));
             }
-            for (counter = 0, len1$ = (ref1$ = providers.hotelProviders).length; counter < len1$; ++counter) {
-              hotelProvider = ref1$[counter];
+            for (counter = 0, len1$ = (ref$ = providers.hotelProviders).length; counter < len1$; ++counter) {
+              hotelProvider = ref$[counter];
               if (counter < pairs.length - 1) {
-                lresult$.push((fn1$.call(this, data.hotelSignature, pair, counter, hotelProvider)));
+                lresult$.push((fn1$.call(this, pair.hotelSignature, pair, counter, hotelProvider)));
               }
             }
             results$.push(lresult$);
@@ -112,9 +129,12 @@
             });
           }
           function fn1$(signature, pair, counter, hotelProvider){
-            return hotelProvider.search(origin, destination, extra, function(error, items){
-              return hotelsReady(error, items, signature);
-            });
+            console.log(signature);
+            if (signature) {
+              return hotelProvider.search(origin, destination, extra, function(error, items){
+                return hotelsReady(error, items, signature);
+              });
+            }
           }
         });
       });

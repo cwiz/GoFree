@@ -26,7 +26,10 @@ exports.process = (json, cb) ->
     cb 'empty json', null
 
   hotels = json.hotels
-  rates  = json._meta.rates
+  rates  = json._meta?.rates
+
+  if not rates
+    return cb {message: 'no rates'}, null
 
   newHotels = []
   for hotel in hotels when hotel.rooms

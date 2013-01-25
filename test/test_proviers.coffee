@@ -1,9 +1,10 @@
+assert 		= require 'assert'
 chai 		= require 'chai'
-io 			= require('socket.io-client')
-
 eviterra 	= require './../app/server/api/providers/eviterra'
+io 			= require 'socket.io-client'
 ostrovok 	= require './../app/server/api/providers/ostrovok'
-#socket 		= require './../app/server/api/socket'
+md5			= require 'MD5'
+moment		= require 'moment'
 
 # globals
 expect = chai.expect
@@ -89,37 +90,42 @@ describe 'Search API', ->
 	describe '#search', ->
 		it 'should work without errors', (done) ->
 			client = io.connect(socketURL, socketOptions)
-			
 			data = 
 				trips: 
 					[
 						{
-							date: "2013-01-15"
+							date: "2013-02-1"
 							removable: false
 							place: 
 								oid: 2395
 								iata: "MOW"
 								name: "Москва°"
+							signature:  md5(moment().format('MMMM Do YYYY, h:mm:ss a'))
 						}
 						{
-							date: "2013-01-18"
+							date: "2013-02-10"
 							removable: false
 							place: 
 								oid: 2114
 								iata: "LON"
-								name: "Лондон"	
+								name: "Лондон"
+							signature: md5(moment().format('MMMM Do YYYY, h:mm:ss a'))
 						}
-						
 					]
 				adults: 1
 				budget: 100000
-				signature: "search_1"
-			
-			client.emit 'start_search', data
+				hash:  md5(moment().format('MMMM Do YYYY, h:mm:ss a'))
 
-			client.on 'hotels_ready', (hotels) ->
-				done() if hotels.progress is 1.0
-					
-			client.on 'flights_ready', (flights) ->
-				done() if flights.progress is 1.0
+			hash = data.hash
+			
+			client.emit 'search', data
+
+			client.on 'search_error', (data) ->
+				assert false
+
+			client.on 'search_ok', (data) ->
+				client.emit 'search_start', { hash : hash }
+
+				client.on 'progress', (data) ->
+					done() if data.progress is 1.0
 					

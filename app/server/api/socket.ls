@@ -1,8 +1,8 @@
+_ 			= require "underscore"
+database 	= require "./../database"
+md5 		= require "MD5"
 providers 	= require "./providers"
 validation 	= require "./validation"
-database 	= require "./../database"
-
-md5 		= require "MD5"
 
 makePairs = (data) ->
 	pairs = []
@@ -18,24 +18,32 @@ makePairs = (data) ->
 			destination 	: data.trips[destinationIndex]
 			origin			: data.trips[tripNumber]
 
-		pair.flightSignature 	= md5(JSON.stringify(origin.place) + JSON.stringify(destination.place) + origin.date)
-		pair.hotelSignaure 		= md5(JSON.stringify(destination.place) + origin.date + destination.date)
+		pair.flightSignature 	= md5(JSON.stringify(pair.origin.place) + JSON.stringify(pair.destination.place) + pair.origin.date)
+		
+		if tripNumber is not (data.trips.length - 1)
+			pair.hotelSignature 		= md5(JSON.stringify(pair.destination.place) + pair.origin.date + pair.destination.date)
+		else
+			pair.hotelSignature 		= null
 		
 		pairs.push pair
 
-	return pairs
+	allSignatures = _.map(pairs, (pair)->pair.flightSignature).concat(_.map(pairs, (pair)->pair.hotelSignature))
+	allSignatures.pop()
+
+	return {
+		pairs 		: pairs,
+		signatures 	: allSignatures 
+	}
 
 exports.search = (socket) ->
 	socket.on 'search', (data) ->
-
 		(error, data) <- validation.search data
 		return socket.emit 'search_error', {error: error} if error
 
 		database.search.insert(data)
-		socket.emit 'search_validation_ok', {} 
+		socket.emit 'search_ok', {} 
 
 	socket.on 'search_start', (data) ->
-
 		(error, data) <- validation.start_search data
 		return socket.emit 'start_search_error', {error: error} if error
 
@@ -44,22 +52,19 @@ exports.search = (socket) ->
 
 		socket.emit 'search_started', searchParams
 
-		pairs 			= makePairs(searchParams)
-		providersReady 	= 0
-		totalProviders 	= rows.length * providers.flightProviders.length + (rows.length - 1) * providers.flightProviders.length
+		result 			= makePairs(searchParams)
+		pairs 			= result.pairs
+		signatures 		= {}
+
+		for signature in result.signatures
+			signatures[signature] = false
 	 
 		# --- start helper functions ---
 		resultReady = (error, items, eventName, signature) ->
-			if error
-				items = {complete: true}
-			
-			providersReady += 1 if (error or items.complete)
-			percentage      = providersReady.toFixed(2) / totalProviders
 
 			results = if error then [] else items.results
 
-			console.log "socket.emit #{eventName} 
-			| Percentage: #{percentage}: #{providersReady} / #{totalProviders} 
+			console.log "socket.emit #{eventName}
 			| Complete: #{items.complete or ''} 
 			| Error: #{error?.message or ''}
 			| \# results: #{results.length}"
@@ -70,26 +75,36 @@ exports.search = (socket) ->
 				signature 	: signature
 			}
 
-			socket.emit 'progress', {progress: percentage}
+			if items.complete or error
+				signatures[signature] = true
+
+			complete = _.filter(_.values(signatures), (elem) -> elem is true).length
+			total    = _.values(signatures).length
+
+			console.log "#{complete} / #{total}"
+
+			socket.emit 'progress', {progress: complete.toFixed(2) / total}
 
 		flightsReady 	= (error, items, signature) -> resultReady error, items, 'flights_ready', signature
 		hotelsReady		= (error, items, signature) -> resultReady error, items, 'hotels_ready',  signature
 		# --- end helper functions ---  
 
-		for pair in rows
+		for pair in pairs
 			destination = pair.destination
 			origin      = pair.origin
 			extra       = 
-				adults: data.adults
+				adults: searchParams.adults
 				page: 1
 
 			for flightProvider, counter in providers.flightProviders
-				let signature = data.flightSignature
+				let signature = pair.flightSignature
 					(error, items) <- flightProvider.search origin, destination, extra
 					flightsReady error, items, signature
 
 			for hotelProvider, counter 	in providers.hotelProviders when counter < (pairs.length - 1)
-				let signature = data.hotelSignature
-					(error, items) <- hotelProvider.search origin, destination, extra
-					hotelsReady error, items, signature
+				let signature = pair.hotelSignature
+					console.log signature
+					if signature
+						(error, items) <- hotelProvider.search origin, destination, extra
+						hotelsReady error, items, signature
 						

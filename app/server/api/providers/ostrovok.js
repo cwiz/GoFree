@@ -21,14 +21,19 @@
     });
   };
   exports.process = function(json, cb){
-    var hotels, rates, newHotels, i$, len$, hotel, rating, ref$, count, price, stars, newHotel;
+    var hotels, ref$, rates, newHotels, i$, len$, hotel, rating, count, price, stars, newHotel;
     console.log("ostrovok.process");
     if (!json || json.hotels == null) {
       console.log("ostrovok.process");
       cb('empty json', null);
     }
     hotels = json.hotels;
-    rates = json._meta.rates;
+    rates = (ref$ = json._meta) != null ? ref$.rates : void 8;
+    if (!rates) {
+      return cb({
+        message: 'no rates'
+      }, null);
+    }
     newHotels = [];
     for (i$ = 0, len$ = hotels.length; i$ < len$; ++i$) {
       hotel = hotels[i$];
