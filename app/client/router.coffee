@@ -11,7 +11,7 @@ Router = Backbone.Router.extend
     if views['index']
       views['index'].showForm()
     else
-      models['search'] = new app.models.Search(trips: new app.collections.SearchTrips())
+      models['search'] = new app.models.Search() unless models['search']
       views['index'] = new app.views.Index(
         model: models['search']
       )
@@ -22,7 +22,7 @@ Router = Backbone.Router.extend
     if views['serp']
       views['serp'].showSERP()
     else
-      models['search'] = new app.models.Search() unless models['search']
+      models['search'] = new app.models.Search()
       views['serp'] = new app.views.SERP(
         hash: hash
         params: models['search']

@@ -2,7 +2,7 @@ Search = Backbone.Model.extend
   defaults:
     adults: 1
     budget: 100000
-    trips: null
+    trips: new app.collections.SearchTrips()
 
   initialize: ->
     app.log('[app.models.Search]: initialize')
@@ -11,18 +11,18 @@ Search = Backbone.Model.extend
     return unless @hash
 
     app.socket.on('search_started', _.bind(@fetched, @))
-    app.socket.emit('search_start', {hash: @hash})
+    app.socket.emit('search_start', hash: @hash)
 
   fetched: (data)->
     return unless data.hash == @hash
 
     @set(
-      adults  : data.adults
-      budget  : data.budget
-      trips   : new app.collections.SearchTrips(data.trips)
+      adults: data.adults
+      budget: data.budget
+      trips: new app.collections.SearchTrips(data.trips)
     )
 
-    @trigger('fetched')
+    @trigger('fetched', data)
 
   isValid: ->
     valid = true
@@ -35,7 +35,7 @@ Search = Backbone.Model.extend
     !!valid
 
   save: ->
-    data  = _.extend(@toJSON(), trips: @get('trips').toJSON())
+    data = _.extend(@toJSON(), trips: @get('trips').toJSON())
     @hash = data['hash'] = md5(data)
 
     app.socket.emit('search', data)

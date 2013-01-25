@@ -40,12 +40,12 @@ Index = Backbone.View.extend
       success: (resp) =>
         @preloader.attr('src', resp.value.image)
 
-  showSERP: (data) ->
+  showSERP: ->
     height = app.dom.win.height()
     @serpPart.css('min-height': height, display: 'block')
 
     app.utils.scroll(height, 300, =>
-      app.router.navigate('search/' + data.hash, trigger: true)
+      app.router.navigate('search/' + @model.hash, trigger: true)
       )
 
   showForm: ->
