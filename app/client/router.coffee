@@ -24,6 +24,8 @@ Router = Backbone.Router.extend
       @history.length = @_historyLimit
 
   index: ->
+    app.log('[app.Router]: match "index"')
+
     if views['index']
       views['index'].showForm()
     else
@@ -33,9 +35,9 @@ Router = Backbone.Router.extend
         model: models['search']
       )
 
-    app.log('[app.Router]: match "index"')
-
   search: (hash) ->
+    app.log('[app.Router]: match "search", hash: "' + hash + '"')
+
     if views['serp']
       views['serp'].showSERP()
     else
@@ -44,8 +46,6 @@ Router = Backbone.Router.extend
         hash: hash
         search: models['search']
         collection: new app.collections.SERPTrips()
-      )
-
-    app.log('[app.Router]: match "search", hash: "' + hash + '"')
+      )    
 
 app.Router = Router
