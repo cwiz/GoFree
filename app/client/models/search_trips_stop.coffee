@@ -11,6 +11,6 @@ SearchTripsStop = Backbone.Model.extend
     @
 
   # sign: ->
-  #   @set('signature', md5(@toJSON()))
+  #   @set('signature', md5(JSON.stringify(@toJSON())))
 
 app.models.SearchTripsStop = SearchTripsStop
