@@ -88,7 +88,10 @@ exports.search = (socket) ->
 
 			console.log "#{complete} / #{total}"
 
-			socket.emit 'progress', {progress: complete.toFixed(2) / total}
+			socket.emit 'progress', {
+				hash	: searchParams.hash
+				progress: complete.toFixed(2) / total
+			}
 
 		flightsReady 	= (error, items, signature) -> resultReady error, items, 'flights_ready', signature
 		hotelsReady		= (error, items, signature) -> resultReady error, items, 'hotels_ready',  signature
