@@ -3,6 +3,7 @@ SERP = Backbone.View.extend
 
   initialize: (@opts) ->
     @params = @opts.params
+    @hash = @opts.hash
 
     @searchPart = @$el.find('#part-search')
     @serpPart = @$el.find('#part-serp')
@@ -12,7 +13,12 @@ SERP = Backbone.View.extend
     app.dom.win.on('resize', _.bind(@updatePageHeight, @))
 
     @params.on('fetched', @paramsReady, @)
-    @params.fetch(@opts.hash)
+    @collection.on('fetched', @collectionReady, @)
+
+    @params.hash = @hash
+    @collection.hash = @hash
+
+    app.socket.emit('search_start', hash: @hash)
 
     app.log('[app.views.SERP]: initialize')
 
@@ -21,6 +27,10 @@ SERP = Backbone.View.extend
 
   paramsReady: ->
     @serpPart.html('LOADING SHITS!')
+    console.warn('PARAMS!!!', @params)
+
+  paramsReady: ->
+    console.warn('COLLEKTEON!!!', @collection)
 
   showSERP: ->
     height = app.dom.win.height()

@@ -1,12 +1,14 @@
 SERPTrip = Backbone.Model.extend
   defaults:
-    from: 
-      name: null
-    to: 
-      name: null
+    origin:
+      date: null
+      place:
+        name: null
 
-    arrival: null
-    departure: null
+    destination:
+      date: null
+      place:
+        name: null
 
     hotels_signature: null
     hotels: null
