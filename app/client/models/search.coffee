@@ -40,7 +40,7 @@ Search = Backbone.Model.extend
 
   save: ->
     data = _.extend(@toJSON(), trips: @get('trips').toJSON())
-    @set('hash', data['hash'] = md5(data))
+    @set('hash', data['hash'] = md5(JSON.stringify(data)))
 
     app.socket.emit('search', data)
     @trigger('save', data)

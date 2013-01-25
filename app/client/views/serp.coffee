@@ -16,7 +16,10 @@ SERP = Backbone.View.extend
     @search.on('fetched', @paramsReady, @)
     @collection.on('fetched', @collectionReady, @)
 
-    window.k = @collection
+    # ============================================
+    # REMOVE THIS SHIT
+    # ============================================
+    window.SERP = @collection
 
     app.socket.emit('search_start', hash: @hash)
 
