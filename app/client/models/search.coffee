@@ -1,18 +1,21 @@
 Search = Backbone.Model.extend
-  hash: null
-
   defaults:
     adults: 1
     budget: 100000
+
     trips: null
+    hash: null
 
   initialize: ->
     app.socket.on('search_started', _.bind(@fetched, @))
 
     app.log('[app.models.Search]: initialize')
 
+  setHash: (hash) ->
+    @set('hash', hash)
+
   fetched: (resp) ->
-    return unless resp.form.hash == @hash
+    return unless resp.form.hash == @get('hash')
 
     data = resp.form
 
@@ -37,7 +40,7 @@ Search = Backbone.Model.extend
 
   save: ->
     data = _.extend(@toJSON(), trips: @get('trips').toJSON())
-    @hash = data['hash'] = md5(data)
+    @set('hash', data['hash'] = md5(data))
 
     app.socket.emit('search', data)
     @trigger('save', data)

@@ -1,5 +1,5 @@
 SERPTrips = Backbone.Collection.extend
-  hash: null
+  _hash: null
 
   model: app.models.SERPTrip
 
@@ -9,8 +9,10 @@ SERPTrips = Backbone.Collection.extend
 
     app.log('[app.collections.SERPTrips]: initialize')
 
+  setHash: (@_hash) ->
+
   fetched: (resp)->
-    return unless resp.form.hash == @hash
+    return unless resp.form.hash == @_hash
 
     data = resp.trips
     @add(resp.trips)
@@ -30,9 +32,9 @@ SERPTrips = Backbone.Collection.extend
       item.hotels = item.hotels.toJSON()
       item.flights = item.flights.toJSON()
  
-    item
+    json
 
-  jsonify: ->
+  serialize: ->
     @_dump(@toJSON())
 
 app.collections.SERPTrips = SERPTrips

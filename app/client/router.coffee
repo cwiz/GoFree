@@ -25,7 +25,7 @@ Router = Backbone.Router.extend
       models['search'] = new app.models.Search()
       views['serp'] = new app.views.SERP(
         hash: hash
-        params: models['search']
+        search: models['search']
         collection: new app.collections.SERPTrips()
       )
 

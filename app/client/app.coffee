@@ -16,7 +16,7 @@ app.dom.body = $('body')
 app.dom.header = $('#l-header')
 app.dom.content = $('#l-content')
 
-app.modules = {}
+# app.modules = {}
 
 app.dom.html.removeClass('no-js').addClass('js')
 app.dom.html.addClass('opera')                                   if app.browser.isOpera

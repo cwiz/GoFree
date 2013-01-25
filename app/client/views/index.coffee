@@ -45,7 +45,7 @@ Index = Backbone.View.extend
     @serpPart.css('min-height': height, display: 'block')
 
     app.utils.scroll(height, 300, =>
-      app.router.navigate('search/' + @model.hash, trigger: true)
+      app.router.navigate('search/' + @model.get('hash'), trigger: true)
       )
 
   showForm: ->
