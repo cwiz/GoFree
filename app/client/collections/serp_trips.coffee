@@ -13,4 +13,14 @@ SERPTrips = Backbone.Collection.extend
     unless model.get('flights')?
       model.set('flights', new app.collections.SERPTripFlights())
 
+  _dump: (json) ->
+    for item in json
+      item.hotels = item.hotels.toJSON()
+      item.flights = item.flights.toJSON()
+ 
+    item
+
+  jsonify: ->
+    @_dump(@toJSON())
+
 app.collections.SERPTrips = SERPTrips

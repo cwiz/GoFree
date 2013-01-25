@@ -1,7 +1,7 @@
 SERP = Backbone.View.extend
   el: '#l-content'
 
-  initialize: (opts) ->
+  initialize: (@opts) ->
     @params = opts.params
 
     @searchPart = @$el.find('#part-search')
@@ -12,7 +12,7 @@ SERP = Backbone.View.extend
     app.dom.win.on('resize', _.bind(@updatePageHeight, @))
 
     @params.on('fetched', @paramsReady, @)
-    @params.fetch(@hash)
+    @params.fetch(@opts.hash)
 
     app.log('[app.views.SERP]: initialize')
 
