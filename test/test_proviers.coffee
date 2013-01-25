@@ -85,47 +85,76 @@ describe 'Eviterra', ->
 				expect(err).to.be.equal null
 				done()
 
+generateData = () ->
+	data = 
+		trips: 
+			[
+				{
+					date: moment().add('days', 7).format("YYYY-MM-DD")
+					removable: false
+					place: 
+						oid: 2395
+						iata: "MOW"
+						name: "Москва°"
+					signature:  md5(moment().format('MMMM Do YYYY, h:mm:ss a'))
+				}
+				{
+					date: moment().add('days', 14).format("YYYY-MM-DD")
+					removable: false
+					place: 
+						oid: 2114
+						iata: "LON"
+						name: "Лондон"
+					signature: md5(moment().format('MMMM Do YYYY, h:mm:ss a'))
+				}
+			]
+		adults: 1
+		budget: 100000
+		hash:  md5(moment().format('MMMM Do YYYY, h:mm:ss a'))
+
+	return data
 
 describe 'Search API', ->
 	describe '#search', ->
-		it 'should work without errors', (done) ->
-			client = io.connect(socketURL, socketOptions)
-			data = 
-				trips: 
-					[
-						{
-							date: "2013-02-1"
-							removable: false
-							place: 
-								oid: 2395
-								iata: "MOW"
-								name: "Москва°"
-							signature:  md5(moment().format('MMMM Do YYYY, h:mm:ss a'))
-						}
-						{
-							date: "2013-02-10"
-							removable: false
-							place: 
-								oid: 2114
-								iata: "LON"
-								name: "Лондон"
-							signature: md5(moment().format('MMMM Do YYYY, h:mm:ss a'))
-						}
-					]
-				adults: 1
-				budget: 100000
-				hash:  md5(moment().format('MMMM Do YYYY, h:mm:ss a'))
 
+		client = io.connect(socketURL, socketOptions)
+		
+		it 'should work without errors', (done) ->	
+			data = generateData()
 			hash = data.hash
 			
 			client.emit 'search', data
+				
+			client.emit 'search_start', { hash : hash }
 
+			finished = false
+
+			client.on 'progress', (data) ->
+				if data.progress is 1.0 and not finished
+					done() 
+					finished = true
+
+		it 'should fail validation error', (done) ->	
+			data = generateData()
+			hash = data.hash
+
+			delete data.hash
+			
+			client.emit 'search', data
+				
 			client.on 'search_error', (data) ->
-				assert false
+				done()
 
-			client.on 'search_ok', (data) ->
-				client.emit 'search_start', { hash : hash }
+		it 'should fail with dates in the past', (done) ->	
+			data = generateData()
+			hash = data.hash
 
-				client.on 'progress', (data) ->
-					done() if data.progress is 1.0
-					
+			data.trips[0].date = moment().add('days', -14).format("YYYY-MM-DD")
+			data.trips[1].date = moment().add('days', -7).format("YYYY-MM-DD")
+			
+			client.emit 'search', data
+				
+			client.emit 'search_start', { hash : hash }
+
+			client.on 'progress', (data) ->
+				done() if data.progress is 1.0

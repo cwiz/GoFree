@@ -65,7 +65,7 @@ exports.search = (socket) ->
 			results = if error then [] else items.results
 
 			console.log "socket.emit #{eventName}
-			| Complete: #{items.complete or ''} 
+			| Complete: #{items?.complete or ''} 
 			| Error: #{error?.message or ''}
 			| \# results: #{results.length}"
 			
@@ -75,7 +75,7 @@ exports.search = (socket) ->
 				signature 	: signature
 			}
 
-			if items.complete or error
+			if items?.complete or error
 				signatures[signature] = true
 
 			complete = _.filter(_.values(signatures), (elem) -> elem is true).length
@@ -103,7 +103,6 @@ exports.search = (socket) ->
 
 			for hotelProvider, counter 	in providers.hotelProviders when counter < (pairs.length - 1)
 				let signature = pair.hotelSignature
-					console.log signature
 					if signature
 						(error, items) <- hotelProvider.search origin, destination, extra
 						hotelsReady error, items, signature

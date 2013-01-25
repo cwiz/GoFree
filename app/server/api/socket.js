@@ -77,13 +77,13 @@
             results = error
               ? []
               : items.results;
-            console.log("socket.emit " + eventName + "| Complete: " + (items.complete || '') + " | Error: " + ((error != null ? error.message : void 8) || '') + "| # results: " + results.length);
+            console.log("socket.emit " + eventName + "| Complete: " + ((items != null ? items.complete : void 8) || '') + " | Error: " + ((error != null ? error.message : void 8) || '') + "| # results: " + results.length);
             socket.emit(eventName, {
               error: error,
               items: results,
               signature: signature
             });
-            if (items.complete || error) {
+            if ((items != null && items.complete) || error) {
               signatures[signature] = true;
             }
             complete = _.filter(_.values(signatures), function(elem){
@@ -129,7 +129,6 @@
             });
           }
           function fn1$(signature, pair, counter, hotelProvider){
-            console.log(signature);
             if (signature) {
               return hotelProvider.search(origin, destination, extra, function(error, items){
                 return hotelsReady(error, items, signature);
