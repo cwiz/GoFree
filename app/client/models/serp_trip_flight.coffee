@@ -2,10 +2,15 @@ SERPTripFlight = Backbone.Model.extend
   defaults:
     price: 0
 
-    # from: 
-    #   name: null
-    # to: 
-    #   name: null
+    # origin:
+    #   date: null
+    #   place:
+    #     name: null
+
+    # destination:
+    #   date: null
+    #   place:
+    #     name: null
 
     departure: null
     arrival: null
