@@ -2,14 +2,17 @@ SERPTrips = Backbone.Collection.extend
   _hash: null
 
   model: app.models.SERPTrip
+  comparator: 'price'
 
   initialize: () ->
     @on('add', @instantiateCollections, @)
-    app.socket.on('search_started', _.bind(@fetched, @))
 
     app.log('[app.collections.SERPTrips]: initialize')
 
-  setHash: (@_hash) ->
+  observe: ->
+    app.socket.on('search_started', _.bind(@fetched, @))
+
+  setHash: (@_hash) -> @
 
   fetched: (resp)->
     return unless resp.form.hash == @_hash

@@ -7,12 +7,14 @@ Search = Backbone.Model.extend
     hash: null
 
   initialize: ->
-    app.socket.on('search_started', _.bind(@fetched, @))
-
     app.log('[app.models.Search]: initialize')
+
+  observe: ->
+    app.socket.on('search_started', _.bind(@fetched, @))
 
   setHash: (hash) ->
     @set('hash', hash)
+    @
 
   fetched: (resp) ->
     return unless resp.form.hash == @get('hash')
@@ -38,8 +40,11 @@ Search = Backbone.Model.extend
 
     !!valid
 
+  serialize: ->
+    _.extend(@toJSON(), trips: @get('trips').toJSON())
+
   save: ->
-    data = _.extend(@toJSON(), trips: @get('trips').toJSON())
+    data = @serialize()
     @set('hash', data['hash'] = md5(JSON.stringify(data)))
 
     app.socket.emit('search', data)
