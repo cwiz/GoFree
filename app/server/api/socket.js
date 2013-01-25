@@ -1,154 +1,122 @@
 (function(){
-  var providers, JSV, validate, convertToRows;
+  var providers, validation, database, md5, makePairs;
   providers = require("./providers");
-  JSV = require("JSV").JSV;
-  validate = function(data, cb){
-    var schema, env, report;
-    schema = {
-      type: 'object',
-      properties: {
-        adults: {
-          type: 'integer',
-          required: true,
-          minimum: 1,
-          maximum: 6
-        },
-        budget: {
-          type: 'integer',
-          required: true,
-          minimum: 0
-        },
-        signature: {
-          type: 'string',
-          required: false
-        },
-        trips: {
-          type: 'array',
-          required: true,
-          items: {
-            type: 'object',
-            properties: {
-              date: {
-                type: 'string',
-                format: 'date',
-                required: true
-              },
-              removable: {
-                type: 'boolean',
-                required: false
-              },
-              place: {
-                type: 'object',
-                required: true
-              }
-            }
-          }
-        }
-      }
-    };
-    env = JSV.createEnvironment();
-    report = env.validate(data, schema);
-    if (report.errors.length === 0) {
-      return cb(null, data);
-    } else {
-      return cb(report.errors, null);
-    }
-  };
-  convertToRows = function(data){
-    var rows, tripNumber, ref$, len$, trip, index;
-    rows = [];
+  validation = require("./validation");
+  database = require("./../database");
+  md5 = require("MD5");
+  makePairs = function(data){
+    var pairs, tripNumber, ref$, len$, trip, destinationIndex, pair;
+    pairs = [];
     for (tripNumber = 0, len$ = (ref$ = data.trips).length; tripNumber < len$; ++tripNumber) {
       trip = ref$[tripNumber];
       if (tripNumber === data.trips.length - 1) {
-        index = 0;
+        destinationIndex = 0;
       } else {
-        index = tripNumber + 1;
+        destinationIndex = tripNumber + 1;
       }
-      console.log(tripNumber);
-      console.log(index);
-      rows.push({
-        destination: {
-          place: data.trips[index].place,
-          date: data.trips[index].date
-        },
-        origin: {
-          place: data.trips[tripNumber].place,
-          date: data.trips[tripNumber].date
-        }
-      });
+      pair = {
+        destination: data.trips[destinationIndex],
+        origin: data.trips[tripNumber]
+      };
+      pair.flightSignature = md5(JSON.stringify(origin.place) + JSON.stringify(destination.place) + origin.date);
+      pair.hotelSignaure = md5(JSON.stringify(destination.place) + origin.date + destination.date);
+      pairs.push(pair);
     }
-    return rows;
+    return pairs;
   };
   exports.search = function(socket){
-    return socket.on('start_search', function(data){
-      return validate(data, function(errors, data){
-        var rows, signature, providersReady, totalProviders, resultReady, flightsReady, hotelsReady, rowNumber, len$, row, lresult$, destination, origin, extra, i$, ref$, len1$, flightProvider, hotelProvider, results$ = [];
-        if (errors) {
-          return socket.emit('start_search_validation_error', {
-            errors: errors
+    socket.on('search', function(data){
+      return validation.search(data, function(error, data){
+        if (error) {
+          return socket.emit('search_error', {
+            error: error
           });
         }
-        rows = convertToRows(data);
-        signature = data.signature;
-        providersReady = 0;
-        totalProviders = rows.length * providers.flightProviders.length + (rows.length - 1) * providers.flightProviders.length;
-        resultReady = function(error, items, eventName){
-          var percentage, results;
+        database.search.insert(data);
+        return socket.emit('search_validation_ok', {});
+      });
+    });
+    return socket.on('search_start', function(data){
+      return validation.start_search(data, function(error, data){
+        if (error) {
+          return socket.emit('start_search_error', {
+            error: error
+          });
+        }
+        return database.search.findOne(data, function(error, searchParams){
+          var pairs, providersReady, totalProviders, resultReady, flightsReady, hotelsReady, i$, ref$, len$, pair, lresult$, destination, origin, extra, counter, ref1$, len1$, flightProvider, hotelProvider, results$ = [];
           if (error) {
-            items = {
-              complete: true
-            };
+            return socket.emit('start_search_error', {
+              error: error
+            });
           }
-          if (error || items.complete) {
-            providersReady += 1;
-          }
-          percentage = providersReady.toFixed(2) / totalProviders;
-          results = error
-            ? []
-            : items.results;
-          console.log("socket.emit " + eventName + " | Percentage: " + percentage + ": " + providersReady + " / " + totalProviders + " | Complete: " + (items.complete || '') + " | Error: " + ((error != null ? error.message : void 8) || '') + "| # results: " + results.length);
-          return socket.emit(eventName, {
-            error: error,
-            items: results,
-            progress: percentage,
-            rowNumber: rowNumber,
-            signature: signature
-          });
-        };
-        flightsReady = function(error, items){
-          return resultReady(error, items, 'flights_ready');
-        };
-        hotelsReady = function(error, items){
-          return resultReady(error, items, 'hotels_ready');
-        };
-        for (rowNumber = 0, len$ = rows.length; rowNumber < len$; ++rowNumber) {
-          row = rows[rowNumber];
-          lresult$ = [];
-          destination = row.destination;
-          origin = row.origin;
-          extra = {
-            adults: data.adults,
-            page: 1
+          socket.emit('search_started', searchParams);
+          pairs = makePairs(searchParams);
+          providersReady = 0;
+          totalProviders = rows.length * providers.flightProviders.length + (rows.length - 1) * providers.flightProviders.length;
+          resultReady = function(error, items, eventName, signature){
+            var percentage, results;
+            if (error) {
+              items = {
+                complete: true
+              };
+            }
+            if (error || items.complete) {
+              providersReady += 1;
+            }
+            percentage = providersReady.toFixed(2) / totalProviders;
+            results = error
+              ? []
+              : items.results;
+            console.log("socket.emit " + eventName + " | Percentage: " + percentage + ": " + providersReady + " / " + totalProviders + " | Complete: " + (items.complete || '') + " | Error: " + ((error != null ? error.message : void 8) || '') + "| # results: " + results.length);
+            socket.emit(eventName, {
+              error: error,
+              items: results,
+              signature: signature
+            });
+            return socket.emit('progress', {
+              progress: percentage
+            });
           };
-          for (i$ = 0, len1$ = (ref$ = providers.flightProviders).length; i$ < len1$; ++i$) {
-            flightProvider = ref$[i$];
-            (fn$.call(this, rowNumber, data.signature, row, flightProvider));
+          flightsReady = function(error, items, signature){
+            return resultReady(error, items, 'flights_ready', signature);
+          };
+          hotelsReady = function(error, items, signature){
+            return resultReady(error, items, 'hotels_ready', signature);
+          };
+          for (i$ = 0, len$ = (ref$ = rows).length; i$ < len$; ++i$) {
+            pair = ref$[i$];
+            lresult$ = [];
+            destination = pair.destination;
+            origin = pair.origin;
+            extra = {
+              adults: data.adults,
+              page: 1
+            };
+            for (counter = 0, len1$ = (ref1$ = providers.flightProviders).length; counter < len1$; ++counter) {
+              flightProvider = ref1$[counter];
+              (fn$.call(this, data.flightSignature, pair, counter, flightProvider));
+            }
+            for (counter = 0, len1$ = (ref1$ = providers.hotelProviders).length; counter < len1$; ++counter) {
+              hotelProvider = ref1$[counter];
+              if (counter < pairs.length - 1) {
+                lresult$.push((fn1$.call(this, data.hotelSignature, pair, counter, hotelProvider)));
+              }
+            }
+            results$.push(lresult$);
           }
-          for (i$ = 0, len1$ = (ref$ = providers.hotelProviders).length; i$ < len1$; ++i$) {
-            hotelProvider = ref$[i$];
-            lresult$.push((fn1$.call(this, rowNumber, data.signature, row, hotelProvider)));
+          return results$;
+          function fn$(signature, pair, counter, flightProvider){
+            flightProvider.search(origin, destination, extra, function(error, items){
+              return flightsReady(error, items, signature);
+            });
           }
-          results$.push(lresult$);
-        }
-        return results$;
-        function fn$(rowNumber, signature, row, flightProvider){
-          flightProvider.search(origin, destination, extra, flightsReady);
-        }
-        function fn1$(rowNumber, signature, row, hotelProvider){
-          if (!(rowNumber === rows.length - 1)) {
-            return hotelProvider.search(origin, destination, extra, hotelsReady);
+          function fn1$(signature, pair, counter, hotelProvider){
+            return hotelProvider.search(origin, destination, extra, function(error, items){
+              return hotelsReady(error, items, signature);
+            });
           }
-        }
+        });
       });
     });
   };

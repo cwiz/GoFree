@@ -1,93 +1,58 @@
-providers = require "./providers"
-JSV       = require("JSV").JSV
+providers 	= require "./providers"
+validation 	= require "./validation"
+database 	= require "./../database"
 
-validate = (data, cb) ->
-	schema = 
-		type: 'object'
-		properties:
-			adults: 
-				type: 'integer'
-				required: true
-				minimum: 1
-				maximum: 6
+md5 		= require "MD5"
 
-			budget:
-				type: 'integer'
-				required: true
-				minimum: 0
-
-			signature:
-				type: 'string'
-				required: false
-			
-			trips:
-				type: 'array'
-				required: true
-				
-				items: 
-					type: 'object'
-					properties:
-						
-						date:
-							type: 'string'
-							format: 'date'
-							required: true
-						
-						removable:
-							type: 'boolean'
-							required: false
-						
-						place:
-							type: 'object'
-							required: true
-
-	env     = JSV.createEnvironment()
-	report  = env.validate(data, schema)
-
-	if report.errors.length is 0
-		cb null, data
-
-	else
-		cb report.errors, null
-
-convertToRows = (data) ->
-	rows = []
+makePairs = (data) ->
+	pairs = []
+	
 	for trip, tripNumber in data.trips
 
 		if tripNumber is (data.trips.length-1)
-			index = 0
+			destinationIndex = 0
 		else
-			index = tripNumber+1
+			destinationIndex = tripNumber + 1
 
-		console.log tripNumber
-		console.log index
+		pair = 
+			destination 	: data.trips[destinationIndex]
+			origin			: data.trips[tripNumber]
 
-		rows.push {
-			destination:
-				place : data.trips[index].place
-				date  : data.trips[index].date
-			origin:
-				place : data.trips[tripNumber].place
-				date  : data.trips[tripNumber].date
-		}
+		pair.flightSignature 	= md5(JSON.stringify(origin.place) + JSON.stringify(destination.place) + origin.date)
+		pair.hotelSignaure 		= md5(JSON.stringify(destination.place) + origin.date + destination.date)
+		
+		pairs.push pair
 
-	return rows
+	return pairs
 
 exports.search = (socket) ->
-	socket.on 'start_search', (data) ->
+	socket.on 'search', (data) ->
 
-		(errors, data) <- validate data
-		return socket.emit 'start_search_validation_error', {errors: errors} if errors
+		(error, data) <- validation.search data
+		return socket.emit 'search_error', {error: error} if error
 
-		rows 			= convertToRows(data)
-		signature      	= data.signature
+		database.search.insert(data)
+		socket.emit 'search_validation_ok', {} 
+
+	socket.on 'search_start', (data) ->
+
+		(error, data) <- validation.start_search data
+		return socket.emit 'start_search_error', {error: error} if error
+
+		(error, searchParams) <- database.search.findOne(data)
+		return socket.emit 'start_search_error', {error: error} if error
+
+		socket.emit 'search_started', searchParams
+
+		pairs 			= makePairs(searchParams)
 		providersReady 	= 0
 		totalProviders 	= rows.length * providers.flightProviders.length + (rows.length - 1) * providers.flightProviders.length
 	 
 		# --- start helper functions ---
-		resultReady = (error, items, eventName) ->
+		resultReady = (error, items, eventName, signature) ->
 			if error
 				items = {complete: true}
+			
 			providersReady += 1 if (error or items.complete)
 			percentage      = providersReady.toFixed(2) / totalProviders
 
@@ -99,30 +64,32 @@ exports.search = (socket) ->
 			| Error: #{error?.message or ''}
 			| \# results: #{results.length}"
 			
-			socket.emit eventName ,
+			socket.emit eventName , {
 				error     	: error
 				items   	: results
-				progress  	: percentage
-				rowNumber 	: rowNumber
 				signature 	: signature
+			}
 
-		flightsReady 	= (error, items) -> resultReady error, items, 'flights_ready'
-		hotelsReady		= (error, items) -> resultReady error, items, 'hotels_ready'	
+			socket.emit 'progress', {progress: percentage}
+
+		flightsReady 	= (error, items, signature) -> resultReady error, items, 'flights_ready', signature
+		hotelsReady		= (error, items, signature) -> resultReady error, items, 'hotels_ready',  signature
 		# --- end helper functions ---  
 
-		for row, rowNumber in rows
-			destination = row.destination
-			origin      = row.origin
+		for pair in rows
+			destination = pair.destination
+			origin      = pair.origin
 			extra       = 
 				adults: data.adults
 				page: 1
 
-			for flightProvider in providers.flightProviders
-				let rowNumber = rowNumber, signature = data.signature
-					flightProvider.search origin, destination, extra, flightsReady
+			for flightProvider, counter in providers.flightProviders
+				let signature = data.flightSignature
+					(error, items) <- flightProvider.search origin, destination, extra
+					flightsReady error, items, signature
 
-			for hotelProvider in providers.hotelProviders
-				let rowNumber = rowNumber, signature = data.signature
-					if not (rowNumber is (rows.length - 1))
-						hotelProvider.search origin, destination, extra, hotelsReady
+			for hotelProvider, counter 	in providers.hotelProviders when counter < (pairs.length - 1)
+				let signature = data.hotelSignature
+					(error, items) <- hotelProvider.search origin, destination, extra
+					hotelsReady error, items, signature
 						

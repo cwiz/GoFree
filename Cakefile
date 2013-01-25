@@ -6,10 +6,6 @@ spawn           = child_process.spawn
 
 REPORTER = "spec"
 
-RED   = '\u001b[31m'
-BLUE  = '\u001b[34m'
-RESET = '\u001b[0m'
-
 task "test", "run tests", ->
 	test = exec "NODE_ENV=test 
 		mocha 
@@ -38,7 +34,11 @@ task "devserver", 'development server w/ autoreload', ->
 	ls.stderr.on 'error', console.log
 
 	setTimeout ( ->
-		nodemon = exec "nodemon -w public/ -w app/ -w views/ app.js"
+		nodemon = exec "nodemon 
+						-w public/ 
+						-w app/ 
+						-w views/ 
+						app.js"
 		nodemon.stdout.on 'data', console.log
 		nodemon.stderr.on 'data', console.log
 	), 1000
