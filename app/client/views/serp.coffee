@@ -2,7 +2,7 @@ SERP = Backbone.View.extend
   el: '#l-content'
 
   initialize: (@opts) ->
-    @params = opts.params
+    @params = @opts.params
 
     @searchPart = @$el.find('#part-search')
     @serpPart = @$el.find('#part-serp')
