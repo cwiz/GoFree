@@ -1,5 +1,6 @@
 SERP = Backbone.View.extend
   el: '#l-content'
+  progress: 0
 
   initialize: (@opts) ->
     @search = @opts.search
@@ -35,7 +36,8 @@ SERP = Backbone.View.extend
 
   progress: (data) ->
     return unless data.hash == @hash
-    console.log('PROGRESS:', data)
+    @progress = data.progress
+    app.log('[app.views.SERP]: progress ' + Math.floor(@progress * 100) + '%')
 
   paramsReady: ->
     @serpPart.html('LOADING SHITS!')
