@@ -2,7 +2,7 @@ Search = Backbone.Model.extend
   defaults:
     adults: 1
     budget: 100000
-    trips: new app.collections.SearchTrips()
+    trips: null
 
   initialize: ->
     app.log('[app.models.Search]: initialize')

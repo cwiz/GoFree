@@ -9,10 +9,10 @@ SERPTrip = Backbone.Model.extend
     departure: null
 
     hotels_signature: null
-    hotels: new app.collections.SERPTripHotels()
+    hotels: null
 
     flights_signature: null
-    flights: new app.collections.SERPTripFlights()
+    flights: null
 
   initialize: ->
     app.log('[app.models.SERPTrip]: initialize')
