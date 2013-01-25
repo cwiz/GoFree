@@ -23,6 +23,7 @@ Search = Backbone.Model.extend
     )
 
     @trigger('fetched', data)
+    app.log('[app.models.Search]: fetched', data)
 
   isValid: ->
     valid = true

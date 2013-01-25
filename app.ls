@@ -66,6 +66,7 @@ assets.on "complete", ->
   # Routes
   # --- static
   app.get "/",                            backEnd.about.index
+  app.get "/search/:hash",                backEnd.about.index
   app.get "/about",                       backEnd.about.about
   # --- api
   app.get "/api/v1/autocomplete/:query",  backEnd.api.autocomplete
