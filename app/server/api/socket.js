@@ -70,7 +70,7 @@
           delete searchParams._id;
           socket.emit('search_started', {
             form: searchParams,
-            pairs: pairs
+            trips: pairs
           });
           for (i$ = 0, len$ = (ref$ = result.signatures).length; i$ < len$; ++i$) {
             signature = ref$[i$];

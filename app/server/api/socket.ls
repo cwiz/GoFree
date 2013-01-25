@@ -58,7 +58,7 @@ exports.search = (socket) ->
 
 		socket.emit 'search_started', {
 			form 	: searchParams
-			pairs 	: pairs
+			trips 	: pairs
 		}
 
 		for signature in result.signatures
