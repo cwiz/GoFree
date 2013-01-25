@@ -19,18 +19,18 @@
         destination: data.trips[destinationIndex],
         origin: data.trips[tripNumber]
       };
-      pair.flightSignature = md5(JSON.stringify(pair.origin.place) + JSON.stringify(pair.destination.place) + pair.origin.date);
+      pair.flights_signature = md5(JSON.stringify(pair.origin.place) + JSON.stringify(pair.destination.place) + pair.origin.date);
       if (tripNumber !== data.trips.length - 1) {
-        pair.hotelSignature = md5(JSON.stringify(pair.destination.place) + pair.origin.date + pair.destination.date);
+        pair.hotels_signature = md5(JSON.stringify(pair.destination.place) + pair.origin.date + pair.destination.date);
       } else {
-        pair.hotelSignature = null;
+        pair.hotels_signature = null;
       }
       pairs.push(pair);
     }
     allSignatures = _.map(pairs, function(pair){
-      return pair.flightSignature;
+      return pair.flights_signature;
     }).concat(_.map(pairs, function(pair){
-      return pair.hotelSignature;
+      return pair.hotels_signature;
     }));
     allSignatures.pop();
     return {
@@ -64,10 +64,14 @@
               error: error
             });
           }
-          socket.emit('search_started', searchParams);
           result = makePairs(searchParams);
           pairs = result.pairs;
           signatures = {};
+          delete searchParams._id;
+          socket.emit('search_started', {
+            form: searchParams,
+            pairs: pairs
+          });
           for (i$ = 0, len$ = (ref$ = result.signatures).length; i$ < len$; ++i$) {
             signature = ref$[i$];
             signatures[signature] = false;
@@ -112,12 +116,12 @@
             };
             for (counter = 0, len1$ = (ref$ = providers.flightProviders).length; counter < len1$; ++counter) {
               flightProvider = ref$[counter];
-              (fn$.call(this, pair.flightSignature, pair, counter, flightProvider));
+              (fn$.call(this, pair.flights_signature, pair, counter, flightProvider));
             }
             for (counter = 0, len1$ = (ref$ = providers.hotelProviders).length; counter < len1$; ++counter) {
               hotelProvider = ref$[counter];
               if (counter < pairs.length - 1) {
-                lresult$.push((fn1$.call(this, pair.hotelSignature, pair, counter, hotelProvider)));
+                lresult$.push((fn1$.call(this, pair.hotels_signature, pair, counter, hotelProvider)));
               }
             }
             results$.push(lresult$);

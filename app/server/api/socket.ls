@@ -18,16 +18,16 @@ makePairs = (data) ->
 			destination 	: data.trips[destinationIndex]
 			origin			: data.trips[tripNumber]
 
-		pair.flightSignature 	= md5(JSON.stringify(pair.origin.place) + JSON.stringify(pair.destination.place) + pair.origin.date)
+		pair.flights_signature 	= md5(JSON.stringify(pair.origin.place) + JSON.stringify(pair.destination.place) + pair.origin.date)
 		
 		if tripNumber is not (data.trips.length - 1)
-			pair.hotelSignature 		= md5(JSON.stringify(pair.destination.place) + pair.origin.date + pair.destination.date)
+			pair.hotels_signature 		= md5(JSON.stringify(pair.destination.place) + pair.origin.date + pair.destination.date)
 		else
-			pair.hotelSignature 		= null
+			pair.hotels_signature 		= null
 		
 		pairs.push pair
 
-	allSignatures = _.map(pairs, (pair)->pair.flightSignature).concat(_.map(pairs, (pair)->pair.hotelSignature))
+	allSignatures = _.map(pairs, (pair)->pair.flights_signature).concat(_.map(pairs, (pair)->pair.hotels_signature))
 	allSignatures.pop()
 
 	return {
@@ -50,11 +50,16 @@ exports.search = (socket) ->
 		(error, searchParams) <- database.search.findOne(data)
 		return socket.emit 'start_search_error', {error: error} if error
 
-		socket.emit 'search_started', searchParams
-
 		result 			= makePairs(searchParams)
 		pairs 			= result.pairs
 		signatures 		= {}
+
+		delete searchParams._id
+
+		socket.emit 'search_started', {
+			form 	: searchParams
+			pairs 	: pairs
+		}
 
 		for signature in result.signatures
 			signatures[signature] = false
@@ -97,12 +102,12 @@ exports.search = (socket) ->
 				page: 1
 
 			for flightProvider, counter in providers.flightProviders
-				let signature = pair.flightSignature
+				let signature = pair.flights_signature
 					(error, items) <- flightProvider.search origin, destination, extra
 					flightsReady error, items, signature
 
 			for hotelProvider, counter 	in providers.hotelProviders when counter < (pairs.length - 1)
-				let signature = pair.hotelSignature
+				let signature = pair.hotels_signature
 					if signature
 						(error, items) <- hotelProvider.search origin, destination, extra
 						hotelsReady error, items, signature
