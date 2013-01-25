@@ -96,6 +96,7 @@
             total = _.values(signatures).length;
             console.log(complete + " / " + total);
             return socket.emit('progress', {
+              hash: searchParams.hash,
               progress: complete.toFixed(2) / total
             });
           };
