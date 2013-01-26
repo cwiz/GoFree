@@ -1,5 +1,6 @@
 SERP = Backbone.View.extend
   el: '#l-content'
+  progress: 0
 
   initialize: (@opts) ->
     @search = @opts.search
@@ -10,25 +11,33 @@ SERP = Backbone.View.extend
 
     app.dom.win.on('resize', _.bind(@updatePageHeight, @))
 
-    @search.setHash(@hash)
-    @collection.setHash(@hash)
+    @search.setHash(@hash).observe()
+    @collection.setHash(@hash).observe()
 
     @search.on('fetched', @paramsReady, @)
     @collection.on('fetched', @collectionReady, @)
 
-    # ============================================
-    # REMOVE THIS SHIT
-    # ============================================
-    window.SERP = @collection
+    app.socket.on('progress', _.bind(@progress, @))
 
     app.socket.emit('search_start', hash: @hash)
 
     @render()
 
+    # ============================================
+    # REMOVE THIS SHIT
+    # ============================================
+    if app.env.debug
+      window.SERP = @collection
+
     app.log('[app.views.SERP]: initialize')
 
   updatePageHeight: ->
     @serpPart.css('min-height': app.dom.win.height())
+
+  progress: (data) ->
+    return unless data.hash == @hash
+    @progress = data.progress
+    app.log('[app.views.SERP]: progress ' + Math.floor(@progress * 100) + '%')
 
   paramsReady: ->
     @serpPart.html('LOADING SHITS!')

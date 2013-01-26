@@ -11,7 +11,11 @@ Index = Backbone.View.extend
     @collection = @model.get('trips')
 
     @updatePageHeight()
-    @render()
+
+    if app.router.history.length # this is not the first page to load
+      @showForm()
+    else
+      @render()
     
     @searchFormView = new app.views.SearchForm
       el : @searchPart.find('.block-form')[0]

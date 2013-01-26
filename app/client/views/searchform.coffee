@@ -22,7 +22,10 @@ SearchForm = Backbone.View.extend
     @form = @$el.find('.v-s-form').m_formValidate()[0]
     @restrictBudget()
 
-    @populateCollection() unless @collection.length > 1
+    if @collection.length
+      @initStops()
+    else
+      @populateCollection()
 
     app.log('[app.views.SearchForm]: initialize')
     @
@@ -49,6 +52,10 @@ SearchForm = Backbone.View.extend
       { date: app.utils.dateToYMD(@maxDate), removable: false }
       { date: null, removable: false }
     ])
+
+  initStops: () ->
+    iterator = _.bind(@initStop, @)
+    @collection.each(iterator)
 
   initStop: (item) ->
     index     = @collection.indexOf(item)
