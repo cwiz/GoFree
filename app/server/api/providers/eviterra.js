@@ -1,5 +1,5 @@
 (function(){
-  var async, database, moment, request, xml2js, _, parser;
+  var async, database, moment, request, xml2js, _, parser, getEviterraId;
   async = require("async");
   database = require("./../../database");
   moment = require("moment");
@@ -9,19 +9,53 @@
   parser = new xml2js.Parser(xml2js.defaults["0.1"]);
   moment.lang('ru');
   exports.name = "eviterra";
+  getEviterraId = function(place, callback){
+    return exports.autocomplete(place.name_ru + "", function(error, result){
+      var eviterra_id;
+      if (error) {
+        return callback(error, null);
+      }
+      if (result.length === 0) {
+        return callback({
+          'nothing found': 'nothing found'
+        }, null);
+      }
+      eviterra_id = result[0].iata;
+      callback(null, eviterra_id);
+      return database.geonames.update({
+        geoname_id: place.geoname_id
+      }, {
+        $set: {
+          eviterra_id: eviterra_id
+        }
+      });
+    });
+  };
   exports.query = function(origin, destination, extra, cb){
-    var evUrl;
-    evUrl = "http://api.eviterra.com/avia/v1/variants.xml?from=" + origin.place.iata + "&to=" + destination.place.iata + "&date1=" + origin.date + "&adults=" + extra.adults;
-    return request(evUrl, function(error, response, body){
-      console.log("Queried Eviterra serp | " + evUrl + " | status " + response.statusCode);
+    return async.parallel({
+      origin: function(callback){
+        return getEviterraId(origin.place, callback);
+      },
+      destination: function(callback){
+        return getEviterraId(destination.place, callback);
+      }
+    }, function(error, eviterraId){
+      var evUrl;
       if (error) {
         return cb(error, null);
       }
-      return parser.parseString(response.body, function(error, json){
+      evUrl = "http://api.eviterra.com/avia/v1/variants.xml?from=" + eviterraId.origin + "&to=" + eviterraId.destination + "&date1=" + origin.date + "&adults=" + extra.adults;
+      return request(evUrl, function(error, response, body){
+        console.log("Queried Eviterra serp | " + evUrl + " | status " + response.statusCode);
         if (error) {
           return cb(error, null);
         }
-        return cb(null, json);
+        return parser.parseString(response.body, function(error, json){
+          if (error) {
+            return cb(error, null);
+          }
+          return cb(null, json);
+        });
       });
     });
   };

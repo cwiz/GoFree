@@ -12,8 +12,27 @@ moment.lang('ru')
 # Providers
 exports.name = "eviterra"
 
+getEviterraId = (place, callback) ->
+  #return callback(null, place.eviterra_id) if place.eviterra_id
+
+  (error, result) <- exports.autocomplete "#{place.name_ru}"
+  return callback(error,              null)  if error
+  return callback({'nothing found'},  null)  if result.length is 0
+
+  eviterra_id = result[0].iata
+  callback null, eviterra_id
+  database.geonames.update {geoname_id : place.geoname_id}, {$set: {eviterra_id : eviterra_id}}
+
 exports.query = (origin, destination, extra, cb) ->
-  evUrl = "http://api.eviterra.com/avia/v1/variants.xml?from=#{origin.place.iata}&to=#{destination.place.iata}&date1=#{origin.date}&adults=#{extra.adults}"
+
+  (error, eviterraId) <- async.parallel {
+    origin      : (callback) -> getEviterraId origin.place,       callback
+    destination : (callback) -> getEviterraId destination.place,  callback
+  }
+
+  return cb(error, null) if error
+
+  evUrl = "http://api.eviterra.com/avia/v1/variants.xml?from=#{eviterraId.origin}&to=#{eviterraId.destination}&date1=#{origin.date}&adults=#{extra.adults}"
 
   (error, response, body) <- request evUrl
   console.log "Queried Eviterra serp | #{evUrl} | status #{response.statusCode}"

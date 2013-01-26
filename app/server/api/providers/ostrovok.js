@@ -1,23 +1,59 @@
 (function(){
-  var request;
+  var async, database, request, getOstrovokId;
+  async = require("async");
+  database = require("./../../database");
   request = require("request");
   exports.name = "ostrovok";
+  getOstrovokId = function(place, callback){
+    return exports.autocomplete(place.name_ru + ", " + place.country_name_ru, function(error, result){
+      var ostrovok_id;
+      if (error) {
+        return callback(error, null);
+      }
+      if (result.length === 0) {
+        return callback({
+          'nothing found': 'nothing found'
+        }, null);
+      }
+      ostrovok_id = result[0].oid;
+      callback(null, ostrovok_id);
+      return database.geonames.update({
+        geoname_id: place.geoname_id
+      }, {
+        $set: {
+          ostrovok_id: ostrovok_id
+        }
+      });
+    });
+  };
   exports.query = function(origin, destination, extra, cb){
-    var ostUrl;
-    ostUrl = "http://ostrovok.ru/api/v1/search/page/" + extra.page + "/?region_id=" + destination.place.oid + "&arrivalDate=" + origin.date + "&departureDate=" + destination.date + "&room1_numberOfAdults=" + extra.adults;
-    return request(ostUrl, function(error, response, body){
-      var json, page;
-      console.log("Queried ostrovok serp | " + ostUrl + " | status " + response.statusCode);
+    return async.parallel({
+      origin: function(callback){
+        return getOstrovokId(origin.place, callback);
+      },
+      destination: function(callback){
+        return getOstrovokId(destination.place, callback);
+      }
+    }, function(error, ostrovokId){
+      var ostUrl;
       if (error) {
         return cb(error, null);
       }
-      json = JSON.parse(response.body);
-      page = json._next_page;
-      cb(null, json);
-      if (page) {
-        extra.page = page;
-        exports.query(origin, destination, extra, cb);
-      }
+      ostUrl = "http://ostrovok.ru/api/v1/search/page/" + extra.page + "/?region_id=" + ostrovokId.destination + "&arrivalDate=" + origin.date + "&departureDate=" + destination.date + "&room1_numberOfAdults=" + extra.adults;
+      return request(ostUrl, function(error, response, body){
+        var json, page;
+        console.log("Queried ostrovok serp | " + ostUrl + " | status " + response.statusCode);
+        if (error) {
+          return cb(error, null);
+        }
+        json = JSON.parse(response.body);
+        page = json._next_page;
+        cb(null, json);
+        if (page) {
+          extra.page = page;
+          exports.query(origin, destination, extra, cb);
+        }
+      });
     });
   };
   exports.process = function(json, cb){

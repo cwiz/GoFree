@@ -1,9 +1,30 @@
-request = require "request"
+async     = require "async"
+database  = require "./../../database"
+request   = require "request"
 
 exports.name = "ostrovok"
 
+getOstrovokId = (place, callback) ->
+  #return callback(null, place.ostrovok_id) if place.ostrovok_id
+
+  (error, result) <- exports.autocomplete "#{place.name_ru}, #{place.country_name_ru}"
+  return callback(error,              null)  if error
+  return callback({'nothing found'},  null)  if result.length is 0
+
+  ostrovok_id = result[0].oid
+  callback null, ostrovok_id
+  database.geonames.update {geoname_id : place.geoname_id}, {$set: {ostrovok_id : ostrovok_id}}
+
 exports.query = (origin, destination, extra, cb) ->
-  ostUrl = "http://ostrovok.ru/api/v1/search/page/#{extra.page}/?region_id=#{destination.place.oid}&arrivalDate=#{origin.date}&departureDate=#{destination.date}&room1_numberOfAdults=#{extra.adults}"
+
+  (error, ostrovokId) <- async.parallel {
+    origin      : (callback) -> getOstrovokId origin.place,       callback
+    destination : (callback) -> getOstrovokId destination.place,  callback
+  }
+
+  return cb(error, null) if error
+
+  ostUrl = "http://ostrovok.ru/api/v1/search/page/#{extra.page}/?region_id=#{ostrovokId.destination}&arrivalDate=#{origin.date}&departureDate=#{destination.date}&room1_numberOfAdults=#{extra.adults}"
 
   (error, response, body) <-! request ostUrl
   console.log "Queried ostrovok serp | #{ostUrl} | status #{response.statusCode}"

@@ -55,6 +55,8 @@ importBaseGeonames = (callback)->
 					country_name    : null
 				}
 
+				object.name_lower = object.name.toLowerCase().replace('-', '_').replace(' ', '_')
+
 				valid_geo_ids[object.geoname_id] = true
 
 				return object
@@ -164,12 +166,14 @@ importEnCountries = (callback)->
 					geoname_id 	: parseInt(data[11])
 				}
 
-				return null if not country
+				return null if not country.code
+
+				country.name_lower = country.name.toLowerCase().replace('-', '_').replace(' ', '_')
 					
 				return operation = (total, cb) -> 
 					database.geonames.update(
 						{ country_code: country.code }, 
-						{ $set: { country_name : country.name }},
+						{ $set: { country_name : country.name, country_name_lower : country.name_lower }},
 						true, true,
 						(error, result) ->
 							bar.update(index.toFixed(2)/total);
@@ -199,8 +203,11 @@ syncWithAirports = (callback) ->
 	for airport, number in airports
 		let object = airport, number = number
 			operation = (cb) ->
+				country = object.country.toLowerCase().replace('-', '_').replace(' ', '_')
+				city	= object.city.toLowerCase().replace('-', '_').replace(' ', '_')
+
 				database.geonames.update(
-					{ country_name: object.country, name: object.city },
+					{ country_name_lower: country, name_lower: city },
 					{ $set: { iata: object.iata } },
 					(error, result) ->
 						bar.update(number.toFixed(2)/airports.length);
@@ -216,10 +223,10 @@ syncWithAirports = (callback) ->
 setTimeout( (
 	->
 		async.series([
-			(callback) -> database.geonames.drop(callback), 
-			importBaseGeonames, 
-			importRuGeonames, 
-			importRuCountries, 
+			# (callback) -> database.geonames.drop(callback), 
+			# importBaseGeonames, 
+			# importRuGeonames, 
+			# importRuCountries, 
 			importEnCountries, 
 			syncWithAirports,
 			(callback) -> process.exit()
