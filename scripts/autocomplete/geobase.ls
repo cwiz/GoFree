@@ -10,7 +10,7 @@ importFile = (filename, singleOperation, collectionOperation, callback)->
 
 	console.log "Importing: #{filename}"
 
-	csv().from.path filename, 
+	csv().from.path __dirname + filename, 
 		delimiter	: "\t"
 		columns		: null
 		escape		: null
@@ -35,7 +35,7 @@ valid_geo_ids = {}
 
 importBaseGeonames = (callback)->
 	importFile(
-		"./cities1000.txt",  
+		"/cities1000.txt",  
 		(
 			(data, index) ->
 				object = {
@@ -75,7 +75,7 @@ importRuGeonames = (callback)->
 	bar = progressBar.create process.stdout
 
 	importFile(
-		"./ruNames.txt",  
+		"/ruNames.txt",  
 		(
 			(data, index) ->
 				geoname = {
@@ -98,7 +98,7 @@ importRuGeonames = (callback)->
 							}
 						},
 						(error, result) ->
-							bar.update(Math.min(index.toFixed(2)/total, 1));
+							bar.update(Math.min(index.toFixed(2)/total, 1))
 							cb error, result
 					)
 		),
@@ -119,7 +119,7 @@ importRuCountries = (callback)->
 	bar = progressBar.create process.stdout
 
 	importFile(
-		"./countryCodes-ru.txt",  
+		"/countryCodes-ru.txt",  
 		(
 			(data, index) ->
 				country = {
@@ -157,7 +157,7 @@ importEnCountries = (callback)->
 	bar = progressBar.create process.stdout
 
 	importFile(
-		"./countryCodes-en.txt",  
+		"/countryCodes-en.txt",  
 		(
 			(data, index) ->
 				country = {
@@ -223,10 +223,10 @@ syncWithAirports = (callback) ->
 setTimeout( (
 	->
 		async.series([
-			# (callback) -> database.geonames.drop(callback), 
-			# importBaseGeonames, 
-			# importRuGeonames, 
-			# importRuCountries, 
+			(callback) -> database.geonames.drop(callback), 
+			importBaseGeonames, 
+			importRuGeonames, 
+			importRuCountries, 
 			importEnCountries, 
 			syncWithAirports,
 			(callback) -> process.exit()

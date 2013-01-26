@@ -26,6 +26,12 @@ task "db:populateAirports", 'populate airports', ->
 	airports.stdout.on 'data', console.log
 	airports.stderr.on 'data', console.log
 
+task "db:populateGeonames", 'populate geonames', ->
+	airports = exec "livescript scripts/autocomplete/geobase.ls"
+
+	airports.stdout.on 'data', console.log
+	airports.stderr.on 'data', console.log
+
 task "devserver", 'development server w/ autoreload', ->
 	exec "npm install ."
 
