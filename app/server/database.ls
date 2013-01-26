@@ -4,13 +4,24 @@ Mongolian = require "mongolian"
 server        			= new Mongolian()
 db            			= server.db "ostroterra"
 
-
-# Collections
+# Airports
 exports.airports 		= db.collection 'airports'
-exports.suggest 		= db.collection 'suggest'
-exports.search 			= db.collection 'search'
+exports.airports.ensureIndex 	{ iata		: 1 }, { unique: true }
 
-# Indices
-exports.airports.ensureIndex 	{ iata		: 1 }
-exports.suggest.ensureIndex 	{ query		: 1 }
-exports.search.ensureIndex 		{ hash		: 1 }
+# Suggest
+exports.suggest 		= db.collection 'suggest'
+exports.suggest.ensureIndex 	{ query		: 1 }, { unique: true }
+
+# Search
+exports.search 			= db.collection 'search'
+exports.search.ensureIndex 		{ hash		: 1 }, { unique: true }
+
+# Geonames
+exports.geonames		= db.collection 'geonames'
+exports.geonames.ensureIndex 	{ geoname_id: 1 }, { unique: true }
+exports.geonames.ensureIndex 	{ name_ru_lower: 1 }
+
+# Countries
+exports.countries		= db.collection 'countries'
+exports.countries.ensureIndex 	{ geoname_id: 1 }, 	{ unique: true }
+exports.countries.ensureIndex 	{ code: 1 }, 		{ unique: true }

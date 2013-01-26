@@ -20,6 +20,7 @@
       "socket.io-client":     "*",
       "underscore":           "*",
       "xml2js":               "0.2.2",
-      "MD5":                  "1.0.3"
+      "MD5":                  "1.0.3",
+      "org/progress":         "*"
   }
 }

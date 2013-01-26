@@ -99,7 +99,7 @@ SearchTripsStop = Backbone.View.extend
     place = @suggestions[+e.target.getAttribute('data-index')]
 
     @model.set('place', place)
-    @placeInput.val(place.name)
+    @placeInput.val("#{place.name_ru}, #{place.country_name_ru}")
 
     @clearSuggest()
 
@@ -107,7 +107,7 @@ SearchTripsStop = Backbone.View.extend
     @suggestions = resp.value
     
     list = for o, i in @suggestions
-      '<li class="v-s-t-s-p-suggestion" data-index="' + i + '"">' + o.name + '</li>'
+      '<li class="v-s-t-s-p-suggestion" data-index="' + i + '"">' + "#{o.name_ru}, #{o.country_name_ru}" + '</li>'
 
     @suggestEl.html(list.join(''))
 
