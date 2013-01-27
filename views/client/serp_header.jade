@@ -1,17 +1,17 @@
-.serp-header.l-wrap
-  ul.s-h-tripparams
+.p-s-header.l-wrap
+  ul.p-s-h-tripparams
     - for (var i = 0, l = trips.length; i < l; i++)
       - if (i + 1 === l)
-        li.s-h-tripparamsitem.flight.last
+        li.p-s-h-tripparamsitem.flight.last
           strong #{trips[i].place.name} &ndash; #{trips[0].place.name}
           small #{app.utils.humanizeDate(trips[i].date)}
 
       - else
-        li.s-h-tripparamsitem.flight
+        li.p-s-h-tripparamsitem.flight
           strong #{trips[i].place.name} &ndash; #{trips[i + 1].place.name}
           small #{app.utils.humanizeDate(trips[i].date)}
-        li.s-h-tripparamsitem.hotel
+        li.p-s-h-tripparamsitem.hotel
           strong #{trips[i + 1].place.name}
           small #{app.utils.humanizeDate(trips[i].date)} &ndash; #{app.utils.humanizeDate(trips[i + 1].date)}
 
-  span.button.white.small.s-h-changetripparams Изменить
+  span.button.white.small.p-s-h-changetripparams Изменить

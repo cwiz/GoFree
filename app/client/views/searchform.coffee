@@ -24,6 +24,7 @@ SearchForm = Backbone.View.extend
 
     if @collection.length
       @initStops()
+      @resetDatesLimits()
     else
       @populateCollection()
 
@@ -55,6 +56,12 @@ SearchForm = Backbone.View.extend
 
   initStops: () ->
     iterator = _.bind(@initStop, @)
+    @collection.each(iterator)
+
+  resetDatesLimits: () ->
+    iterator = (model) =>
+      @dateChanged(model, model.get('date'))
+
     @collection.each(iterator)
 
   initStop: (item) ->

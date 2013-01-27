@@ -9,7 +9,7 @@ SERP = Backbone.View.extend
     @searchPart = @$el.find('#part-search')
     @serpPart = @$el.find('#part-serp')
 
-    @serpHeader = @serpPart.find('.serp-header-wrap')
+    @serpHeader = @serpPart.find('.p-s-header-wrap')
 
     app.dom.win.on('resize', _.bind(@updatePageHeight, @))
 
@@ -33,8 +33,14 @@ SERP = Backbone.View.extend
 
     app.log('[app.views.SERP]: initialize')
 
+  events:
+    'click .p-s-h-changetripparams'      : 'changeSearchParams'
+
   updatePageHeight: ->
     @serpPart.css('min-height': app.dom.win.height())
+
+  changeSearchParams: ->
+    app.router.navigate('', trigger: true)
 
   progress: (data) ->
     return unless data.hash == @hash
@@ -42,7 +48,6 @@ SERP = Backbone.View.extend
     app.log('[app.views.SERP]: progress ' + Math.floor(@progress * 100) + '%')
 
   paramsReady: ->
-    console.log(@search.serialize())
     @serpHeader.html(app.templates.serp_header(@search.serialize()))
 
   collectionReady: ->
