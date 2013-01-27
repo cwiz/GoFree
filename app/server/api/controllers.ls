@@ -88,7 +88,7 @@ exports.image = (req, res) ->
 
   flickrKey     = "7925109a48c26fe53555687f9d46a076"
   flickrSecret  = "c936db59c720b4d5"
-  flickrUrl     = "http://api.flickr.com/services/rest/?per_page=10&sort=relevance&format=json&content_type=1&nojsoncallback=1&method=flickr.photos.search&api_key=#{flickrKey}&text=#{query}"
+  flickrUrl     = "http://api.flickr.com/services/rest/?per_page=50&sort=relevance&format=json&content_type=1&nojsoncallback=1&method=flickr.photos.search&api_key=#{flickrKey}&text=#{query}"
   
   (error, response, body) <- request flickrUrl
   console.log ">>> queried flickr search | #{flickrUrl} | status #{response.statusCode}"
