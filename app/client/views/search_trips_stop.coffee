@@ -57,7 +57,7 @@ SearchTripsStop = Backbone.View.extend
       when 38, 40
         app.e(e)
 
-        if not @suggestSelected
+        if not @suggestSelected?.length
           @suggestSelected = @suggestEl.find(if e.keyCode == 38 then 'li:last-child' else 'li:first-child')
           @suggestSelected.addClass('selected')
         else
@@ -74,7 +74,7 @@ SearchTripsStop = Backbone.View.extend
       when 13
         app.e(e)
 
-        if @suggestSelected
+        if @suggestSelected?.length
           place = @suggestions[+@suggestSelected.data('index')]
 
           @model.set('place', place)
