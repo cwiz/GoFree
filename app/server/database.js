@@ -30,6 +30,9 @@
   exports.geonames.ensureIndex({
     name_ru_lower: 1
   });
+  exports.geonames.ensureIndex({
+    name_ru: 1
+  });
   exports.countries = db.collection('countries');
   exports.countries.ensureIndex({
     geoname_id: 1

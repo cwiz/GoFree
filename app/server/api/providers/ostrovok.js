@@ -51,7 +51,7 @@
         cb(null, json);
         if (page) {
           extra.page = page;
-          exports.query(origin, destination, extra, cb);
+          return exports.query(origin, destination, extra, cb);
         }
       });
     });
@@ -105,7 +105,7 @@
   exports.search = function(origin, destination, extra, cb){
     return exports.query(origin, destination, extra, function(error, hotelResult){
       if (error) {
-        cb(error, null);
+        return cb(error, null);
       }
       return exports.process(hotelResult, function(error, hotels){
         if (error) {

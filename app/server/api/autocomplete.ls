@@ -13,9 +13,13 @@ exports.autocomplete = (req, res) ->
 	regexp_query = new RegExp("^" + query);
 	
 	database.geonames.find {
-		name_ru_lower	: regexp_query, 
+		$or : [
+			{ name_ru_lower	: regexp_query },
+			{ name_lower	: regexp_query },
+		] 
 		population		: { $gte: 10000 },
 		iata			: { $ne: null },
+		name_ru 		: { $ne: null },
 	}
 
 	.limit(10)

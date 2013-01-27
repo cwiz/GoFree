@@ -26,7 +26,7 @@ exports.query = (origin, destination, extra, cb) ->
 
   ostUrl = "http://ostrovok.ru/api/v1/search/page/#{extra.page}/?region_id=#{ostrovokId.destination}&arrivalDate=#{origin.date}&departureDate=#{destination.date}&room1_numberOfAdults=#{extra.adults}"
 
-  (error, response, body) <-! request ostUrl
+  (error, response, body) <- request ostUrl
   console.log "Queried ostrovok serp | #{ostUrl} | status #{response.statusCode}"
   return cb(error, null) if error
 
@@ -81,7 +81,7 @@ exports.process = (json, cb) ->
 
 exports.search = (origin, destination, extra, cb) ->
   error, hotelResult <- exports.query origin, destination, extra
-  cb(error, null) if error
+  return cb(error, null) if error
   
   error, hotels <- exports.process hotelResult 
   return cb(error, null) if error
