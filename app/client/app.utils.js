@@ -334,14 +334,29 @@ app.utils.getWeeksNum = function(year, month) {
 app.utils.getDaysNum = function(year, month) { // nMonth is 0 thru 11
     return 32 - new Date(year, month, 32).getDate();
 };
-app.utils.humanizeDate = function(date) {
+app.utils.extractDate = function(date) {
     if (typeof date === 'number') {
         date = new Date(date);
     }
     if (typeof date === 'string') {
         date = app.utils.YMDToDate(date);
     }
+
+    return date;
+};
+app.utils.humanizeDate = function(date) {
+    date = app.utils.extractDate(date);
     return date.getDate() + ' ' + app.utils.monthLabelsAlt[date.getMonth()];
+};
+app.utils.humanizeDatesSpan = function(date1, date2) {
+    date1 = app.utils.extractDate(date1);
+    date2 = app.utils.extractDate(date2);
+
+    if (date1.getMonth() === date2.getMonth()) {
+        return date1.getDate() + ' &ndash; ' + date2.getDate() + ' ' + app.utils.monthLabelsAlt[date2.getMonth()];
+    }
+
+    return date1.getDate() + ' ' + app.utils.monthLabelsAlt[date1.getMonth()] + ' &ndash; ' + date2.getDate() + ' ' + app.utils.monthLabelsAlt[date2.getMonth()];
 };
 app.utils.getDaysDiff = function(date1, date2) {
     return Math.abs((+date1 - +date2) / (1000 * 60 * 60 * 24));

@@ -11,6 +11,8 @@ SERP = Backbone.View.extend
 
     @serpHeader = @serpPart.find('.p-s-header-wrap')
 
+    @serpTrips = null
+
     app.dom.win.on('resize', _.bind(@updatePageHeight, @))
 
     @search.setHash(@hash).observe()
@@ -51,7 +53,10 @@ SERP = Backbone.View.extend
     @serpHeader.html(app.templates.serp_header(@search.serialize()))
 
   collectionReady: ->
-    
+    @serpTrips = new app.views.SERPTrips(
+      el: '.p-s-trips-wrap'
+      collection: @collection
+      )
 
   showSERP: ->
     height = app.dom.win.height()

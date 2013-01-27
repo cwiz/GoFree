@@ -1,0 +1,20 @@
+//- .v-serp-trip
+.v-s-t-bg-wrap
+  .v-s-t-bg-container
+    img.v-s-t-bg-img(src="/img/views/searchform.jpg")
+
+.v-serp-trip-content
+  header.v-s-t-header
+    .v-s-t-meta
+      h2.v-s-t-places #{origin.place.name_ru} &ndash; #{destination.place.name_ru}
+      small.v-s-t-dates #{app.utils.humanizeDatesSpan(origin.date, destination.date)}
+
+    .v-s-t-results
+      .v-s-t-r-flight Перелет:
+        span.v-s-t-r-f-value
+        span.v-s-t-r-f-default не выбран
+
+      .v-s-t-r-hotel Отель:
+        span.v-s-t-r-h-value
+        span.v-s-t-r-h-default не выбран
+

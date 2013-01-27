@@ -1,0 +1,100 @@
+.v-serp-trip {
+  position: relative;
+
+  color: #fff;
+
+  .helper_noselect;
+
+  &.collapsed {
+    .v-serp-trip-content {
+      opacity: .7;
+    }
+  }
+
+  .v-s-t-bg-wrap {
+    width: 100%;
+    height: 100%;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    overflow: hidden;
+
+    .v-s-t-bg-container {
+      width: 200%;
+      height: 200%;
+
+      position: absolute;
+      left: -50%;
+      top: -50%;
+
+      background: #2c3d5b;
+
+      .v-s-t-bg-img {
+        min-width: 50%;
+        min-height: 50%;
+
+        margin: auto; 
+
+        position: absolute; 
+        left: 0; 
+        top: 0; 
+        right: 0; 
+        bottom: 0; 
+      }
+    }
+  }
+
+  .v-serp-trip-content {
+    position: relative;
+  }
+
+  .v-s-t-header {
+    padding: 15px 0;
+
+    text-align: center;
+
+    .v-s-t-meta {
+      padding-bottom: 10px;
+      display: inline-block;
+
+      position: relative;
+
+      background: url('/img/views/serp_trip.png') no-repeat center bottom;
+
+      .v-s-t-places {
+        font-weight: 600;
+        font-size: 46px;
+        line-height: 52px;
+      }
+      .v-s-t-dates {
+        width: 100%;
+        margin-top: -12px;
+
+        position: absolute;
+        left: 0;
+        top: 100%;
+
+        font-weight: 400;
+        font-size: 12px;
+      }
+    }
+
+    .v-s-t-results {
+      width: 250px;
+
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+  }
+
+
+
+
+
+
+
+
+}
