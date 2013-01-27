@@ -26,8 +26,8 @@ task "db:populateAirports", 'populate airports', ->
 	airports.stdout.on 'data', console.log
 	airports.stderr.on 'data', console.log
 
-task "db:populateGeonames", 'populate geonames', ->
-	airports = exec "livescript scripts/autocomplete/geobase.ls"
+task "db:restoreGeonames", 'populate geonames', ->
+	airports = exec "mongorestore --db ostroterra --verbose --collection geonames #{__dirname}/scripts/autocomplete/geonames/ostroterra/geonames.bson"
 
 	airports.stdout.on 'data', console.log
 	airports.stderr.on 'data', console.log
