@@ -1,0 +1,78 @@
+.serp-header {
+  .cf;
+  padding: 15px 0;
+
+  .helper_noselect;
+
+  .s-h-tripparams {
+    .cf;
+    float: left;
+
+    .s-h-tripparamsitem {
+      margin-right: 10px;
+      padding-left: 20px;
+      padding-right: 30px;
+
+      display: inline-block;
+
+      position: relative;
+      float: left;
+
+      color: #565d61;
+      line-height: 14px;
+
+      &:before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+      }
+
+      &:after {
+        margin-top: -10px;
+        content: '→';
+        position: absolute;
+        right: 0;
+        top: 50%;
+
+        font-weight: 400;
+        font-size: 16px;
+
+        color: #919191;
+      }
+
+      strong {
+        display: block;
+        font-weight: 400;
+        font-size: 13px;
+      }
+      small {
+        font-weight: 300;
+        font-size: 11px;
+      }
+
+      &.flight:before {
+        width: 17px;
+        height: 16px;
+        background: url('/img/sprites/sprite_common.png') no-repeat 0 0;
+      }
+      &.hotel:before {
+        width: 16px;
+        height: 16px;
+        background: url('/img/sprites/sprite_common.png') no-repeat -19px 0;
+      }
+
+      &.last {
+        margin-right: 0;
+
+        &:after {
+          display: none;
+        }
+      }
+    }
+  }
+
+  .s-h-changetripparams {
+    float: right;
+  }
+}
