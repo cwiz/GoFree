@@ -20,6 +20,7 @@ exports.search.ensureIndex 		{ hash		: 1 }, { unique: true }
 exports.geonames		= db.collection 'geonames'
 exports.geonames.ensureIndex 	{ geoname_id: 1 }, { unique: true }
 exports.geonames.ensureIndex 	{ name_ru_lower: 1 }
+exports.geonames.ensureIndex 	{ name_ru: 1 }
 
 # Countries
 exports.countries		= db.collection 'countries'
