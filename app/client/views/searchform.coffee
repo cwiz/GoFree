@@ -88,7 +88,7 @@ SearchForm = Backbone.View.extend
     @addStopEl.addClass('disabled')
     @canAddStop = false
 
-  dateChanged: (model, date, prevValue) ->
+  dateChanged: (model, date) ->
     index = @collection.indexOf(model)
     prev = @collection.at(index - 1)
     next = @collection.at(index + 1)
@@ -99,7 +99,7 @@ SearchForm = Backbone.View.extend
     dateObj = app.utils.YMDToDate(date)
     if (+dateObj > +@maxDate) then @maxDate = dateObj
 
-    if not prevValue
+    if not model.previous('date')
       @addStopEl.removeClass('disabled')
       @canAddStop = true
 
