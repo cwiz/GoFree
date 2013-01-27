@@ -338,6 +338,9 @@ app.utils.humanizeDate = function(date) {
     if (typeof date === 'number') {
         date = new Date(date);
     }
+    if (typeof date === 'string') {
+        date = app.utils.YMDToDate(date);
+    }
     return date.getDate() + ' ' + app.utils.monthLabelsAlt[date.getMonth()];
 };
 app.utils.getDaysDiff = function(date1, date2) {

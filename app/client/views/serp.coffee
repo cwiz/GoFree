@@ -9,6 +9,8 @@ SERP = Backbone.View.extend
     @searchPart = @$el.find('#part-search')
     @serpPart = @$el.find('#part-serp')
 
+    @serpHeader = @serpPart.find('.serp-header-wrap')
+
     app.dom.win.on('resize', _.bind(@updatePageHeight, @))
 
     @search.setHash(@hash).observe()
@@ -40,10 +42,11 @@ SERP = Backbone.View.extend
     app.log('[app.views.SERP]: progress ' + Math.floor(@progress * 100) + '%')
 
   paramsReady: ->
-    @serpPart.html('LOADING SHITS!')
+    console.log(@search.serialize())
+    @serpHeader.html(app.templates.serp_header(@search.serialize()))
 
   collectionReady: ->
-    @serpPart.html('LOADING SHITS!!!')
+    
 
   showSERP: ->
     height = app.dom.win.height()

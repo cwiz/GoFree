@@ -1,5 +1,6 @@
 SERPTrips = Backbone.Collection.extend
   _hash: null
+  _observing: false
 
   model: app.models.SERPTrip
   comparator: 'price'
@@ -10,6 +11,7 @@ SERPTrips = Backbone.Collection.extend
     app.log('[app.collections.SERPTrips]: initialize')
 
   observe: ->
+    @_observing = true
     app.socket.on('search_started', _.bind(@fetched, @))
 
   setHash: (@_hash) -> @
@@ -29,6 +31,9 @@ SERPTrips = Backbone.Collection.extend
 
     unless model.get('flights')?
       model.set('flights', new app.collections.SERPTripFlights())
+
+    if @_observing
+      model.observe()
 
   _dump: (json) ->
     for item in json
