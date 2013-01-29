@@ -78,6 +78,7 @@ exports.search = (socket) ->
 				error     	: error
 				items   	: results
 				signature 	: signature
+				progress	: if items?.complete then 1 else 0
 			}
 
 			if items?.complete or error
