@@ -5,6 +5,9 @@
   request = require("request");
   exports.name = "ostrovok";
   getOstrovokId = function(place, callback){
+    if (place.ostrovok_id) {
+      return callback(null, place.ostrovok_id);
+    }
     return exports.autocomplete(place.name_ru + ", " + place.country_name_ru, function(error, result){
       var ostrovok_id;
       if (error) {
@@ -40,6 +43,7 @@
         return cb(error, null);
       }
       ostUrl = "http://ostrovok.ru/api/v1/search/page/" + extra.page + "/?region_id=" + ostrovokId.destination + "&arrivalDate=" + origin.date + "&departureDate=" + destination.date + "&room1_numberOfAdults=" + extra.adults;
+      console.log("Querying ostrovok serp | " + ostUrl);
       return request(ostUrl, function(error, response, body){
         var json, page;
         console.log("Queried ostrovok serp | " + ostUrl + " | status " + response.statusCode);
@@ -57,7 +61,7 @@
     });
   };
   exports.process = function(json, cb){
-    var hotels, rates, ref$, newHotels, i$, len$, hotel, rating, count, price, stars, newHotel;
+    var hotels, ref$, rates, newHotels, i$, len$, hotel, rating, count, price, stars, newHotel;
     console.log("ostrovok.process");
     if (!json || json.hotels == null) {
       console.log("ostrovok.process");
@@ -91,8 +95,9 @@
           stars: stars,
           price: price,
           rating: rating,
+          photo: null,
           url: "http://ostrovok.ru" + hotel.url + "&partner_slug=ostroterra",
-          provider: "ostrovok"
+          provider: 'ostrovok'
         };
         newHotels.push(newHotel);
       }

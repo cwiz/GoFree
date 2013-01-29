@@ -10,6 +10,9 @@
   moment.lang('ru');
   exports.name = "eviterra";
   getEviterraId = function(place, callback){
+    if (place.eviterra_id) {
+      return callback(null, place.eviterra_id);
+    }
     return exports.autocomplete(place.name_ru + "", function(error, result){
       var eviterra_id;
       if (error) {
@@ -111,13 +114,13 @@
           flightTimeSpan = 1;
         }
         newFlight = {
+          price: parseInt(variant.price),
           arrival: arrivalDestinationDate.format('LL'),
           departure: departureOriginDate.format('LL'),
-          price: parseInt(variant.price),
-          timeSpan: flightTimeSpan,
-          transferNumber: variant.transferNumber - 1,
-          url: variant.url + "ostroterra",
-          provider: "eviterra"
+          duration: flightTimeSpan,
+          stops: variant.transferNumber - 1,
+          url: variant.url + 'ostroterra',
+          provider: 'eviterra'
         };
         newFlights.push(newFlight);
       }

@@ -5,7 +5,7 @@ request   = require "request"
 exports.name = "ostrovok"
 
 getOstrovokId = (place, callback) ->
-  #return callback(null, place.ostrovok_id) if place.ostrovok_id
+  return callback(null, place.ostrovok_id) if place.ostrovok_id
 
   (error, result) <- exports.autocomplete "#{place.name_ru}, #{place.country_name_ru}"
   return callback(error,              null)  if error
@@ -26,6 +26,7 @@ exports.query = (origin, destination, extra, cb) ->
 
   ostUrl = "http://ostrovok.ru/api/v1/search/page/#{extra.page}/?region_id=#{ostrovokId.destination}&arrivalDate=#{origin.date}&departureDate=#{destination.date}&room1_numberOfAdults=#{extra.adults}"
 
+  console.log "Querying ostrovok serp | #{ostUrl}"
   (error, response, body) <- request ostUrl
   console.log "Queried ostrovok serp | #{ostUrl} | status #{response.statusCode}"
   return cb(error, null) if error
@@ -65,12 +66,13 @@ exports.process = (json, cb) ->
     stars = (Math.ceil(hotel.star_rating/10.0) + 1) if hotel.star_rating
     
     newHotel =
-      name:     hotel.name
-      stars:    stars
-      price:    price
-      rating:   rating
-      url:      "http://ostrovok.ru#{hotel.url}&partner_slug=ostroterra"
-      provider: "ostrovok"
+      name    : hotel.name
+      stars   : stars
+      price   : price
+      rating  : rating
+      photo   : null
+      url     : "http://ostrovok.ru#{hotel.url}&partner_slug=ostroterra"
+      provider: \ostrovok
     
     newHotels.push newHotel
 
