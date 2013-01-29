@@ -85,7 +85,8 @@
             socket.emit(eventName, {
               error: error,
               items: results,
-              signature: signature
+              signature: signature,
+              progress: items != null && items.complete ? 1 : 0
             });
             if ((items != null && items.complete) || error) {
               signatures[signature] = true;
