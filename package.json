@@ -12,6 +12,7 @@
       "jade":                 "0.27.7", 
       "JSV":                  "*",
       "livescript":           "0.0.1",
+      "log4js":               "*",
       "markdown-js":          "0.0.3",
       "MD5":                  "1.0.3",
       "moment":               "1.7.2",

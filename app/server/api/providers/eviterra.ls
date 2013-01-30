@@ -13,7 +13,7 @@ moment.lang('ru')
 exports.name = "eviterra"
 
 getEviterraId = (place, callback) ->
-  #return callback(null, place.eviterra_id) if place.eviterra_id
+  return callback(null, place.eviterra_id) if place.eviterra_id
 
   (error, result) <- exports.autocomplete "#{place.name_ru}"
   return callback(error,              null)  if error
@@ -89,13 +89,15 @@ exports.process = (flights, cb) ->
     flightTimeSpan          = 1 if (flightTimeSpan is 0)
 
     newFlight = 
-      arrival:        arrivalDestinationDate.format('LL')
-      departure:      departureOriginDate.format('LL')
-      price:          parseInt(variant.price)
-      timeSpan:       flightTimeSpan
-      transferNumber: variant.transferNumber - 1
-      url:            variant.url + "ostroterra"
-      provider:       "eviterra"
+      price     : parseInt variant.price
+      
+      arrival   : arrivalDestinationDate.format \LL
+      departure : departureOriginDate.format \LL
+      duration  : flightTimeSpan
+      stops     : variant.transferNumber - 1
+      
+      url       : variant.url + \ostroterra
+      provider  : \eviterra
 
     newFlights.push newFlight
 
@@ -116,7 +118,7 @@ exports.search = (origin, destination, extra, cb) ->
 exports.autocomplete = (query, callback) ->
   eviterraUrl = "https://eviterra.com/complete.json?val=#{query}"
   (error, response, body) <-! request eviterraUrl
-  console.log "Queried eviterra autocomplete | #{eviterraUrl} | status #{response.statusCode}"
+  console.log "Queried eviterra autocomplete | #{eviterraUrl} | error: #{error} | status: #{response?.statusCode}"
   return callback(error, null) if error
 
   json = JSON.parse(response.body)  

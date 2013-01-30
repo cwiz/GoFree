@@ -104,10 +104,10 @@
     query = encodeURIComponent(req.params.query);
     flickrKey = "7925109a48c26fe53555687f9d46a076";
     flickrSecret = "c936db59c720b4d5";
-    flickrUrl = "http://api.flickr.com/services/rest/?per_page=50&sort=relevance&format=json&content_type=1&nojsoncallback=1&method=flickr.photos.search&api_key=" + flickrKey + "&text=" + query;
+    flickrUrl = "http://api.flickr.com/services/rest/?per_page=5&sort=relevance&format=json&content_type=1&nojsoncallback=1&method=flickr.photos.search&api_key=" + flickrKey + "&text=" + query;
     return request(flickrUrl, function(error, response, body){
       var json, randomIndex, photo;
-      console.log(">>> queried flickr search | " + flickrUrl + " | status " + response.statusCode);
+      console.log(">>> queried flickr search | " + flickrUrl + " | error: " + error + " | status " + (response != null ? response.statusCode : void 8));
       if (error || !(response.statusCode === 200)) {
         return;
       }
