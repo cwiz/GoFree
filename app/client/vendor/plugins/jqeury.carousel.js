@@ -6,14 +6,14 @@
     var Carousel = function(settings) {
         this.options = $.extend({
             items: 3,
-            duration: 300
+            duration: 300,
+            setContainerSize: true
         }, settings);
 
         this.els = {};
         this.els.block = $(this.options.el);
 
         this.init();
-        this.logic();
     };
 
     Carousel.prototype.init = function() {
@@ -27,6 +27,7 @@
         this.els.list = this.els.block.find('.m-c-list');
 
         this.reset();
+        this.logic();
     };
     Carousel.prototype.logic = function() {
         var that = this;
@@ -47,29 +48,23 @@
     };
     Carousel.prototype.shiftLeft = function() {
         var newShift = this.currentShift - this.options.items;
-
-        if (newShift < 0) return;
+        // if (newShift < 0) return;
 
         this._setShift(newShift);
 
-        if (newShift === 0) {
-            this.els.prev.addClass('disabled');
-        }
-        if (this.itemsNum > this.options.items && this.els.next.hasClass('disabled')) {
-            this.els.next.removeClass('disabled');
-        }
+        this.els.next.removeClass('disabled');
+        newShift || this.els.prev.addClass('disabled');
     };
     Carousel.prototype.shiftRight = function() {
         var newShift = this.currentShift + this.options.items;
-
-        if (newShift >= this.itemsNum) return;
+        // if (newShift >= this.itemsNum) return;
 
         this._setShift(newShift);
 
+        this.els.prev.removeClass('disabled');
         if (newShift + this.options.items >= this.itemsNum) {
             this.els.next.addClass('disabled');
         }
-        this.els.prev.removeClass('disabled');
     };
     Carousel.prototype._setShift = function(shift) {
         this.els.list.animate({ left: -((this.itemWidth + this.itemMargin) * shift) }, this.options.duration);
@@ -87,15 +82,20 @@
         this.itemsNum = this.els.items.length;
         this.currentShift = 0;
 
-        this.els.container.css({
-            width: (this.itemWidth * this.options.items) + (this.itemMargin * (this.options.items - 1)),
-            height: item.height()
-        });
-        this.els.list.css({ width: (this.itemWidth + this.itemMargin) * this.itemsNum });
-
+        if (this.options.setContainerSize) {
+            this.els.container.css({
+                width: (this.itemWidth * this.options.items) + (this.itemMargin * (this.options.items - 1)),
+                height: item.height()
+            });
+        }
+        
+        this.els.list.css({ width: (this.itemWidth + this.itemMargin) * this.itemsNum, left: 0 });
         this.els.count.html('0/' + this.itemsNum);
 
-        if (this.itemsNum <= this.options.items) this.els.next.addClass('disabled');
+        this.els.prev.addClass('disabled');
+        (this.itemsNum <= this.options.items) && this.els.next.addClass('disabled');
+
+        return this;
     };
 
     $.fn.m_carousel = function(settings) {
@@ -113,5 +113,3 @@
         return instances;
     };
 })(jQuery);
-
-$(document).ready(function() { $('.m-carousel').m_carousel(); });
