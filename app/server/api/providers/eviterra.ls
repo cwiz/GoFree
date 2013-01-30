@@ -118,7 +118,7 @@ exports.search = (origin, destination, extra, cb) ->
 exports.autocomplete = (query, callback) ->
   eviterraUrl = "https://eviterra.com/complete.json?val=#{query}"
   (error, response, body) <-! request eviterraUrl
-  console.log "Queried eviterra autocomplete | #{eviterraUrl} | status #{response.statusCode}"
+  console.log "Queried eviterra autocomplete | #{eviterraUrl} | error: #{error} | status: #{response?.statusCode}"
   return callback(error, null) if error
 
   json = JSON.parse(response.body)  

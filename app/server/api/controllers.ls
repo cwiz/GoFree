@@ -91,7 +91,7 @@ exports.image = (req, res) ->
   flickrUrl     = "http://api.flickr.com/services/rest/?per_page=5&sort=relevance&format=json&content_type=1&nojsoncallback=1&method=flickr.photos.search&api_key=#{flickrKey}&text=#{query}"
   
   (error, response, body) <- request flickrUrl
-  console.log ">>> queried flickr search | #{flickrUrl} | status #{response.statusCode}"
+  console.log ">>> queried flickr search | #{flickrUrl} | error: #{error} | status #{response?.statusCode}"
   return if error or not(response.statusCode is 200)
   
   json          = JSON.parse(response.body)

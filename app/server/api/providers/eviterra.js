@@ -154,7 +154,7 @@
     eviterraUrl = "https://eviterra.com/complete.json?val=" + query;
     return request(eviterraUrl, function(error, response, body){
       var json, finalJson, i$, ref$, len$, item, name, country, iata, displayName;
-      console.log("Queried eviterra autocomplete | " + eviterraUrl + " | status " + response.statusCode);
+      console.log("Queried eviterra autocomplete | " + eviterraUrl + " | error: " + error + " | status: " + (response != null ? response.statusCode : void 8));
       if (error) {
         return callback(error, null);
       }
