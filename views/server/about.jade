@@ -3,42 +3,22 @@ extends layout
 block content
   #page-sandbox
 
-    .block
-      a.button.gray.tiny Добавить
+    .m-carousel
+      span.m-c-prev.m-c-control.disabled &lt;
+      span.m-c-next.m-c-control &gt;
 
-    .block
-      button.button.orange Добавить
-    
-    .block
-      button.button.orange(disabled) Добавить
+      span.m-c-count 0/0
 
-    .block
-      a.button.orange Добавить
-    
-    .block
-      a.button.orange.disabled Добавить
+      .m-c-coutainer
+        ul.m-c-list
+          li.m-c-l-item 1
+          li.m-c-l-item 2
+          li.m-c-l-item 3
+          li.m-c-l-item 4
+          li.m-c-l-item 5
+          li.m-c-l-item 6
+          li.m-c-l-item 7
+          li.m-c-l-item 8
+          li.m-c-l-item 9
 
-    .block
-      button.button.green Добавить
-      
-    .block
-      button.button.green(disabled) Добавить
-
-    .block
-      a.button.green Добавить
-      
-    .block
-      a.button.green.disabled Добавить
-
-    .block
-      input(type="text", placeholder="Пизда")
-
-    .block
-      input(type="text", placeholder="Пизда", disabled)
-
-    .block
-      textarea(placeholder="Cheeryo")
-
-    .block
-      textarea(placeholder="Cheeryo", disabled)
 

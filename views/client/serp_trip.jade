@@ -3,18 +3,26 @@
   .v-s-t-bg-container
     img.v-s-t-bg-img(src="/img/views/searchform.jpg")
 
-.v-serp-trip-content
+.v-serp-trip-content.l-wrap
   header.v-s-t-header
     .v-s-t-meta
       h2.v-s-t-places #{origin.place.name_ru} &ndash; #{destination.place.name_ru}
       small.v-s-t-dates #{app.utils.humanizeDatesSpan(origin.date, destination.date)}
 
     .v-s-t-results
-      .v-s-t-r-flight Перелет:
-        span.v-s-t-r-f-value
-        span.v-s-t-r-f-default не выбран
+      .v-s-t-r-flight
+        span.v-s-t-r-label Перелет:
+        span.v-s-t-r-value
+          span.v-s-t-r-value-num
+          | руб
+        span.v-s-t-r-default не выбран
 
-      .v-s-t-r-hotel Отель:
-        span.v-s-t-r-h-value
-        span.v-s-t-r-h-default не выбран
+      .v-s-t-r-hotel
+        span.v-s-t-r-label Отель:
+        span.v-s-t-r-value
+          span.v-s-t-r-value-num
+          | руб
+        span.v-s-t-r-default не выбран
+
+  .v-s-t-flights
 

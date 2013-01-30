@@ -51,12 +51,12 @@
   }
 
   .v-s-t-header {
-    padding: 15px 0;
+    padding: 15px 0 20px;
 
     text-align: center;
 
     .v-s-t-meta {
-      padding-bottom: 10px;
+      padding-bottom: 15px;
       display: inline-block;
 
       position: relative;
@@ -66,7 +66,8 @@
       .v-s-t-places {
         font-weight: 600;
         font-size: 46px;
-        line-height: 52px;
+        line-height: 46px;
+        text-transform: uppercase;
       }
       .v-s-t-dates {
         width: 100%;
@@ -82,11 +83,48 @@
     }
 
     .v-s-t-results {
-      width: 250px;
+      width: 200px;
+
+      margin-top: 28px;
 
       position: absolute;
       right: 0;
       top: 0;
+
+      font-weight: 600;
+      font-size: 14px;
+      text-align: right;
+
+      .v-s-t-r-label {
+        width: 75px;
+        display: inline-block;
+      }
+
+      .v-s-t-r-value,
+      .v-s-t-r-default {
+        width: 100px;
+        display: inline-block;
+      }
+
+      .v-s-t-r-value {
+        display: none;
+      }
+      .v-s-t-r-value-num {
+        font-size: 18px;
+      }
+
+      .picked {
+        .v-s-t-r-value {
+          display: inline-block;
+        }
+        .v-s-t-r-default {
+          display: none;
+        }
+      }
+
+      .v-s-t-r-hotel {
+        margin-top: 5px;
+      }
     }
   }
 
