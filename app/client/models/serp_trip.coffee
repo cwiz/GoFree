@@ -27,10 +27,12 @@ SERPTrip = Backbone.Model.extend
     if @get('hotels_signature') == data.signature
       @get('hotels').add(data.items)
       app.log('[app.models.SERPTrip]: received ' + data.items.length + ' hotels')
+      @trigger('hotels_progress', data.progress)
 
   receivedFlights: (data) ->
     if @get('flights_signature') == data.signature
       @get('flights').add(data.items)
       app.log('[app.models.SERPTrip]: received ' + data.items.length + ' flights')
+      @trigger('flights_progress', data.progress)
 
 app.models.SERPTrip = SERPTrip

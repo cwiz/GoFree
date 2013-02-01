@@ -25,4 +25,38 @@
         span.v-s-t-r-default не выбран
 
   .v-s-t-flights
+    h3.v-s-t-title Перелеты #{origin.place.name_ru} &rarr; #{destination.place.name_ru}
 
+    div.v-s-t-carousel.m-carousel
+      ul.v-s-t-c-filters
+        li Оптимальные
+        li Дешевые
+        li Прямые
+
+      span.m-c-prev.m-c-control.disabled &lt;
+      span.m-c-next.m-c-control &gt;
+
+      span.v-s-t-c-count 0/0
+
+      .m-c-coutainer
+        ul.m-c-list
+        .v-s-t-c-loading Загрузка...
+        
+
+  .v-s-t-hotels
+    h3.v-s-t-title Отели в #{destination.place.name_ru}
+
+    div.v-s-t-carousel.m-carousel
+      ul.v-s-t-c-filters
+        li Оптимальные
+        li Дешевые
+        li Люкс
+
+      span.m-c-prev.m-c-control.disabled &lt;
+      span.m-c-next.m-c-control &gt;
+
+      span.v-s-t-c-count 0/0
+
+      .m-c-coutainer
+        ul.m-c-list
+        .v-s-t-c-loading Загрузка...
