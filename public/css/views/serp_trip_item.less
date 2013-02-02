@@ -1,0 +1,157 @@
+.v-s-t-item {
+  width: 266px;
+  margin-right: 20px;
+  padding: 10px;
+  position: relative;
+
+  border-radius: 3px;
+
+  background: #fff;
+  color: #919191;
+
+  .v-s-t-i-header {
+    overflow: hidden;
+
+    .v-s-t-i-price {
+      float: left;
+
+      font-weight: 600;
+      font-size: 34px;
+      line-height: 36px;
+
+      color: #333333;
+
+      small {
+        font-weight: 400;
+        font-size: 12px;
+      }
+    }
+    .v-s-t-meta {
+      width: 50px;
+      float: right;
+
+      text-align: center;
+
+      .v-s-t-i-airline {
+        display: block;
+
+        border-bottom: 1px solid #f2f2f2;
+
+        i {
+          width: 28px;
+          height: 11px;
+          display: inline-block;
+
+          background: url('/img/sprites/sprite_airlines.png') no-repeat 0 0;
+        }
+      }
+
+      .v-s-t-i-provider {
+        display: block;
+        font-size: 10px;
+      }
+    }
+  }
+
+  .v-s-t-i-contents {
+    padding: 10px;
+    background: #f0f0f0;
+
+    .v-s-t-i-times {
+      overflow: hidden;
+
+      .v-s-t-i-origin,
+      .v-s-t-i-destination {
+        width: 50px;
+        float: left;
+
+        text-align: center;
+      }
+
+      .v-s-t-i-duration {
+        width: 146px;
+        float: left;
+
+        text-align: center;
+        background: url('/img/views/serp_trip_item.png') repeat-x right center;
+
+        small {
+          padding: 0 6px;
+          display: inline-block;
+          background: #f0f0f0;
+          font-size: 12px;
+          color: #565d61;
+        }
+      }
+
+      .v-s-t-i-t-time {
+        display: block;
+        font-weight: 400;
+        font-size: 18px;
+        line-height: 18px;
+        color: #565d61;
+      }
+      .v-s-t-i-t-place {
+        font-size: 11px;
+      }
+    }
+
+    .v-s-t-i-stops {
+      margin-top: 10px;
+      color: #565d61;
+      font-size: 12px;
+      text-align: center;
+    }
+  }
+
+  .v-s-t-i-footer {
+    padding: 20px 0 10px;
+
+    text-align: center;
+  }
+
+  .v-s-t-i-overlay {
+    width: 100%;
+    height: 100%;
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+
+    box-shadow: 0 0 0 3px #4ccca4 inset;
+
+    .v-s-t-i-status {
+      width: 100%;
+      padding-bottom: 20px;
+
+      position: absolute;
+      left: 0;
+      bottom: 0;
+
+      box-shadow: 0 0 0 3px #4ccca4 inset;
+
+      background: #fff;
+
+      text-align: center;
+    }
+    .v-s-t-i-selected {
+      margin-bottom: 20px;
+      padding: 15px 0;
+
+      display: block;
+
+      background: #4ccca4;
+
+      font-weight: 600;
+      font-size: 20px;
+      color: #fff;
+      text-transform: uppercase;
+    }
+  }
+
+  &.selected {
+    .v-s-t-i-overlay {
+      display: block;
+    }
+  }
+}
