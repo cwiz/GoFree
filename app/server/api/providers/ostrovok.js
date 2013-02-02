@@ -95,7 +95,7 @@
           stars: stars,
           price: price,
           rating: rating,
-          photo: hotel.thumbnail_url,
+          photo: hotel.thumbnail_url_154x105,
           url: "http://ostrovok.ru" + hotel.url + "&partner_slug=ostroterra",
           provider: 'ostrovok'
         };
