@@ -8,8 +8,8 @@ li.m-c-l-item.v-s-t-item.hotel
 
   .v-s-t-i-contents
     .v-s-t-i-details
-      strong.v-s-t-i-name= app.utils.shortenString(name, 10, 'right')
-      strong.v-s-t-i-stars!= app.utils.formatStars(stars)
+      strong.v-s-t-i-name= app.utils.shortenString(name, 20, 'right')
+      span.v-s-t-i-stars!= app.utils.formatStars(stars)
 
     .v-s-t-i-photo(style='background: url(\'#{photo}\') no-repeat center center')
 

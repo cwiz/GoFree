@@ -38,7 +38,7 @@ a:hover {
 
   &:before,
   &:after {
-    content: "";
+    content: '';
     display: table;
   }
   &:after {
@@ -46,9 +46,21 @@ a:hover {
   }
 }
 
-a[href^="javascript"] {
-  .user-select(none);
-  .touch-callout(none);
+.f-stars {
+    font-family: Helvetica, 'DejaVu Sans', 'Arial Unicode MS', 'Lucida Sans Unicode', sans-serif;
+    font-weight: normal;
+    font-style: normal;
+    font-size: 12px;
+    line-height: 12px;
+
+    color: #f5a209;
+
+    @include helper_noselect();
+
+    > s {
+        text-decoration: none;
+        // color: #cacaca;
+    }
 }
 
 // fixing android2 terribleness
