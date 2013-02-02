@@ -115,9 +115,9 @@
         }
         newFlight = {
           price: parseInt(variant.price),
-          arrival: arrivalDestinationDate.format('LL'),
-          departure: departureOriginDate.format('LL'),
-          duration: flightTimeSpan,
+          arrival: arrivalDestinationDate.format("hh:mm"),
+          departure: departureOriginDate.format("hh:mm"),
+          duration: flightTimeSpan * 60 * 60,
           stops: variant.transferNumber - 1,
           url: variant.url + 'ostroterra',
           provider: 'eviterra'

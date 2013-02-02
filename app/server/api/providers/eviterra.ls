@@ -91,9 +91,9 @@ exports.process = (flights, cb) ->
     newFlight = 
       price     : parseInt variant.price
       
-      arrival   : arrivalDestinationDate.format \LL
-      departure : departureOriginDate.format \LL
-      duration  : flightTimeSpan
+      arrival   : arrivalDestinationDate.format "hh:mm"#\LL
+      departure : departureOriginDate.format "hh:mm"#\LL
+      duration  : flightTimeSpan * 60 * 60
       stops     : variant.transferNumber - 1
       
       url       : variant.url + \ostroterra
