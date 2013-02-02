@@ -23,21 +23,22 @@ SERPTrip = Backbone.View.extend
       template: app.templates.serp_trip_hotel
       )
 
+    @preloader.on('load', _.bind(@showTrip, @))
     # @fetchBackground()
     @showTrip()
-
-    @preloader.on('load', _.bind(@showTrip, @))
 
     app.log('[app.views.SERPTrip]: initialize')
 
   fetchBackground: ->
     $.ajax
       url:  app.api.images + @model.get('destination').place.name
-      complete: (resp) =>
+      success: (resp) =>
         if resp and resp.value
           @preloader.attr('src', resp.value.image)
         else
           @showTrip()
+      error: =>
+        @showTrip()
 
   showTrip: (e)->
     image = @preloader.attr('src')
