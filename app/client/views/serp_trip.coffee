@@ -61,7 +61,7 @@ SERPTrip = Backbone.View.extend
   flightsProgress: (p)->
     items = if p is 1 then @itemsInView * 2 else @itemsInView
     html = for model in @flights.first(items)
-      app.templates.serp_trip_flight(model.toJSON())
+      app.templates.serp_trip_flight(_.extend(model.toJSON(), { origin: @model.get('origin'), destination: @model.get('destination')}))
 
     @flightsList.html(html)
     @flightsCounter.html(@flightsShift + '/' + @flights.length)
@@ -73,7 +73,7 @@ SERPTrip = Backbone.View.extend
   hotelsProgress: (p)->
     items = if p is 1 then @itemsInView * 2 else @itemsInView
     html = for model in @hotels.first(items)
-      app.templates.serp_trip_hotel(model.toJSON())
+      app.templates.serp_trip_hotel(_.extend(model.toJSON(), { origin: @model.get('origin'), destination: @model.get('destination')}))
 
     @hotelsList.html(html)
     @hotelsCounter.html(@hotelsShift + '/' + @hotels.length)
@@ -90,7 +90,7 @@ SERPTrip = Backbone.View.extend
       max = Math.min(length, @flightsShift + @itemsInView)
 
       html = for i in [@flightsShift..max]
-        app.templates.serp_trip_flight(@flights.at(i).toJSON())
+        app.templates.serp_trip_flight(_.extend(@flights.at(i).toJSON(), { origin: @model.get('origin'), destination: @model.get('destination')}))
 
       @flightsList.append(html)
       @flightsCarousel.reset()
@@ -104,7 +104,7 @@ SERPTrip = Backbone.View.extend
       max = Math.min(length, @hotelsShift + @itemsInView)
 
       html = for i in [@hotelsShift..max]
-        app.templates.serp_trip_hotel(@hotels.at(i).toJSON())
+        app.templates.serp_trip_hotel(_.extend(@hotels.at(i).toJSON(), { origin: @model.get('origin'), destination: @model.get('destination')}))
 
       @hotelsList.append(html)
       @hotelsCarousel.reset()

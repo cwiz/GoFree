@@ -24,39 +24,46 @@
           | руб
         span.v-s-t-r-default не выбран
 
-  .v-s-t-flights
-    h3.v-s-t-title Перелеты #{origin.place.name_ru} &rarr; #{destination.place.name_ru}
+  if flights_signature
+    .v-s-t-flights
+      h3.v-s-t-title Перелеты #{origin.place.name_ru} &rarr; #{destination.place.name_ru}
 
-    div.v-s-t-carousel.m-carousel
-      ul.v-s-t-c-filters
-        li Оптимальные
-        li Дешевые
-        li Прямые
+      .v-s-t-rowcontrols
+        ul.v-s-t-c-filters
+          li.selected Все
+          li Оптимальные
+          li Дешевые
+          li Прямые
 
-      span.m-c-prev.m-c-control.disabled &lt;
-      span.m-c-next.m-c-control &gt;
+        span.v-s-t-c-count 0/0
 
-      span.v-s-t-c-count 0/0
+      div.v-s-t-carousel.m-carousel
+        span.m-c-prev.m-c-control.disabled
+        span.m-c-next.m-c-control
 
-      .m-c-coutainer
-        ul.m-c-list
-        .v-s-t-c-loading Загрузка...
+        .m-c-coutainer
+          ul.m-c-list
+          .v-s-t-c-loading
+            span Загрузка...
         
+  if hotels_signature
+    .v-s-t-hotels
+      h3.v-s-t-title Отели в #{destination.place.name_ru}
 
-  .v-s-t-hotels
-    h3.v-s-t-title Отели в #{destination.place.name_ru}
+      .v-s-t-rowcontrols
+        ul.v-s-t-c-filters
+          li.selected Все
+          li Оптимальные
+          li Дешевые
+          li Прямые
 
-    div.v-s-t-carousel.m-carousel
-      ul.v-s-t-c-filters
-        li Оптимальные
-        li Дешевые
-        li Люкс
+        span.v-s-t-c-count 0/0
 
-      span.m-c-prev.m-c-control.disabled &lt;
-      span.m-c-next.m-c-control &gt;
+      div.v-s-t-carousel.m-carousel
+        span.m-c-prev.m-c-control.disabled
+        span.m-c-next.m-c-control
 
-      span.v-s-t-c-count 0/0
-
-      .m-c-coutainer
-        ul.m-c-list
-        .v-s-t-c-loading Загрузка...
+        .m-c-coutainer
+          ul.m-c-list
+          .v-s-t-c-loading
+            span Загрузка...

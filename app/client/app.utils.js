@@ -370,6 +370,17 @@ app.utils.getMinutesDiff = function(date1, date2) {
 app.utils.getSecondsDiff = function(date1, date2) {
     return Math.abs((+date1 - +date2) / (1000));
 };
+app.utils.humanizeDuration = function(ts) {
+    var diff = ts / 60,
+        hours = Math.floor(diff / 60),
+        minutes = diff % 60;
+
+    if (minutes) {
+        return hours + ' ч. ' + minutes + ' мин.';
+    }
+
+    return hours + ' ч.';
+};
 app.utils.humanizeTimeSince = function(timestamp) {
     var diff = Math.ceil(app.utils.getSecondsDiff(+new Date(), timestamp));
 
