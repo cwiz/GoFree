@@ -51,7 +51,7 @@
         var newShift = this.currentShift - this.options.items;
         // if (newShift < 0) return;
 
-        this._setShift(newShift, 'left');
+        this._animate(newShift, 'left');
 
         this.els.next.removeClass('disabled');
         newShift || this.els.prev.addClass('disabled');
@@ -60,14 +60,14 @@
         var newShift = this.currentShift + this.options.items;
         // if (newShift >= this.itemsNum) return;
 
-        this._setShift(newShift, 'right');
+        this._animate(newShift, 'right');
 
         this.els.prev.removeClass('disabled');
         if (newShift + this.options.items >= this.itemsNum) {
             this.els.next.addClass('disabled');
         }
     };
-    Carousel.prototype._setShift = function(shift, direction) {
+    Carousel.prototype._animate = function(shift, direction) {
         var that = this;
         this.els.block.trigger('mod_shifting_' + direction);
         this.els.list.animate({ left: -((this.itemWidth + this.itemMargin) * shift) }, this.options.duration, function() {
