@@ -10,29 +10,27 @@ SERPTrip = Backbone.Model.extend
       place:
         name: null
 
-    hotels_signature: null
-    hotels: null
-
     flights_signature: null
     flights: null
+
+    hotels_signature: null
+    hotels: null
 
   initialize: ->
     app.log('[app.models.SERPTrip]: initialize')
 
   observe: ->
-    if @get('hotels_signature')? then app.socket.on('hotels_ready', _.bind(@receivedHotels, @))
     if @get('flights_signature')? then app.socket.on('flights_ready', _.bind(@receivedFlights, @))
-
-  receivedHotels: (data) ->
-    if @get('hotels_signature') == data.signature
-      @get('hotels').add(data.items)
-      app.log('[app.models.SERPTrip]: received ' + data.items.length + ' hotels')
-      @trigger('hotels_progress', data.progress)
+    if @get('hotels_signature')? then app.socket.on('hotels_ready', _.bind(@receivedHotels, @))
 
   receivedFlights: (data) ->
     if @get('flights_signature') == data.signature
-      @get('flights').add(data.items)
-      app.log('[app.models.SERPTrip]: received ' + data.items.length + ' flights')
-      @trigger('flights_progress', data.progress)
+      @get('flights').add(data.items).trigger('progress', data.progress)
+      app.log('[app.models.SERPTrip]: received ' + data.items.length + ' flights, signed ' + data.signature)
+
+  receivedHotels: (data) ->
+    if @get('hotels_signature') == data.signature
+      @get('hotels').add(data.items).trigger('progress', data.progress)
+      app.log('[app.models.SERPTrip]: received ' + data.items.length + ' hotels, signed ' + data.signature)
 
 app.models.SERPTrip = SERPTrip
