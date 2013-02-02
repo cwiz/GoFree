@@ -88,14 +88,14 @@
         price = hotel.rooms[0].total_rate * rates[hotel.rooms[0].currency];
         stars = 1;
         if (hotel.star_rating) {
-          stars = Math.ceil(hotel.star_rating / 10.0) + 1;
+          stars = hotel.star_rating / 10.0;
         }
         newHotel = {
           name: hotel.name,
           stars: stars,
           price: price,
           rating: rating,
-          photo: null,
+          photo: hotel.thumbnail_url_220,
           url: "http://ostrovok.ru" + hotel.url + "&partner_slug=ostroterra",
           provider: 'ostrovok'
         };
