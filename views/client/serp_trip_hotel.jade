@@ -1,1 +1,23 @@
-li.m-c-l-item #{name}
+li.m-c-l-item.v-s-t-item.hotel
+  .v-s-t-i-header
+    strong.v-s-t-i-price= app.utils.formatNum(price)
+      small руб.
+
+    p.v-s-t-meta
+      span.v-s-t-i-provider= provider
+
+  .v-s-t-i-contents
+    .v-s-t-i-details
+      strong.v-s-t-i-name= app.utils.shortenString(name, 10, 'right')
+      strong.v-s-t-i-stars!= app.utils.formatStars(stars)
+
+    .v-s-t-i-photo(style='background: url(\'#{photo}\') no-repeat center center')
+
+  .v-s-t-i-footer
+    span.v-s-t-i-pick.button.medium.green Выбрать
+
+  .v-s-t-i-overlay
+    span.v-s-t-i-selected Выбрано
+    .v-s-t-i-ofooter
+      span.v-s-t-i-unpick.button.medium.gray Убрать
+      

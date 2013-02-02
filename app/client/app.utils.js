@@ -422,3 +422,13 @@ else {
         return app.utils.humanizeTimeSince(typeof dateString === 'number' ? dateString : Date.parse(dateString));
     };
 }
+app.utils.starMap = [
+    '<i class="f-stars">★<s>☆☆☆☆</s></i>',
+    '<i class="f-stars">★★<s>☆☆☆</s></i>',
+    '<i class="f-stars">★★★<s>☆☆</s></i>',
+    '<i class="f-stars">★★★★<s>☆</s></i>',
+    '<i class="f-stars">★★★★★</i>'
+];
+app.utils.formatStars = function(num) {
+    return app.utils.starMap[+num - 1];
+};

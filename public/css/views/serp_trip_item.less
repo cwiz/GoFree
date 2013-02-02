@@ -1,3 +1,6 @@
+@flightsCarouselHeight: 215px;
+@hotelsCarouselHeight: 230px;
+
 .v-s-t-item {
   width: 266px;
   margin-right: 20px;
@@ -32,10 +35,15 @@
 
       text-align: center;
 
+      .v-s-t-i-provider {
+        display: block;
+        font-size: 10px;
+      }
+
       .v-s-t-i-airline {
         display: block;
 
-        border-bottom: 1px solid #f2f2f2;
+        border-top: 1px solid #f2f2f2;
 
         i {
           width: 28px;
@@ -45,11 +53,6 @@
           background: url('/img/sprites/sprite_airlines.png') no-repeat 0 0;
         }
       }
-
-      .v-s-t-i-provider {
-        display: block;
-        font-size: 10px;
-      }
     }
   }
 
@@ -58,20 +61,30 @@
     background: #f0f0f0;
 
     .v-s-t-i-times {
-      overflow: hidden;
+      min-height: 47px;
+      position: relative;
 
       .v-s-t-i-origin,
       .v-s-t-i-destination {
-        width: 50px;
-        float: left;
+        min-width: 45px;
+        position: absolute;
+        left: 0;
+        top: 0;
 
-        text-align: center;
+        text-align: left;
+      }
+      .v-s-t-i-destination {
+        left: auto;
+        right: 0;
+        text-align: right;
+
+        .v-s-t-i-t-time {
+          padding-left: 6px;
+          padding-right: 0;
+        }
       }
 
       .v-s-t-i-duration {
-        width: 146px;
-        float: left;
-
         text-align: center;
         background: url('/img/views/serp_trip_item.png') repeat-x right center;
 
@@ -85,19 +98,21 @@
       }
 
       .v-s-t-i-t-time {
-        display: block;
+        padding-right: 6px;
+        display: inline-block;
         font-weight: 400;
         font-size: 18px;
         line-height: 18px;
         color: #565d61;
+        background: #f0f0f0;
       }
       .v-s-t-i-t-place {
+        display: block;
         font-size: 11px;
       }
     }
 
     .v-s-t-i-stops {
-      margin-top: 10px;
       color: #565d61;
       font-size: 12px;
       text-align: center;
@@ -111,41 +126,37 @@
   }
 
   .v-s-t-i-overlay {
-    width: 100%;
-    height: 100%;
     display: none;
+
     position: absolute;
     left: 0;
     top: 0;
+    right: 0;
+    bottom: 0;
 
-    box-shadow: 0 0 0 3px #4ccca4 inset;
+    border: 5px solid #4ccca4;
+    border-radius: 3px;
 
-    .v-s-t-i-status {
-      width: 100%;
-      padding-bottom: 20px;
-
-      position: absolute;
-      left: 0;
-      bottom: 0;
-
-      box-shadow: 0 0 0 3px #4ccca4 inset;
-
-      background: #fff;
-
-      text-align: center;
-    }
     .v-s-t-i-selected {
-      margin-bottom: 20px;
+      margin-top: 88px;
       padding: 15px 0;
 
       display: block;
 
       background: #4ccca4;
 
+      opacity: .7;
+
       font-weight: 600;
       font-size: 20px;
       color: #fff;
       text-transform: uppercase;
+      text-align: center;
+    }
+    .v-s-t-i-ofooter {
+      padding: 20px 0 10px;
+      background: #fff;
+      text-align: center;
     }
   }
 

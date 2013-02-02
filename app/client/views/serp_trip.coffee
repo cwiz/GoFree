@@ -86,10 +86,11 @@ SERPTrip = Backbone.View.extend
     length = @flights.length
     @flightsShift += @itemsInView
 
-    if length > @flightsShift
-      max = Math.min(length, @flightsShift + @itemsInView)
+    if length >= @flightsShift
+      start = @flightsShift - 1
+      max = Math.min(length, @flightsShift + @itemsInView) - 1
 
-      html = for i in [@flightsShift..max]
+      html = for i in [start..max]
         app.templates.serp_trip_flight(_.extend(@flights.at(i).toJSON(), { origin: @model.get('origin'), destination: @model.get('destination')}))
 
       @flightsList.append(html)
@@ -100,10 +101,11 @@ SERPTrip = Backbone.View.extend
     length = @hotels.length
     @hotelsShift += @itemsInView
 
-    if length > @hotelsShift
-      max = Math.min(length, @hotelsShift + @itemsInView)
+    if length >= @hotelsShift
+      start = @hotelsShift - 1
+      max = Math.min(length, @hotelsShift + @itemsInView) - 1
 
-      html = for i in [@hotelsShift..max]
+      html = for i in [start..max]
         app.templates.serp_trip_hotel(_.extend(@hotels.at(i).toJSON(), { origin: @model.get('origin'), destination: @model.get('destination')}))
 
       @hotelsList.append(html)

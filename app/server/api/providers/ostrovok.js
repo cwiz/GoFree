@@ -61,7 +61,7 @@
     });
   };
   exports.process = function(json, cb){
-    var hotels, ref$, rates, newHotels, i$, len$, hotel, rating, count, price, stars, newHotel;
+    var hotels, rates, ref$, newHotels, i$, len$, hotel, rating, count, price, stars, newHotel;
     console.log("ostrovok.process");
     if (!json || json.hotels == null) {
       console.log("ostrovok.process");

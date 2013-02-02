@@ -4,22 +4,22 @@ li.m-c-l-item.v-s-t-item.flight
       small руб.
 
     p.v-s-t-meta
+      span.v-s-t-i-provider= provider
       span.v-s-t-i-airline
         i(data-type=airline)
-      span.v-s-t-i-provider= provider
 
   .v-s-t-i-contents
     .v-s-t-i-times
       .v-s-t-i-origin
         span.v-s-t-i-t-time= departure
-        span.v-s-t-i-t-place= origin.place.name
+        span.v-s-t-i-t-place= origin.place.name_ru
 
       .v-s-t-i-duration
         small= app.utils.humanizeDuration(duration)
 
       .v-s-t-i-destination
         span.v-s-t-i-t-time= arrival
-        span.v-s-t-i-t-place= destination.place.name
+        span.v-s-t-i-t-place= destination.place.name_ru
 
     .v-s-t-i-stops
       if stops
@@ -31,6 +31,7 @@ li.m-c-l-item.v-s-t-item.flight
     span.v-s-t-i-pick.button.medium.green Выбрать
 
   .v-s-t-i-overlay
-    .v-s-t-i-status
-      span.v-s-t-i-selected Выбрано
+    span.v-s-t-i-selected Выбрано
+    .v-s-t-i-ofooter
       span.v-s-t-i-unpick.button.medium.gray Убрать
+      
