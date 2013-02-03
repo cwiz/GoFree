@@ -26,7 +26,7 @@ SERPTrip = Backbone.View.extend
     @preloader.on('load', _.bind(@showTrip, @))
 
     @initialCollapse()
-    # @fetchBackground()
+    @fetchBackground()
     @showTrip()
 
     app.log('[app.views.SERPTrip]: initialize')
@@ -50,10 +50,10 @@ SERPTrip = Backbone.View.extend
 
   fetchBackground: ->
     $.ajax
-      url:  app.api.images + @model.get('destination').place.name
+      url:  "#{app.api.images}#{@model.get('destination').place.country_code}/#{@model.get('destination').place.name}"
       success: (resp) =>
         if resp and resp.value
-          @preloader.attr('src', resp.value.image)
+          @preloader.attr('src', resp.value.blured)
         else
           @showTrip()
       error: =>

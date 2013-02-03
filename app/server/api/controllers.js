@@ -1,8 +1,9 @@
 (function(){
-  var request, database, async, ostrovok, eviterra, travelmenu, glueAutocompleteResults;
+  var request, database, async, fs, ostrovok, eviterra, travelmenu, glueAutocompleteResults, queryFlickr;
   request = require("request");
   database = require("./../database");
   async = require("async");
+  fs = require("fs");
   ostrovok = require("./providers/ostrovok");
   eviterra = require("./providers/eviterra");
   travelmenu = require("./providers/travelmenu-hotels");
@@ -99,9 +100,8 @@
     }
     return cb(finalResults);
   };
-  exports.image = function(req, res){
-    var query, flickrKey, flickrSecret, flickrUrl;
-    query = encodeURIComponent(req.params.query);
+  queryFlickr = function(query, callback){
+    var flickrKey, flickrSecret, flickrUrl;
     flickrKey = "7925109a48c26fe53555687f9d46a076";
     flickrSecret = "c936db59c720b4d5";
     flickrUrl = "http://api.flickr.com/services/rest/?per_page=5&sort=relevance&format=json&content_type=1&nojsoncallback=1&method=flickr.photos.search&api_key=" + flickrKey + "&text=" + query;
@@ -115,13 +115,61 @@
       randomIndex = Math.floor(Math.random() * (json.photos.photo.length - 1));
       photo = json.photos.photo[randomIndex];
       if (photo) {
+        return callback(null, "http://farm" + photo.farm + ".staticflickr.com/" + photo.server + "/" + photo.id + "_" + photo.secret + "_b.jpg");
+      }
+      return callback({
+        message: 'nothing found'
+      }, null);
+    });
+  };
+  exports.image = function(req, res){
+    var query;
+    query = encodeURIComponent(req.params.query);
+    return queryFlickr(query, function(error, image){
+      if (error) {
+        return res.json({
+          status: 'error',
+          message: error
+        });
+      }
+      return res.json({
+        status: 'ok',
+        value: {
+          image: image
+        }
+      });
+    });
+  };
+  exports.image_v2 = function(req, res){
+    var country, city;
+    country = encodeURIComponent(req.params.country).toLowerCase();
+    city = encodeURIComponent(req.params.city).toLowerCase();
+    return fs.exists("./public/img/cities/" + country + "--" + city + "-blured.jpg", function(exists){
+      console.log(exists);
+      if (exists) {
         return res.json({
           status: 'ok',
           value: {
-            image: "http://farm" + photo.farm + ".staticflickr.com/" + photo.server + "/" + photo.id + "_" + photo.secret + "_b.jpg"
+            blured: "/img/cities/" + country + "--" + city + "-blured.jpg",
+            sharp: "/img/cities/" + country + "--" + city + "-resized.jpg"
           }
         });
       }
+      return queryFlickr(city, function(error, image){
+        if (error) {
+          return res.json({
+            status: 'error',
+            message: error
+          });
+        }
+        return res.json({
+          status: 'ok',
+          value: {
+            blured: image,
+            sharp: image
+          }
+        });
+      });
     });
   };
 }).call(this);

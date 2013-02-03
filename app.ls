@@ -72,6 +72,7 @@ assets.on "complete", ->
   app.get "/api/v1/autocomplete/:query",  backEnd.api.autocomplete
   app.get "/api/v2/autocomplete/:query",  backEnd.api.autocomplete_v2
   app.get "/api/v1/image/:query",         backEnd.api.image
+  app.get "/api/v2/image/:country/:city", backEnd.api.image_v2
   # --- socket
   io.sockets.on "connection",             backEnd.api.search
 

@@ -40,9 +40,9 @@ Index = Backbone.View.extend
 
   placeChanged: (model, place) ->
     $.ajax
-      url:  app.api.images + place.name
+      url:  "#{app.api.images}#{place.country_code}/#{place.name}"
       success: (resp) =>
-        @preloader.attr('src', resp.value.image)
+        @preloader.attr('src', resp.value.sharp)
 
   showSERP: ->
     height = app.dom.win.height()
