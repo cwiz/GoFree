@@ -24,10 +24,29 @@ SERPTrip = Backbone.View.extend
       )
 
     @preloader.on('load', _.bind(@showTrip, @))
+
+    @initialCollapse()
     # @fetchBackground()
     @showTrip()
 
     app.log('[app.views.SERPTrip]: initialize')
+
+  events:
+    'click .v-s-t-places'        : 'toggleCollapse'
+
+  initialCollapse: ->
+    @heightFull = @$el.outerHeight()
+
+    @$el.addClass('collapsed')
+    @heightCollapsed = @$el.find('.v-s-t-header').height()
+
+    @$el.hide()
+
+    @collapsed = true
+    @$el.css(height: @heightCollapsed)
+
+  toggleCollapse: ->
+    if @collapsed then @expand() else @collapse()
 
   fetchBackground: ->
     $.ajax
@@ -43,11 +62,21 @@ SERPTrip = Backbone.View.extend
   showTrip: (e)->
     image = @preloader.attr('src')
     @bg.attr('src', @preloader.attr('src')) if image
-
     @$el.fadeIn(500)
 
+  expand: ->
+    return unless @collapsed
+    @collapsed = false
+    @$el.removeClass('collapsed')
+    @$el.animate(height: @heightFull, 500)
+
+  collapse: ->
+    return if @collapsed
+    @collapsed = true
+    @$el.addClass('collapsed')
+    @$el.animate(height: @heightCollapsed, 500)
+
   render: ->
-    @$el.hide()
     @$el.html(app.templates.serp_trip(@model.toJSON()))
     @container.append(@$el)
 

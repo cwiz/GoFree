@@ -9,6 +9,8 @@ SERPTrips = Backbone.View.extend
 
     @initTrips()
 
+    @expandFirst()
+
     app.log('[app.views.SERPTrips]: initialize')
 
   initTrips: ->
@@ -18,6 +20,9 @@ SERPTrips = Backbone.View.extend
         model: model
         )
     @collection.each(iterator)
+
+  expandFirst: ->
+    _.values(@trips)[0].expand()
 
   render: ->
     @$el.html(app.templates.serp_trips())

@@ -2,17 +2,12 @@
 
 .v-serp-trip {
   padding-bottom: 30px;
+  overflow: hidden;
   position: relative;
 
   color: #fff;
 
   .helper_noselect;
-
-  &.collapsed {
-    .v-serp-trip-content {
-      opacity: .7;
-    }
-  }
 
   .v-s-t-bg-wrap {
     width: 100%;
@@ -65,27 +60,29 @@
       position: relative;
 
       background: url('/img/views/serp_trip.png') no-repeat center bottom;
-
-      .v-s-t-places {
-        font-weight: 600;
-        font-size: 46px;
-        line-height: 46px;
-        text-transform: uppercase;
-      }
-      .v-s-t-dates {
-        width: 100%;
-        margin-top: -12px;
-
-        position: absolute;
-        left: 0;
-        top: 100%;
-
-        font-weight: 400;
-        font-size: 12px;
-      }
     }
 
-    .v-s-t-results {
+    .v-s-t-places {
+      font-weight: 600;
+      font-size: 46px;
+      line-height: 46px;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    .v-s-t-dates {
+      width: 100%;
+      margin-top: -12px;
+
+      position: absolute;
+      left: 0;
+      top: 100%;
+
+      font-weight: 400;
+      font-size: 12px;
+    }
+
+    .v-s-t-results,
+    .v-s-t-totals {
       width: 200px;
 
       margin-top: 28px;
@@ -97,37 +94,45 @@
       font-weight: 600;
       font-size: 14px;
       text-align: right;
+    }
 
-      .v-s-t-r-label {
-        width: 75px;
-        display: inline-block;
-      }
+    .v-s-t-r-label {
+      width: 75px;
+      display: inline-block;
+    }
 
+    .v-s-t-r-value,
+    .v-s-t-r-default,
+    .v-s-t-t-value {
+      width: 100px;
+      display: inline-block;
+    }
+
+    .v-s-t-r-value,
+    .v-s-t-t-value {
+      display: none;
+    }
+    .v-s-t-r-value-num,
+    .v-s-t-t-value-num {
+      font-size: 18px;
+    }
+
+    .picked {
       .v-s-t-r-value,
-      .v-s-t-r-default {
-        width: 100px;
+      .v-s-t-t-value {
         display: inline-block;
       }
-
-      .v-s-t-r-value {
+      .v-s-t-r-default {
         display: none;
       }
-      .v-s-t-r-value-num {
-        font-size: 18px;
-      }
+    }
 
-      .picked {
-        .v-s-t-r-value {
-          display: inline-block;
-        }
-        .v-s-t-r-default {
-          display: none;
-        }
-      }
+    .v-s-t-r-hotel {
+      margin-top: 5px;
+    }
 
-      .v-s-t-r-hotel {
-        margin-top: 5px;
-      }
+    .v-s-t-totals {
+      display: none;
     }
   }
 
@@ -248,6 +253,27 @@
     }
     .m-c-control {
       margin-top: @hotelsCarouselHeight / 2 - 23px;
+    }
+  }
+
+  &.collapsed {
+    .v-s-t-header {
+      height: 40px;
+
+      .v-s-t-places {
+        font-size: 28px;
+        line-height: 28px;
+      }
+      .v-s-t-results {
+        display: none;
+      }
+      .v-s-t-totals {
+        display: block;
+      }
+    }
+    
+    .v-serp-trip-content {
+      opacity: .7;
     }
   }
 

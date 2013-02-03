@@ -9,6 +9,11 @@
       h2.v-s-t-places #{origin.place.name_ru} &ndash; #{destination.place.name_ru}
       small.v-s-t-dates #{app.utils.humanizeDatesSpan(origin.date, destination.date)}
 
+    .v-s-t-totals
+      span.v-s-t-t-value
+        span.v-s-t-t-value-num
+        | руб
+
     .v-s-t-results
       .v-s-t-r-flight
         span.v-s-t-r-label Перелет:
