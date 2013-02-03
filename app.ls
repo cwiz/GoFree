@@ -79,5 +79,5 @@ assets.on "complete", ->
   server.listen app.get("port"), ->
     console.log "Express server listening on port " + app.get("port")
 
-  io.set        "log level",  0
+  io.set        "log level",  1
   

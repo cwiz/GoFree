@@ -105,7 +105,7 @@ exports.process = (flights, cb) ->
     results: newFlights,
     complete: true
   }
-    
+
 exports.search = (origin, destination, extra, cb) ->
   (error, json)     <- exports.query origin, destination, extra
   return cb(error, null) if error

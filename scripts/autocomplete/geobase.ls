@@ -64,6 +64,9 @@ importBaseGeonames = (callback)->
 
 				valid_geo_ids[object.geoname_id] = true
 
+				if population <= 10000
+					return null
+
 				return object
 		),
 		(
@@ -271,12 +274,12 @@ addInflectedNames = (callback) ->
 setTimeout( (
 	->
 		async.series([
-			# (callback) -> database.geonames.drop(callback), 
-			# importBaseGeonames, 
-			# importRuGeonames, 
-			# importRuCountries, 
-			# importEnCountries, 
-			#syncWithAirports,
+			(callback) -> database.geonames.drop(callback), 
+			importBaseGeonames, 
+			importRuGeonames, 
+			importRuCountries, 
+			importEnCountries, 
+			syncWithAirports,
 			addInflectedNames,
 			(callback) -> process.exit()
 		])

@@ -44,4 +44,10 @@
   }, {
     unique: true
   });
+  exports.cache = db.collection('cache');
+  exports.countries.ensureIndex({
+    hash: 1
+  }, {
+    unique: true
+  });
 }).call(this);

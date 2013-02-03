@@ -58,6 +58,6 @@
     server.listen(app.get("port"), function(){
       return console.log("Express server listening on port " + app.get("port"));
     });
-    return io.set("log level", 0);
+    return io.set("log level", 1);
   });
 }).call(this);

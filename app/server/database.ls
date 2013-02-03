@@ -26,3 +26,7 @@ exports.geonames.ensureIndex 	{ name_ru: 1 }
 exports.countries		= db.collection 'countries'
 exports.countries.ensureIndex 	{ geoname_id: 1 }, 	{ unique: true }
 exports.countries.ensureIndex 	{ code: 1 }, 		{ unique: true }
+
+# Cache
+exports.cache			= db.collection 'cache'
+exports.countries.ensureIndex 	{ hash: 1 }, 	{ unique: true }
