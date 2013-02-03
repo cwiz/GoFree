@@ -59,7 +59,7 @@
         }
         return database.search.findOne(data, function(error, searchParams){
           var result, pairs, signatures, i$, ref$, len$, signature, resultReady, flightsReady, hotelsReady, pair, lresult$, destination, origin, extra, counter, len1$, flightProvider, hotelProvider, results$ = [];
-          if (error) {
+          if (error || !searchParams) {
             return socket.emit('start_search_error', {
               error: error
             });

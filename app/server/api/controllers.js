@@ -1,9 +1,10 @@
 (function(){
-  var request, database, async, fs, ostrovok, eviterra, travelmenu, glueAutocompleteResults, queryFlickr;
-  request = require("request");
-  database = require("./../database");
+  var async, database, exec, fs, request, ostrovok, eviterra, travelmenu, glueAutocompleteResults, queryFlickr;
   async = require("async");
+  database = require("./../database");
+  exec = require("child_process").exec;
   fs = require("fs");
+  request = require("request");
   ostrovok = require("./providers/ostrovok");
   eviterra = require("./providers/eviterra");
   travelmenu = require("./providers/travelmenu-hotels");
@@ -102,11 +103,12 @@
   };
   queryFlickr = function(query, callback){
     var flickrKey, flickrSecret, flickrUrl;
+    query = query + " view";
     flickrKey = "7925109a48c26fe53555687f9d46a076";
     flickrSecret = "c936db59c720b4d5";
     flickrUrl = "http://api.flickr.com/services/rest/?per_page=5&sort=relevance&format=json&content_type=1&nojsoncallback=1&method=flickr.photos.search&api_key=" + flickrKey + "&text=" + query;
     return request(flickrUrl, function(error, response, body){
-      var json, randomIndex, photo;
+      var json, randomIndex, photo, url;
       console.log(">>> queried flickr search | " + flickrUrl + " | error: " + error + " | status " + (response != null ? response.statusCode : void 8));
       if (error || !(response.statusCode === 200)) {
         return;
@@ -115,7 +117,9 @@
       randomIndex = Math.floor(Math.random() * (json.photos.photo.length - 1));
       photo = json.photos.photo[randomIndex];
       if (photo) {
-        return callback(null, "http://farm" + photo.farm + ".staticflickr.com/" + photo.server + "/" + photo.id + "_" + photo.secret + "_b.jpg");
+        url = "http://farm" + photo.farm + ".staticflickr.com/" + photo.server + "/" + photo.id + "_" + photo.secret + ".jpg";
+        console.log(url);
+        return callback(null, url);
       }
       return callback({
         message: 'nothing found'
@@ -141,33 +145,73 @@
     });
   };
   exports.image_v2 = function(req, res){
-    var country, city;
-    country = encodeURIComponent(req.params.country).toLowerCase();
-    city = encodeURIComponent(req.params.city).toLowerCase();
-    return fs.exists("./public/img/cities/" + country + "--" + city + "-blured.jpg", function(exists){
-      console.log(exists);
-      if (exists) {
+    var country, city, shutterstockPath, shutterstockBlured, shutterstockSharp;
+    country = encodeURIComponent(req.params.country.replace(/ /g, "_").toLowerCase());
+    city = encodeURIComponent(req.params.city.replace(/ /g, "_").toLowerCase());
+    shutterstockPath = "./public/img/cities/custom/" + country + "--" + city + "-blured.jpg";
+    shutterstockBlured = "/img/cities/custom/" + country + "--" + city + "-blured.jpg";
+    shutterstockSharp = "/img/cities/custom/" + country + "--" + city + "-resized.jpg";
+    return fs.exists(shutterstockPath, function(shutterstockExits){
+      var flickrPath, flickrBlured, flickrSharp;
+      if (shutterstockExits) {
         return res.json({
           status: 'ok',
           value: {
-            blured: "/img/cities/" + country + "--" + city + "-blured.jpg",
-            sharp: "/img/cities/" + country + "--" + city + "-resized.jpg"
+            blured: shutterstockBlured,
+            sharp: shutterstockSharp
           }
         });
       }
-      return queryFlickr(city, function(error, image){
-        if (error) {
+      flickrPath = "./public/img/cities/flickr/" + country + "--" + city + "-blured.jpg";
+      flickrBlured = "/img/cities/flickr/" + country + "--" + city + "-blured.jpg";
+      flickrSharp = "/img/cities/flickr/" + country + "--" + city + "-resized.jpg";
+      return fs.exists(flickrPath, function(flickrExits){
+        if (flickrExits) {
           return res.json({
-            status: 'error',
-            message: error
+            status: 'ok',
+            value: {
+              blured: flickrBlured,
+              sharp: flickrBlured
+            }
           });
         }
-        return res.json({
-          status: 'ok',
-          value: {
-            blured: image,
-            sharp: image
+        return queryFlickr(city, function(error, image){
+          var origFile, resizedFile, bluredFile;
+          if (error) {
+            return res.json({
+              status: 'error',
+              message: error
+            });
           }
+          origFile = "./public/img/cities/flickr/" + country + "--" + city + "-orig.jpg";
+          resizedFile = "./public/img/cities/flickr/" + country + "--" + city + "-resized.jpg";
+          bluredFile = "./public/img/cities/flickr/" + country + "--" + city + "-blured.jpg";
+          return exec("wget " + image + " -O " + resizedFile, function(error, result){
+            if (error) {
+              exec("rm " + origFile);
+              return res.json({
+                status: 'error',
+                message: error
+              });
+            }
+            return fs.stat(resizedFile, function(error, stat){
+              if (stat.size === 9218) {
+                return res.json({
+                  status: 'error',
+                  message: error
+                });
+              }
+              return exec("convert " + resizedFile + " -blur 0x3 -quality 0.6 " + bluredFile, function(error, result){
+                return res.json({
+                  status: 'ok',
+                  value: {
+                    blured: flickrBlured,
+                    sharp: flickrBlured
+                  }
+                });
+              });
+            });
+          });
         });
       });
     });

@@ -48,7 +48,7 @@ exports.search = (socket) ->
 		return socket.emit 'start_search_error', {error: error} if error
 
 		(error, searchParams) <- database.search.findOne(data)
-		return socket.emit 'start_search_error', {error: error} if error
+		return socket.emit 'start_search_error', {error: error} if (error or not searchParams)
 
 		result 			= makePairs(searchParams)
 		pairs 			= result.pairs
