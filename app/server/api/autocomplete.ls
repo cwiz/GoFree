@@ -1,4 +1,6 @@
-database = require "./../database"
+_			= require "underscore"
+async		= require "async"
+database 	= require "./../database"
 
 exports.autocomplete = (req, res) ->
 	query = req.params.query
@@ -26,10 +28,10 @@ exports.autocomplete = (req, res) ->
 	.sort { population: -1 }
 	.toArray (err, results) ->
 		res.send { status: 'error', error: err } if err
-		
+
 		for r in results
-			delete r._id 
-			
+			delete r._id
+
 		res.send {
 			status: "ok"
 			value:  results

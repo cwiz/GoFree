@@ -1,5 +1,7 @@
 (function(){
-  var database;
+  var _, async, database;
+  _ = require("underscore");
+  async = require("async");
   database = require("./../database");
   exports.autocomplete = function(req, res){
     var query, regexp_query;

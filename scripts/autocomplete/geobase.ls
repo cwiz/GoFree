@@ -2,7 +2,12 @@ _ 			= require "underscore"
 async		= require "async"
 csv       	= require "csv"
 database  	= require "./../../app/server/database.ls"
+exec		= require("child_process").exec
 progressBar = require "progress-bar"
+
+String.prototype.capitalize = ->
+	return this.charAt(0).toUpperCase() + this.slice(1)
+
 
 importFile = (filename, singleOperation, collectionOperation, callback)->
 
@@ -220,15 +225,59 @@ syncWithAirports = (callback) ->
 	console.log "Performing DB operation on #{operations.length} operations."
 	async.series operations, callback
 
+addInflectedNames = (callback) ->
+
+	console.log 'Inflecting'
+	bar = progressBar.create process.stdout
+	done = 0
+
+	q = async.queue (
+		(task, cb) -> 
+			task cb
+		), 16
+
+	q.drain = ->
+		callback(null, 'done')
+
+	(err, results) <- database.geonames.find({
+		name_ru 	: {$ne: null}, 
+		iata		: {$ne: null},
+		population	: {$gte: 10000}
+	}).toArray()
+
+	callbacks = _.map results, (result) ->
+			
+		opearation = (cb) ->
+			
+			(error, stdout, stderr) <- exec "python #{__dirname}/python/inflect.py -d #{__dirname}/python/dicts/ -w #{result.name_ru}"
+
+			if error or stderr
+				return cb(error, null)
+			
+			name_ru_inflected = stdout.toLowerCase().capitalize().replace('\n', '')
+
+			database.geonames.update( 
+				{ geoname_id: result.geoname_id }, 
+				{ $set: { name_ru_inflected: name_ru_inflected } }
+				(error, result) -> 
+					bar.update done.toFixed(2) / results.length
+					done += 1
+					cb error, result
+			)
+
+		q.push opearation
+
+	
 setTimeout( (
 	->
 		async.series([
-			(callback) -> database.geonames.drop(callback), 
-			importBaseGeonames, 
-			importRuGeonames, 
-			importRuCountries, 
-			importEnCountries, 
-			syncWithAirports,
+			# (callback) -> database.geonames.drop(callback), 
+			# importBaseGeonames, 
+			# importRuGeonames, 
+			# importRuCountries, 
+			# importEnCountries, 
+			#syncWithAirports,
+			addInflectedNames,
 			(callback) -> process.exit()
 		])
 	), 1000
