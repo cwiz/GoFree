@@ -6,10 +6,11 @@
   providers = require("./providers");
   validation = require("./validation");
   makePairs = function(data){
-    var pairs, tripNumber, ref$, len$, trip, destinationIndex, pair, allSignatures;
+    var pairs, i$, ref$, len$, tripNumber, trip, destinationIndex, pair, allSignatures;
     pairs = [];
-    for (tripNumber = 0, len$ = (ref$ = data.trips).length; tripNumber < len$; ++tripNumber) {
-      trip = ref$[tripNumber];
+    for (i$ = 0, len$ = (ref$ = data.trips).length; i$ < len$; ++i$) {
+      tripNumber = i$;
+      trip = ref$[i$];
       if (tripNumber === data.trips.length - 1) {
         destinationIndex = 0;
       } else {
@@ -58,7 +59,7 @@
           });
         }
         return database.search.findOne(data, function(error, searchParams){
-          var result, pairs, signatures, i$, ref$, len$, signature, resultReady, flightsReady, hotelsReady, pair, lresult$, destination, origin, extra, counter, len1$, flightProvider, hotelProvider, results$ = [];
+          var result, pairs, signatures, i$, ref$, len$, signature, resultReady, flightsReady, hotelsReady, pair, lresult$, destination, origin, extra, j$, len1$, counter, flightProvider, hotelProvider, results$ = [];
           if (error || !searchParams) {
             return socket.emit('start_search_error', {
               error: error
@@ -116,12 +117,14 @@
               adults: searchParams.adults,
               page: 1
             };
-            for (counter = 0, len1$ = (ref$ = providers.flightProviders).length; counter < len1$; ++counter) {
-              flightProvider = ref$[counter];
+            for (j$ = 0, len1$ = (ref$ = providers.flightProviders).length; j$ < len1$; ++j$) {
+              counter = j$;
+              flightProvider = ref$[j$];
               (fn$.call(this, pair.flights_signature, pair, counter, flightProvider));
             }
-            for (counter = 0, len1$ = (ref$ = providers.hotelProviders).length; counter < len1$; ++counter) {
-              hotelProvider = ref$[counter];
+            for (j$ = 0, len1$ = (ref$ = providers.hotelProviders).length; j$ < len1$; ++j$) {
+              counter = j$;
+              hotelProvider = ref$[j$];
               if (counter < pairs.length - 1) {
                 lresult$.push((fn1$.call(this, pair.hotels_signature, pair, counter, hotelProvider)));
               }

@@ -42,11 +42,13 @@
       app.use(express.methodOverride());
       app.use(app.router);
       app.use(express.compress());
-      return app.locals.pretty = true;
+      app.locals.pretty = true;
+      return app.locals.debug = false;
     });
     app.configure("development", function(){
       app.use(express.errorHandler());
-      return app.use(express.logger("dev"));
+      app.use(express.logger("dev"));
+      return app.locals.debug = true;
     });
     app.get("/", backEnd.about.index);
     app.get("/search/:hash", backEnd.about.index);
