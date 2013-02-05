@@ -58,12 +58,12 @@ assets.on "complete", ->
     app.use express.compress()
 
     app.locals.pretty = true
-    app.locals.debug = false
+    app.locals.__debug = false
 
   app.configure "development", ->
     app.use express.errorHandler()
     app.use express.logger          "dev"
-    app.locals.debug = true
+    app.locals.__debug = true
 
   # Routes
   # --- static
