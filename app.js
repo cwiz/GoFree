@@ -43,12 +43,12 @@
       app.use(app.router);
       app.use(express.compress());
       app.locals.pretty = true;
-      return app.locals.debug = false;
+      return app.locals.__debug = false;
     });
     app.configure("development", function(){
       app.use(express.errorHandler());
       app.use(express.logger("dev"));
-      return app.locals.debug = true;
+      return app.locals.__debug = true;
     });
     app.get("/", backEnd.about.index);
     app.get("/search/:hash", backEnd.about.index);
