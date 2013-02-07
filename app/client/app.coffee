@@ -27,6 +27,6 @@ app.dom.html.addClass('android android' + app.browser.isAndroid) if app.browser.
 
 app.socket = io.connect(app.api.root)
 app.router = new app.Router()
-Backbone.history.start(pushState: true);
+Backbone.history.start(pushState: true)
 
 @app = app
