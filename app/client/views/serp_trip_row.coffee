@@ -35,7 +35,7 @@ SERPTripRow = Backbone.View.extend
     el = $(e.target)
     data = 
       signature: @signature
-      model: el.data('filter')
+      filter: el.data('filter')
 
     @filtersEl.find('.selected').removeClass('selected')
     el.addClass('selected')
