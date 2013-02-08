@@ -4,6 +4,7 @@ SERP = Backbone.View.extend
 
   initialize: (@opts) ->
     @search = @opts.search
+    @selected = @opts.selected
     @hash = @opts.hash
 
     @searchPart = @$el.find('#part-search')
@@ -17,6 +18,7 @@ SERP = Backbone.View.extend
 
     @search.setHash(@hash).observe()
     @collection.setHash(@hash).observe()
+    @selected.setHash(@hash).observe()
 
     @search.on('fetched', @paramsReady, @)
     @collection.on('fetched', @collectionReady, @)
@@ -32,6 +34,7 @@ SERP = Backbone.View.extend
     # ============================================
     if app.env.debug
       window.SERP = @collection
+      window.SELECTED = @selected
 
     app.log('[app.views.SERP]: initialize')
 

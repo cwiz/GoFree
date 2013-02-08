@@ -11,6 +11,7 @@ Search = Backbone.Model.extend
 
   observe: ->
     app.socket.on('search_started', _.bind(@fetched, @))
+    app.log('[app.models.Search]: observing')
 
   setHash: (hash) ->
     @set('hash', hash)

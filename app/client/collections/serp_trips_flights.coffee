@@ -1,4 +1,5 @@
 SERPTripFlights = Backbone.Collection.extend
+  comparator: 'price'
   model: app.models.SERPTripFlight
 
   initialize: ->

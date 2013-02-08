@@ -22,6 +22,7 @@ SERPTrip = Backbone.Model.extend
   observe: ->
     if @get('flights_signature')? then app.socket.on('flights_ready', _.bind(@receivedFlights, @))
     if @get('hotels_signature')? then app.socket.on('hotels_ready', _.bind(@receivedHotels, @))
+    app.log('[app.models.SERPTrip]: observing')
 
   receivedFlights: (data) ->
     if @get('flights_signature') == data.signature

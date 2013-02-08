@@ -1,4 +1,5 @@
 SERPTripHotels = Backbone.Collection.extend
+  comparator: 'price'
   model: app.models.SERPTripHotel
 
   initialize: ->

@@ -14,6 +14,7 @@ SERPTrip = Backbone.View.extend
       model: @model
       collection: @model.get('flights')
       template: app.templates.serp_trip_flight
+      signature: @model.get('flights_signature')
       )
 
     @hotelsRow = new app.views.SERPTripRow(
@@ -21,6 +22,7 @@ SERPTrip = Backbone.View.extend
       model: @model
       collection: @model.get('hotels')
       template: app.templates.serp_trip_hotel
+      signature: @model.get('hotels_signature')
       )
 
     @preloader.on('load', _.bind(@showTrip, @))

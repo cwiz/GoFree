@@ -3,7 +3,6 @@ SERPTrips = Backbone.Collection.extend
   _observing: false
 
   model: app.models.SERPTrip
-  comparator: 'price'
 
   initialize: () ->
     @on('add', @instantiateCollections, @)
