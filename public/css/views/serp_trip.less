@@ -164,12 +164,12 @@
       cursor: pointer;
 
       &:hover {
-        background: rgba(23, 165, 188, .2);
+        background: rgba(23, 165, 188, .4);
       }
 
       &.selected {
         background: #397f93;
-        background: rgba(23, 165, 188, .5);
+        background: rgba(23, 165, 188, .8);
         cursor: default;
       }
     }
@@ -233,6 +233,8 @@
           font-weight: 400;
           font-size: 16px;
 
+          text-shadow: 0 -1px 1px rgba(255, 255, 255, 1);
+
           color: #333;
         }
       }
@@ -254,6 +256,12 @@
     .m-c-control {
       margin-top: @hotelsCarouselHeight / 2 - 23px;
     }
+  }
+
+  .v-s-t-header,
+  .v-s-t-title,
+  .v-s-t-rowcontrols {
+    text-shadow: 0 0 20px rgba(0, 0, 0, .4), 0 -1px 1px rgba(0, 0, 0, .4);
   }
 
   &.collapsed {
