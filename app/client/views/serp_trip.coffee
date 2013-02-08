@@ -12,7 +12,7 @@ SERPTrip = Backbone.View.extend
     @flightsRow = new app.views.SERPTripRow(
       el: @$el.find('.v-s-t-flights')
       model: @model
-      collection: @model.get('flights')
+      collection: @model.get('flights_filtered')
       template: app.templates.serp_trip_flight
       signature: @model.get('flights_signature')
       )
@@ -20,7 +20,7 @@ SERPTrip = Backbone.View.extend
     @hotelsRow = new app.views.SERPTripRow(
       el: @$el.find('.v-s-t-hotels')
       model: @model
-      collection: @model.get('hotels')
+      collection: @model.get('hotels_filtered')
       template: app.templates.serp_trip_hotel
       signature: @model.get('hotels_signature')
       )

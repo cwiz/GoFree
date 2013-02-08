@@ -11,6 +11,7 @@ SERPTripRow = Backbone.View.extend
 
     @listEl = @$el.find('.m-c-list')
     @counterEl = @$el.find('.v-s-t-c-count')
+    @filtersEl = @$el.find('.v-s-t-c-filters')
 
     @carousel = @carouselEl.m_carousel()[0]
 
@@ -28,6 +29,18 @@ SERPTripRow = Backbone.View.extend
   events:
     'click .v-s-t-i-pick':      'selectItem'
     'click .v-s-t-i-unpick':    'deselectItem'
+    'click .v-s-t-c-filter':   'setFilter'
+
+  setFilter: (e)->
+    el = $(e.target)
+    data = 
+      signature: @signature
+      model: el.data('filter')
+
+    @filtersEl.find('.selected').removeClass('selected')
+    el.addClass('selected')
+
+    app.trigger('serp_filter', data)
 
   selectItem: (e)->
     el = $(e.target)

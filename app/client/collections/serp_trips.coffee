@@ -27,9 +27,11 @@ SERPTrips = Backbone.Collection.extend
   instantiateCollections: (model) ->
     unless model.get('hotels')?
       model.set('hotels', new app.collections.SERPTripHotels())
+      model.set('hotels_filtered', new app.collections.SERPTripHotels())
 
     unless model.get('flights')?
       model.set('flights', new app.collections.SERPTripFlights())
+      model.set('flights_filtered', new app.collections.SERPTripFlights())
 
     if @_observing
       model.observe()
@@ -38,6 +40,9 @@ SERPTrips = Backbone.Collection.extend
     for item in json
       item.hotels = item.hotels.toJSON()
       item.flights = item.flights.toJSON()
+
+      delete item.hotels_filtered
+      delete item.flights_filtered
  
     json
 
