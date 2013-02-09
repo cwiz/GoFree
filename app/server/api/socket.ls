@@ -66,7 +66,7 @@ exports.search = (socket) ->
 		resultReady = (error, result, eventName, signature, totalProviders) ->
 
 			items 	 = result?.results 	or []
-			complete = result.complete
+			complete = result?.complete
 			error    = error?.message 	or null
 
 			if complete or error

@@ -82,7 +82,7 @@
           resultReady = function(error, result, eventName, signature, totalProviders){
             var items, complete, total;
             items = (result != null ? result.results : void 8) || [];
-            complete = result.complete;
+            complete = result != null ? result.complete : void 8;
             error = (error != null ? error.message : void 8) || null;
             if (complete || error) {
               console.log(signature);
