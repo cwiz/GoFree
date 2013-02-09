@@ -18,8 +18,10 @@ SERPTripRow = Backbone.View.extend
     @counter = 0
     @length = 0
     @rendered = 0
+    @progress = 0
 
-    @collection.on('progress', @progress, @)
+    @collection.on('progress', @newData, @)
+    @collection.on('filtered', @update, @)
 
     @carouselEl.on('mod_shifted_right', _.bind(@shiftRight, @))
     @carouselEl.on('mod_shifted_left', _.bind(@shiftLeft, @))
@@ -65,24 +67,32 @@ SERPTripRow = Backbone.View.extend
     @selected = null
     app.trigger('serp_deselected', data)
 
-  progress: (p)->
-    items = if p is 1 then @itemsNum * 2 else @itemsNum
+  update: ->
+    items = if @progress is 1 then @itemsNum * 2 else @itemsNum
     html = for model in @collection.first(items)
       @render(model)
 
-    @counter = @itemsNum
     @length = @collection.length
-    @rendered = items
+    @counter = Math.min(@itemsNum, @length)
+    @rendered = Math.min(items, @length)
 
     @listEl.html(html)
     @counterEl.html(@counter + '/' + @length)
 
-    if p is 1
+    if not @length
+      @$el.addClass('empty')
+    else
+      @$el.removeClass('empty')
+
+  newData: (@progress)->
+    @update()
+
+    if @progress is 1
       @carousel.hardReset()
       @$el.addClass('loaded')
 
   shiftRight: ->
-    @counter += @itemsNum
+    @counter = Math.min(@counter + @itemsNum, @length)
     @counterEl.html(@counter + '/' + @length)
 
     if @rendered < @length
@@ -98,7 +108,7 @@ SERPTripRow = Backbone.View.extend
       @carousel.reset()
 
   shiftLeft: ->
-    @counter -= @itemsNum
+    @counter = @counter = Math.max(@counter - @itemsNum, 0)
     @counterEl.html(@counter + '/' + @length)
 
   render: (model)->
