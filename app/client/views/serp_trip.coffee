@@ -70,13 +70,13 @@ SERPTrip = Backbone.View.extend
     return unless @collapsed
     @collapsed = false
     @$el.removeClass('collapsed')
-    @$el.animate(height: @heightFull, 500)
+    @$el.animate({ height: @heightFull }, { duration: 500, queue: false })
 
   collapse: ->
     return if @collapsed
     @collapsed = true
     @$el.addClass('collapsed')
-    @$el.animate(height: @heightCollapsed, 500)
+    @$el.animate({ height: @heightCollapsed }, { duration: 500, queue: false })
 
   render: ->
     @$el.html(app.templates.serp_trip(@model.toJSON()))
