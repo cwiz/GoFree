@@ -7,11 +7,10 @@
   providers = require("./providers");
   validation = require("./validation");
   makePairs = function(data){
-    var pairs, i$, ref$, len$, tripNumber, trip, isLastTrip, destinationIndex, pair, allSignatures;
+    var pairs, tripNumber, ref$, len$, trip, isLastTrip, destinationIndex, pair, allSignatures;
     pairs = [];
-    for (i$ = 0, len$ = (ref$ = data.trips).length; i$ < len$; ++i$) {
-      tripNumber = i$;
-      trip = ref$[i$];
+    for (tripNumber = 0, len$ = (ref$ = data.trips).length; tripNumber < len$; ++tripNumber) {
+      trip = ref$[tripNumber];
       isLastTrip = tripNumber === data.trips.length - 1;
       destinationIndex = isLastTrip
         ? 0
@@ -114,30 +113,31 @@
           callbacks = [];
           _.map(pairs, function(pair){
             return function(){
-              var x$, copyPair, hotelOperations;
-              x$ = copyPair = pair;
-              _.map(providers.flightProviders, function(provider){
-                return function(){
-                  return callbacks.push(function(callback){
-                    return provider.search(copyPair.origin, copyPair.destination, copyPair.extra, function(error, items){
-                      return flightsReady(error, items, copyPair.flights_signature);
+              var copyPair, hotelOperations;
+              (function(){
+                _.map(providers.flightProviders, function(provider){
+                  return function(){
+                    return callbacks.push(function(callback){
+                      return provider.search(copyPair.origin, copyPair.destination, copyPair.extra, function(error, items){
+                        return flightsReady(error, items, copyPair.flights_signature);
+                      });
                     });
-                  });
-                }();
-              });
+                  }();
+                });
+              }.call(copyPair = pair));
               if (!pair.hotels_signature) {
                 return;
               }
               return hotelOperations = _.map(providers.hotelProviders, function(provider){
                 return function(){
-                  var x$, copyPair;
-                  x$ = copyPair = pair;
-                  callbacks.push(function(callback){
-                    return provider.search(copyPair.origin, copyPair.destination, copyPair.extra, function(error, items){
-                      return hotelsReady(error, items, copyPair.hotels_signature);
+                  var copyPair;
+                  return (function(){
+                    return callbacks.push(function(callback){
+                      return provider.search(copyPair.origin, copyPair.destination, copyPair.extra, function(error, items){
+                        return hotelsReady(error, items, copyPair.hotels_signature);
+                      });
                     });
-                  });
-                  return x$;
+                  }.call(copyPair = pair));
                 }();
               });
             }();
