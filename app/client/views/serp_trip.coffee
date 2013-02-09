@@ -71,20 +71,32 @@ SERPTrip = Backbone.View.extend
   setCollapsable: (bool)->
     @_collapsable = bool
 
+    if @_collapsable
+      @$el.removeClass('nocollapse')
+    else
+      @$el.addClass('nocollapse')
+
   expand: ->
-    @trigger('expand', @model.cid)
     return unless @collapsed
+
+    @trigger('expand', @model.cid)
+
     @collapsed = false
     @$el.removeClass('collapsed')
     @$el.animate({ height: @heightFull }, { duration: 500, queue: false })
+
     @trigger('expanding', @model.cid)
 
   collapse: ->
+    return if @collapsed
+
     @trigger('collapse', @model.cid)
-    return if @collapsed or not @_collapsable
+    return if not @_collapsable
+
     @collapsed = true
     @$el.addClass('collapsed')
     @$el.animate({ height: @heightCollapsed }, { duration: 500, queue: false })
+
     @trigger('collapsing', @model.cid)
 
   render: ->
