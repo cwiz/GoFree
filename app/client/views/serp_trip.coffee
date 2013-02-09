@@ -2,6 +2,8 @@ SERPTrip = Backbone.View.extend
   tagName: 'article'
   className: 'v-serp-trip'
 
+  _collapsable: true
+
   initialize: (@opts) ->
     @container = @opts.container
     @render()
@@ -66,17 +68,36 @@ SERPTrip = Backbone.View.extend
     @bg.attr('src', @preloader.attr('src')) if image
     @$el.fadeIn(500)
 
+  setCollapsable: (bool)->
+    @_collapsable = bool
+
+    if @_collapsable
+      @$el.removeClass('nocollapse')
+    else
+      @$el.addClass('nocollapse')
+
   expand: ->
     return unless @collapsed
+
+    @trigger('expand', @model.cid)
+
     @collapsed = false
     @$el.removeClass('collapsed')
-    @$el.animate(height: @heightFull, 500)
+    @$el.animate({ height: @heightFull }, { duration: 500, queue: false })
+
+    @trigger('expanding', @model.cid)
 
   collapse: ->
     return if @collapsed
+
+    @trigger('collapse', @model.cid)
+    return if not @_collapsable
+
     @collapsed = true
     @$el.addClass('collapsed')
-    @$el.animate(height: @heightCollapsed, 500)
+    @$el.animate({ height: @heightCollapsed }, { duration: 500, queue: false })
+
+    @trigger('collapsing', @model.cid)
 
   render: ->
     @$el.html(app.templates.serp_trip(@model.toJSON()))

@@ -68,6 +68,8 @@
       line-height: 46px;
       text-transform: uppercase;
       cursor: pointer;
+
+      .transition(font-size .4s linear);
     }
     .v-s-t-dates {
       width: 100%;
@@ -200,50 +202,64 @@
     .m-c-coutainer {
       width: 899px;
       min-height: @flightsCarouselHeight;
+    }
+  }
 
-      .v-s-t-c-loading {
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        left: 0;
-        top: 0;
+  .v-s-t-c-loading,
+  .v-s-t-c-emptyset {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
 
-        background: #fff;
-        border-radius: 3px;
+    background: #fff;
+    border-radius: 3px;
 
-        opacity: .85;
+    opacity: .85;
 
-        text-align: center;
+    text-align: center;
 
-        span {
-          margin-top: -14px;
-          margin-left: -50px;
+    span {
+      margin-top: -14px;
+      margin-left: -50px;
 
-          padding: 5px 10px;
+      padding: 5px 10px;
 
-          display: inline-block;
+      display: inline-block;
 
-          position: absolute;
-          left: 50%;
-          top: 50%;
+      position: absolute;
+      left: 50%;
+      top: 50%;
 
-          border-radius: 5px;
+      border-radius: 5px;
 
-          background: #ddd;
-          font-weight: 400;
-          font-size: 16px;
+      background: #ddd;
+      font-weight: 400;
+      font-size: 16px;
 
-          text-shadow: 0 -1px 1px rgba(255, 255, 255, 1);
+      text-shadow: 0 -1px 1px rgba(255, 255, 255, 1);
 
-          color: #333;
-        }
-      }
+      color: #333;
+    }
+  }
+  .v-s-t-c-emptyset {
+    display: none;
+
+    span {
+      margin-left: -192px;
     }
   }
 
   .loaded {
     .v-s-t-c-loading {
       display: none;
+    }
+  }
+
+  .empty {
+    .v-s-t-c-emptyset {
+      display: block;
     }
   }
 
@@ -255,6 +271,9 @@
     }
     .m-c-control {
       margin-top: @hotelsCarouselHeight / 2 - 23px;
+    }
+    .v-s-t-c-emptyset span {
+      margin-left: -222px;
     }
   }
 
@@ -285,5 +304,12 @@
     }
   }
 
+  &.nocollapse {
+    .v-s-t-header {
+      .v-s-t-places {
+        cursor: default;
+      }
+    }
+  }
 
 }

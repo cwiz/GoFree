@@ -1,20 +1,29 @@
 SERP = Backbone.View.extend
   el: '#l-content'
-  progress: 0
 
-  initialize: (@opts) ->
+  initialize: (opts) ->
+    @searchPart = @$el.find('#part-search')
+    @serpPart = @$el.find('#part-serp')
+    @serpHeader = @serpPart.find('.p-s-header-wrap')
+
+    app.dom.win.on('resize', _.bind(@updatePageHeight, @))
+    app.socket.on('progress', _.bind(@progress, @))
+
+    @setup(opts)
+
+    app.log('[app.views.SERP]: initialize')
+
+  events:
+    'click .p-s-h-changetripparams'      : 'changeSearchParams'
+
+  setup: (@opts)->
+    @collection = @opts.collection
     @search = @opts.search
     @selected = @opts.selected
     @hash = @opts.hash
 
-    @searchPart = @$el.find('#part-search')
-    @serpPart = @$el.find('#part-serp')
-
-    @serpHeader = @serpPart.find('.p-s-header-wrap')
-
+    @progress = 0
     @serpTrips = null
-
-    app.dom.win.on('resize', _.bind(@updatePageHeight, @))
 
     @search.setHash(@hash).observe()
     @collection.setHash(@hash).observe()
@@ -22,8 +31,6 @@ SERP = Backbone.View.extend
 
     @search.on('fetched', @paramsReady, @)
     @collection.on('fetched', @collectionReady, @)
-
-    app.socket.on('progress', _.bind(@progress, @))
 
     app.socket.emit('search_start', hash: @hash)
 
@@ -35,11 +42,6 @@ SERP = Backbone.View.extend
     if app.env.debug
       window.SERP = @collection
       window.SELECTED = @selected
-
-    app.log('[app.views.SERP]: initialize')
-
-  events:
-    'click .p-s-h-changetripparams'      : 'changeSearchParams'
 
   updatePageHeight: ->
     @serpPart.css('min-height': app.dom.win.height())
