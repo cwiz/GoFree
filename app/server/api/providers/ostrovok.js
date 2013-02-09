@@ -43,10 +43,9 @@
         return cb(error, null);
       }
       ostUrl = "http://ostrovok.ru/api/v1/search/page/" + extra.page + "/?region_id=" + ostrovokId.destination + "&arrivalDate=" + origin.date + "&departureDate=" + destination.date + "&room1_numberOfAdults=" + extra.adults;
-      console.log("Querying ostrovok serp | " + ostUrl);
       return request(ostUrl, function(error, response, body){
         var json, page;
-        console.log("Queried ostrovok serp | " + ostUrl + " | status " + response.statusCode);
+        console.log("OSTROVOK: Queried ostrovok serp | " + ostUrl + " | status " + response.statusCode);
         if (error) {
           return cb(error, null);
         }
@@ -62,10 +61,8 @@
   };
   exports.process = function(json, cb){
     var hotels, rates, ref$, newHotels, i$, len$, hotel, rating, count, price, stars, newHotel;
-    console.log("ostrovok.process");
     if (!json || json.hotels == null) {
-      console.log("ostrovok.process");
-      cb('empty json', null);
+      return cb('empty json', null);
     }
     hotels = json.hotels;
     rates = (ref$ = json._meta) != null ? ref$.rates : void 8;

@@ -35,7 +35,7 @@ exports.query = (origin, destination, extra, cb) ->
   evUrl = "http://api.eviterra.com/avia/v1/variants.xml?from=#{eviterraId.origin}&to=#{eviterraId.destination}&date1=#{origin.date}&adults=#{extra.adults}"
 
   (error, response, body) <- request evUrl
-  console.log "Queried Eviterra serp | #{evUrl} | status #{response.statusCode}"
+  console.log "EVITERRA: Queried Eviterra serp | #{evUrl} | status #{response.statusCode}"
   return cb(error, null) if error
 
   (error, json) <- parser.parseString response.body
@@ -44,8 +44,6 @@ exports.query = (origin, destination, extra, cb) ->
   cb null, json
 
 exports.process = (flights, cb) -> 
-  console.log "Processing Eviterra serp"
-
   if not flights or not flights.variant
     return cb({message: 'No flights found'}, null)
 
@@ -117,7 +115,7 @@ exports.search = (origin, destination, extra, cb) ->
 
 exports.autocomplete = (query, callback) ->
   eviterraUrl = "https://eviterra.com/complete.json?val=#{query}"
-  (error, response, body) <-! request eviterraUrl
+  (error, response, body) <- request eviterraUrl
   console.log "Queried eviterra autocomplete | #{eviterraUrl} | error: #{error} | status: #{response?.statusCode}"
   return callback(error, null) if error
 

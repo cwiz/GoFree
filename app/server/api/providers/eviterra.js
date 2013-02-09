@@ -49,7 +49,7 @@
       }
       evUrl = "http://api.eviterra.com/avia/v1/variants.xml?from=" + eviterraId.origin + "&to=" + eviterraId.destination + "&date1=" + origin.date + "&adults=" + extra.adults;
       return request(evUrl, function(error, response, body){
-        console.log("Queried Eviterra serp | " + evUrl + " | status " + response.statusCode);
+        console.log("EVITERRA: Queried Eviterra serp | " + evUrl + " | status " + response.statusCode);
         if (error) {
           return cb(error, null);
         }
@@ -64,7 +64,6 @@
   };
   exports.process = function(flights, cb){
     var i$, ref$, len$, variant, allAirports;
-    console.log("Processing Eviterra serp");
     if (!flights || !flights.variant) {
       return cb({
         message: 'No flights found'
@@ -179,7 +178,7 @@
           });
         }
       }
-      callback(null, finalJson);
+      return callback(null, finalJson);
     });
   };
 }).call(this);

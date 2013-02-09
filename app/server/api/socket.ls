@@ -1,4 +1,5 @@
 _ 			= require "underscore"
+async		= require "async"
 database 	= require "./../database"
 md5 		= require "MD5"
 providers 	= require "./providers"
@@ -9,25 +10,25 @@ makePairs = (data) ->
 	
 	for trip, tripNumber in data.trips
 
-		if tripNumber is (data.trips.length-1)
-			destinationIndex = 0
-		else
-			destinationIndex = tripNumber + 1
+		isLastTrip 		= tripNumber is (data.trips.length-1) 
 
+		destinationIndex = if isLastTrip then 0 else tripNumber + 1
+			
 		pair = 
-			destination 	: data.trips[destinationIndex]
-			origin			: data.trips[tripNumber]
+			destination : data.trips[destinationIndex]
+			origin		: data.trips[tripNumber]
+			extra		: 
+				adults	: data.adults
+				page	: 1
 
-		pair.flights_signature 	= md5(JSON.stringify(pair.origin.place) + JSON.stringify(pair.destination.place) + pair.origin.date)
+		pair.flights_signature 	= md5(JSON.stringify(pair.origin.place) 		+ JSON.stringify(pair.destination.place) 	+ pair.origin.date)
 		
-		if tripNumber is not (data.trips.length - 1)
-			pair.hotels_signature 		= md5(JSON.stringify(pair.destination.place) + pair.origin.date + pair.destination.date)
-		else
-			pair.hotels_signature 		= null
-		
+		pair.hotels_signature 	= md5(JSON.stringify(pair.destination.place) 	+ pair.origin.date 							+ pair.destination.date)
+		pair.hotels_signature 	= null if isLastTrip
+			
 		pairs.push pair
 
-	allSignatures = _.map(pairs, (pair)->pair.flights_signature).concat(_.map(pairs, (pair)->pair.hotels_signature))
+	allSignatures = _.map( pairs, (pair) -> pair.flights_signature).concat( _.map( pairs, (pair) -> pair.hotels_signature ) )
 	allSignatures.pop()
 
 	return {
@@ -36,6 +37,7 @@ makePairs = (data) ->
 	}
 
 exports.search = (socket) ->
+	
 	socket.on 'search', (data) ->
 		(error, data) <- validation.search data
 		return socket.emit 'search_error', {error: error} if error
@@ -44,75 +46,76 @@ exports.search = (socket) ->
 		socket.emit 'search_ok', {} 
 
 	socket.on 'search_start', (data) ->
+
 		(error, data) <- validation.start_search data
 		return socket.emit 'start_search_error', {error: error} if error
 
 		(error, searchParams) <- database.search.findOne(data)
 		return socket.emit 'start_search_error', {error: error} if (error or not searchParams)
 
-		result 			= makePairs(searchParams)
-		pairs 			= result.pairs
-		signatures 		= {}
-
 		delete searchParams._id
 
-		socket.emit 'search_started', {
-			form 	: searchParams
-			trips 	: pairs
-		}
+		result 			= makePairs(searchParams)
+		pairs 			= result.pairs
+		
+		signatures 		= _.map(result.signatures, (signature) -> [signature, 0] )  |> _.object
 
-		for signature in result.signatures
-			signatures[signature] = false
-	 
-		# --- start helper functions ---
-		resultReady = (error, items, eventName, signature) ->
+		socket.emit 'search_started', { form : searchParams, trips : pairs }
 
-			results = if error then [] else items.results
+		# --- start helper functions --- 
+		resultReady = (error, result, eventName, signature, totalProviders) ->
 
-			console.log "socket.emit #{eventName}
-			| Complete: #{items?.complete or ''} 
-			| Error: #{error?.message or ''}
-			| \# results: #{results.length}"
+			items 	 = result?.results 	or []
+			complete = result.complete
+			error    = error?.message 	or null
+
+			if complete or error
+				console.log signature
+				console.log totalProviders
+				signatures[signature] += 1.0 / totalProviders
+
+			console.log "SOCKET: #{eventName}
+			| Complete: #{complete} 
+			| Error: #{error}
+			| \# results: #{items.length}"
 			
 			socket.emit eventName , {
 				error     	: error
-				items   	: results
+				items   	: items
 				signature 	: signature
-				progress	: if items?.complete then 1 else 0
+				progress	: signatures[signature]
 			}
 
-			if items?.complete or error
-				signatures[signature] = true
-
-			complete = _.filter(_.values(signatures), (elem) -> elem is true).length
+			complete = _.filter(_.values(signatures), (elem) -> elem).length
 			total    = _.values(signatures).length
-
-			console.log "#{complete} / #{total}"
 
 			socket.emit 'progress', {
 				hash	: searchParams.hash
 				progress: complete.toFixed(2) / total
 			}
 
-		flightsReady 	= (error, items, signature) -> resultReady error, items, 'flights_ready', signature
-		hotelsReady		= (error, items, signature) -> resultReady error, items, 'hotels_ready',  signature
+		flightsReady 	= (error, items, signature) -> resultReady error, items, 'flights_ready', signature, providers.flightProviders.length
+		hotelsReady		= (error, items, signature) -> resultReady error, items, 'hotels_ready',  signature, providers.hotelProviders.length
 		# --- end helper functions ---  
 
-		for pair in pairs
-			destination = pair.destination
-			origin      = pair.origin
-			extra       = 
-				adults: searchParams.adults
-				page: 1
+		callbacks = []
+		
+		_.map pairs, (pair) -> 
 
-			for flightProvider, counter in providers.flightProviders
-				let signature = pair.flights_signature
-					(error, items) <- flightProvider.search origin, destination, extra
-					flightsReady error, items, signature
+			do->
+				with copyPair = pair
+					_.map providers.flightProviders, (provider) -> do ->
+						callbacks.push (callback) ->
+							(error, items) <- provider.search copyPair.origin, copyPair.destination, copyPair.extra
+							flightsReady error, items, copyPair.flights_signature
 
-			for hotelProvider, counter 	in providers.hotelProviders when counter < (pairs.length - 1)
-				let signature = pair.hotels_signature
-					if signature
-						(error, items) <- hotelProvider.search origin, destination, extra
-						hotelsReady error, items, signature
+				return if not pair.hotels_signature
+					
+				hotelOperations = _.map providers.hotelProviders, (provider) -> do ->
+					with copyPair = pair
+						callbacks.push (callback) ->
+							(error, items) <- provider.search copyPair.origin, copyPair.destination, copyPair.extra
+							hotelsReady error, items, copyPair.hotels_signature
 						
+		async.parallel callbacks
+

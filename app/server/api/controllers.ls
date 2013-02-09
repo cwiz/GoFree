@@ -11,38 +11,17 @@ travelmenu  = require "./providers/travelmenu-hotels"
 
 exports.autocomplete = (req, res) ->
 	
-	emitResults = (results) ->
-		res.send {
-			status: "ok"
-			value:  results
-		}
+	emitResults = (results) -> res.send { status: "ok", 	value: results 	}
+	emitError   = (message) -> res.send { status: "error", 	value: message 	}
 
 	query = req.params.query
-
-	if not query
-		res.send
-			status: "error"
-			message: "please supply q GET param"
+	emitError "please supply q GET param" if not query
 
 	(err, results) <- database.suggest.findOne { query: query }
+	
 	console.log "searched mongodb for #{query}"
-	return emitResults(results.results) if results
+	emitResults(results.results) if results
 	
-	providerCallbacks = {
-		ostrovok:   (callback) -> ostrovok.autocomplete   query, callback
-		eviterra:   (callback) -> eviterra.autocomplete   query, callback
-		travelmenu: (callback) -> travelmenu.autocomplete query, callback
-	}
-
-	(err, autocompleteResults) <- async.parallel providerCallbacks
-	results <- glueAutocompleteResults autocompleteResults
-	
-	database.suggest.insert {
-		query:    query
-		results:  results
-	}
-
-	emitResults results
 
 glueAutocompleteResults = (results, cb) ->
 
@@ -138,7 +117,6 @@ exports.image_v2 = (req, res) ->
 			blured	: shutterstockBlured
 			sharp	: shutterstockSharp
 	}) if shutterstockExits
-
 
 	flickrPath 			= "./public/img/cities/flickr/#{country}--#{city}-blured.jpg"
 	flickrBlured		= "/img/cities/flickr/#{country}--#{city}-blured.jpg"

@@ -9,49 +9,30 @@
   eviterra = require("./providers/eviterra");
   travelmenu = require("./providers/travelmenu-hotels");
   exports.autocomplete = function(req, res){
-    var emitResults, query, x$;
+    var emitResults, emitError, query;
     emitResults = function(results){
       return res.send({
         status: "ok",
         value: results
       });
     };
+    emitError = function(message){
+      return res.send({
+        status: "error",
+        value: message
+      });
+    };
     query = req.params.query;
     if (!query) {
-      x$ = res.send;
-      ({
-        status: "error",
-        message: "please supply q GET param"
-      });
+      emitError("please supply q GET param");
     }
     return database.suggest.findOne({
       query: query
     }, function(err, results){
-      var providerCallbacks;
       console.log("searched mongodb for " + query);
       if (results) {
         return emitResults(results.results);
       }
-      providerCallbacks = {
-        ostrovok: function(callback){
-          return ostrovok.autocomplete(query, callback);
-        },
-        eviterra: function(callback){
-          return eviterra.autocomplete(query, callback);
-        },
-        travelmenu: function(callback){
-          return travelmenu.autocomplete(query, callback);
-        }
-      };
-      return async.parallel(providerCallbacks, function(err, autocompleteResults){
-        return glueAutocompleteResults(autocompleteResults, function(results){
-          database.suggest.insert({
-            query: query,
-            results: results
-          });
-          return emitResults(results);
-        });
-      });
     });
   };
   glueAutocompleteResults = function(results, cb){
