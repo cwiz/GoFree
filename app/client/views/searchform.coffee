@@ -88,6 +88,10 @@ SearchForm = Backbone.View.extend
     @collection.remove(item)
     delete @stops[item.cid]
 
+    if @collection.last().get('date')
+      @addStopEl.removeClass('disabled')
+      @canAddStop = true
+
   addStop: (e) ->
     return unless @canAddStop
     @collection.add(date: null, removable: true)
