@@ -23,10 +23,10 @@ SERPTrip = Backbone.Model.extend
 
   filterFactors:
     # flights + hotels
-    'convenient': (src)-> _.filter(src, (model)-> return model.get('stops') == 1 and model.get('price') <= 15000)
+    'convenient': (src)-> _.filter(src, (model)-> return model.get('stops') == 0 and model.get('price') <= 15000)
     'cheap': (src)-> _.filter(src, (model)-> return model.get('price') <= 10000)
     # flights
-    'direct': (src)-> _.filter(src, (model)-> return model.get('stops') == 1)
+    'direct': (src)-> _.filter(src, (model)-> return model.get('stops') == 0)
     # hotels
     'luxury': (src)-> _.filter(src, (model)-> return model.get('price') >= 40000 and model.get('stars') == 5)
 

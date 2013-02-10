@@ -79,7 +79,9 @@ SERPTripRow = Backbone.View.extend
     @listEl.html(html)
     @counterEl.html(@counter + '/' + @length)
 
-    if not @length
+    @carousel.hardReset()
+
+    if not @length and @progress is 1
       @$el.addClass('empty')
     else
       @$el.removeClass('empty')
@@ -87,9 +89,7 @@ SERPTripRow = Backbone.View.extend
   newData: (@progress)->
     @update()
 
-    if @progress is 1
-      @carousel.hardReset()
-      @$el.addClass('loaded')
+    if @progress is 1 then @$el.addClass('loaded')
 
   shiftRight: ->
     @counter = Math.min(@counter + @itemsNum, @length)
