@@ -47,7 +47,7 @@
         return page.evaluate(function(){
           return AirbnbSearch.resultsJson;
         }, function(result){
-          var ref$, hasResults, results;
+          var hasResults, ref$, results;
           hasResults = (ref$ = result.properties) != null ? ref$.length : void 8;
           console.log("AIRBNB: page: " + extra.page + " | # results found: " + hasResults);
           if (!hasResults) {
