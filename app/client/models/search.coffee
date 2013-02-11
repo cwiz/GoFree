@@ -25,11 +25,11 @@ Search = Backbone.Model.extend
     @set(
       adults: data.adults
       budget: data.budget
-      trips: new app.collections.SearchTrips(data.trips)
+      trips: @get('trips').reset(data.trips)
     )
 
-    @trigger('fetched', data)
     app.log('[app.models.Search]: fetched', data)
+    @trigger('fetched', data)
 
   isValid: ->
     valid = true

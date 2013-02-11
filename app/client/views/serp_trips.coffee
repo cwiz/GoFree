@@ -13,8 +13,6 @@ SERPTrips = Backbone.View.extend
 
     @initTrips()
 
-    @expandFirst()
-
     app.log('[app.views.SERPTrips]: initialize')
 
   initTrips: ->

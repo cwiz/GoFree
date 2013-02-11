@@ -3,23 +3,45 @@
 
 #part-serp {
   display: none;
+  .helper_noselect;
 
   .p-s-header-wrap {
     min-height: 60px;
     border-bottom: 1px solid #bfbfbf;
   }
 
-  .p-s-trips-wrap {
-    .loading {
-      .helper_noselect;
-      height: 300px;
+  .p-s-t-loading,
+  .p-s-t-error {
+    height: 300px;
 
-      font-size: 24px;
-      line-height: 300px;
-      text-align: center;
+    font-size: 24px;
+    line-height: 300px;
+    text-align: center;
 
-      color: #777;
-      text-shadow: 0 1px 0 rgba(255, 255, 255, 1);
+    color: #777;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 1);
+  }
+
+  .p-s-t-error,
+  .p-s-t-content {
+    display: none;
+  }
+
+  &.loaded {
+    .p-s-t-loading {
+      display: none;
+    }
+    .p-s-t-content {
+      display: block;
+    }
+  }
+
+  &.error {
+    .p-s-t-loading {
+      display: none;
+    }
+    .p-s-t-error {
+      display: block;
     }
   }
 }

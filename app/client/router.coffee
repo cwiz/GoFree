@@ -41,7 +41,7 @@ Router = Backbone.Router.extend
     if views['serp'] and views['serp'].hash is hash
       views['serp'].showSERP()
     else
-      models['search'] = new app.models.Search()
+      models['search'] = new app.models.Search(trips: new app.collections.SearchTrips())
 
       if views['serp']
         views['serp'].setup(
