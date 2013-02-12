@@ -29,11 +29,11 @@ SERPTrip = Backbone.View.extend
         signature: @model.get('hotels_signature')
         )
 
-    @preloader.on('load', _.bind(@showTrip, @))
+    @preloader.on('load', _.bind(@updateBG, @))
 
     @initialCollapse()
-    @fetchBackground()
     @showTrip()
+    @fetchBackground()
 
     app.log('[app.views.SERPTrip]: initialize')
 
@@ -60,14 +60,14 @@ SERPTrip = Backbone.View.extend
       success: (resp) =>
         if resp and resp.value
           @preloader.attr('src', resp.value.blured)
-        else
-          @showTrip()
-      error: =>
-        @showTrip()
+
+  updateBG: (e)->
+    @bg.fadeOut(200, =>
+      @bg.attr('src', e.target.src)
+      @bg.fadeIn(200)
+      )
 
   showTrip: (e)->
-    image = @preloader.attr('src')
-    @bg.attr('src', @preloader.attr('src')) if image
     @$el.fadeIn(500)
 
   setCollapsable: (bool)->

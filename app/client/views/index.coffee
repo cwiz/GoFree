@@ -42,7 +42,8 @@ Index = Backbone.View.extend
     $.ajax
       url:  "#{app.api.images}#{place.country_code}/#{place.name}"
       success: (resp) =>
-        @preloader.attr('src', resp.value.sharp)
+        if resp and resp.value
+          @preloader.attr('src', resp.value.sharp)
 
   showSERP: ->
     height = app.dom.win.height()
