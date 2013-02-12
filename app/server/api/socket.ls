@@ -69,10 +69,7 @@ exports.search = (socket) ->
 			complete = result?.complete
 			error    = error?.message 	or null
 
-			if complete or error
-				console.log signature
-				console.log totalProviders
-				signatures[signature] += 1.0 / totalProviders
+			signatures[signature] += 1.0 / totalProviders if complete or error
 
 			console.log "SOCKET: #{eventName}
 			| Complete: #{complete} 

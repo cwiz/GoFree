@@ -23,7 +23,7 @@ getEviterraId = (place, callback) ->
   callback null, eviterra_id
   database.geonames.update {geoname_id : place.geoname_id}, {$set: {eviterra_id : eviterra_id}}
 
-exports.query = (origin, destination, extra, cb) ->
+query = (origin, destination, extra, cb) ->
 
   (error, eviterraId) <- async.parallel {
     origin      : (callback) -> getEviterraId origin.place,       callback
@@ -43,7 +43,7 @@ exports.query = (origin, destination, extra, cb) ->
 
   cb null, json
 
-exports.process = (flights, cb) -> 
+process = (flights, cb) -> 
   if not flights or not flights.variant
     return cb({message: 'No flights found'}, null)
 
@@ -63,9 +63,16 @@ exports.process = (flights, cb) ->
     allAirports.push variant.firstFlight.departure
     allAirports.push variant.lastFlight.arrival
 
-  allAirports = _.uniq(allAirports)
+  # todo add all list!
+  allCarriers = _.map flights.variant, (variant) -> variant.firstFlight.marketingCarrier
+  allCarriers = _.uniq allCarriers
+
+  allAirports = _.uniq allAirports
 
   (err, airportsInfo) <- database.airports.find({iata:{$in:allAirports}}).toArray()
+
+  (err, airlinesInfo) <- database.airlines.find({iata:{$in:allCarriers}}).toArray()
+
   newFlights = []
 
   for variant in flights.variant
@@ -73,11 +80,15 @@ exports.process = (flights, cb) ->
     arrivalDestinationDate  = moment variant.lastFlight.arrivalDate     + 'T' + variant.lastFlight.arrivalTime
     departureOriginDate     = moment variant.firstFlight.departureDate  + 'T' + variant.firstFlight.departureTime
 
-    departureAirport        = _.filter(airportsInfo, (el) -> el.iata is variant.firstFlight.departure)[0]
-    arrivalAirport          = _.filter(airportsInfo, (el) -> el.iata is variant.lastFlight.arrival)[0]
+    departureAirport        = _.filter( airportsInfo, (el) -> el.iata is variant.firstFlight.departure      )[0]
+    arrivalAirport          = _.filter( airportsInfo, (el) -> el.iata is variant.lastFlight.arrival         )[0]
 
-    if not(departureAirport and arrivalAirport)
-      return cb {message: "No airport found | departure: #{departureAirport} | arrival: #{arrivalAirport}"}, null
+    carrier                 = _.filter( airlinesInfo, (el) -> el.iata is variant.lastFlight.marketingCarrier)[0]
+
+    return cb(
+      { message: "No airport found | departure: #{departureAirport} | arrival: #{arrivalAirport}" }, 
+      null
+    ) if not(departureAirport and arrivalAirport)
 
     # UTC massage
     utcArrivalDate          = arrivalDestinationDate.clone().subtract 'hours', arrivalAirport.timezone  
@@ -96,6 +107,7 @@ exports.process = (flights, cb) ->
       
       url       : variant.url + \ostroterra
       provider  : \eviterra
+      carrier   : carrier
 
     newFlights.push newFlight
 
@@ -105,15 +117,15 @@ exports.process = (flights, cb) ->
   }
 
 exports.search = (origin, destination, extra, cb) ->
-  (error, json)     <- exports.query origin, destination, extra
+  (error, json)     <- query origin, destination, extra
   return cb(error, null) if error
   
-  (error, results)  <- exports.process json
+  (error, results)  <- process json
   return cb(error, null) if error
 
   cb null, results
 
-exports.autocomplete = (query, callback) ->
+autocomplete = (query, callback) ->
   eviterraUrl = "https://eviterra.com/complete.json?val=#{query}"
   (error, response, body) <- request eviterraUrl
   console.log "Queried eviterra autocomplete | #{eviterraUrl} | error: #{error} | status: #{response?.statusCode}"
@@ -140,3 +152,5 @@ exports.autocomplete = (query, callback) ->
     }
 
   callback null, finalJson
+
+

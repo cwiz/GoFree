@@ -33,6 +33,12 @@
   exports.geonames.ensureIndex({
     name_ru: 1
   });
+  exports.airlines = db.collection('airlines');
+  exports.airlines.ensureIndex({
+    iata: 1
+  }, {
+    unique: true
+  });
   exports.countries = db.collection('countries');
   exports.countries.ensureIndex({
     geoname_id: 1

@@ -85,8 +85,6 @@
             complete = result != null ? result.complete : void 8;
             error = (error != null ? error.message : void 8) || null;
             if (complete || error) {
-              console.log(signature);
-              console.log(totalProviders);
               signatures[signature] += 1.0 / totalProviders;
             }
             console.log("SOCKET: " + eventName + "| Complete: " + complete + " | Error: " + error + "| # results: " + items.length);
