@@ -11,21 +11,23 @@ SERPTrip = Backbone.View.extend
     @bg = @$el.find('.v-s-t-bg-img')
     @preloader = $('<img/>')
 
-    @flightsRow = new app.views.SERPTripRow(
-      el: @$el.find('.v-s-t-flights')
-      model: @model
-      collection: @model.get('flights_filtered')
-      template: app.templates.serp_trip_flight
-      signature: @model.get('flights_signature')
-      )
+    if @model.get('flights_signature')
+      @flightsRow = new app.views.SERPTripRow(
+        el: @$el.find('.v-s-t-flights')
+        model: @model
+        collection: @model.get('flights_filtered')
+        template: app.templates.serp_trip_flight
+        signature: @model.get('flights_signature')
+        )
 
-    @hotelsRow = new app.views.SERPTripRow(
-      el: @$el.find('.v-s-t-hotels')
-      model: @model
-      collection: @model.get('hotels_filtered')
-      template: app.templates.serp_trip_hotel
-      signature: @model.get('hotels_signature')
-      )
+    if @model.get('hotels_signature')
+      @hotelsRow = new app.views.SERPTripRow(
+        el: @$el.find('.v-s-t-hotels')
+        model: @model
+        collection: @model.get('hotels_filtered')
+        template: app.templates.serp_trip_hotel
+        signature: @model.get('hotels_signature')
+        )
 
     @preloader.on('load', _.bind(@showTrip, @))
 
@@ -102,5 +104,24 @@ SERPTrip = Backbone.View.extend
   render: ->
     @$el.html(app.templates.serp_trip(@model.toJSON()))
     @container.append(@$el)
+
+  destroy: ->
+    @undelegateEvents()
+
+    @preloader.off('load')
+    delete @preloader
+
+    if @model.get('flights_signature')
+      @flightsRow.destroy()
+      delete @flightsRow
+    if @model.get('hotels_signature')
+      @hotelsRow.destroy()
+      delete @hotelsRow
+
+    delete @model
+    delete @collection
+    delete @opts
+
+    app.log('[app.views.SERPTrip]: destroyed')
 
 app.views.SERPTrip = SERPTrip

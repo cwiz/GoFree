@@ -38,24 +38,21 @@ Router = Backbone.Router.extend
   search: (hash) ->
     app.log('[app.Router]: match "search", hash: "' + hash + '"')
 
-    if views['serp'] and views['serp'].hash is hash
-      views['serp'].showSERP()
-    else
-      models['search'] = new app.models.Search(trips: new app.collections.SearchTrips())
+    models['search'] = new app.models.Search(trips: new app.collections.SearchTrips())
 
-      if views['serp']
-        views['serp'].setup(
-          hash: hash
-          search: models['search']
-          collection: new app.collections.SERPTrips()
-          selected: new app.collections.SERPTripsSelected()
-          )
-      else       
-        views['serp'] = new app.views.SERP(
-          hash: hash
-          search: models['search']
-          collection: new app.collections.SERPTrips()
-          selected: new app.collections.SERPTripsSelected()
+    if views['serp']
+      views['serp'].setup(
+        hash: hash
+        search: models['search']
+        collection: new app.collections.SERPTrips()
+        selected: new app.collections.SERPTripsSelected()
         )
+    else       
+      views['serp'] = new app.views.SERP(
+        hash: hash
+        search: models['search']
+        collection: new app.collections.SERPTrips()
+        selected: new app.collections.SERPTripsSelected()
+      )
 
 app.Router = Router

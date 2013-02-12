@@ -12,6 +12,7 @@ SERPTrips = Backbone.View.extend
     @container = @$el.find('.v-serp-trips-container')
 
     @initTrips()
+    @expandFirst()
 
     app.log('[app.views.SERPTrips]: initialize')
 
@@ -55,5 +56,19 @@ SERPTrips = Backbone.View.extend
 
   render: ->
     @$el.html(app.templates.serp_trips())
+
+  destroy: ->
+    for k, v of @trips
+      v.destroy()
+      delete @trips[k]
+
+    delete @trips
+    delete @_expandedHash
+    delete @_locked
+
+    delete @container
+    delete @collection
+
+    app.log('[app.views.SERPTrips]: destroyed')
 
 app.views.SERPTrips = SERPTrips

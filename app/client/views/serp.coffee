@@ -19,10 +19,10 @@ SERP = Backbone.View.extend
     'click .p-s-h-changetripparams'      : 'changeSearchParams'
 
   setup: (@opts)->
-    @collection = @opts.collection
-    @search = @opts.search
-    @selected = @opts.selected
     @hash = @opts.hash
+    @search = @opts.search
+    @collection = @opts.collection
+    @selected = @opts.selected
 
     @progress = 0
     @serpTrips = null
@@ -33,9 +33,6 @@ SERP = Backbone.View.extend
 
     @search.on('fetched', @paramsReady, @)
     @collection.on('fetched', @collectionReady, @)
-
-    @tripsContent.html('')
-    @serpPart.removeClass('loaded error')
 
     app.socket.emit('search_start', hash: @hash)
 
@@ -48,10 +45,13 @@ SERP = Backbone.View.extend
       window.SERP = @collection
       window.SELECTED = @selected
 
+    app.log('[app.views.SERP]: setup with hash: ' + @hash)
+
   updatePageHeight: ->
     @serpPart.css('min-height': app.dom.win.height())
 
   changeSearchParams: ->
+    @destroy()
     app.router.navigate('', trigger: true)
 
   # progress: (data) ->
@@ -72,16 +72,33 @@ SERP = Backbone.View.extend
   searchError: ->
     @serpPart.addClass('error')
 
-  showSERP: ->
-    height = app.dom.win.height()
-    @serpPart.css('min-height': height, display: 'block')
+  # showSERP: ->
+  #   height = app.dom.win.height()
+  #   @serpPart.css('min-height': height, display: 'block')
 
-    app.utils.scroll(height, 300, =>
-      @render()
-      )
+  #   app.utils.scroll(height, 300, =>
+  #     @render()
+  #     )
 
   render: ->
     @searchPart.hide()
     @serpPart.show() # who knows might be loading from a link
+
+  destroy: ->
+    @tripsContent.html('')
+    @serpPart.removeClass('loaded error')
+
+    @search.off('fetched')
+    @collection.off('fetched')
+
+    if @serpTrips
+      @serpTrips.destroy()
+      delete @serpTrips
+
+    delete @hash
+    delete @search
+    delete @collection
+    delete @selected
+    delete @opts
 
 app.views.SERP = SERP

@@ -114,4 +114,19 @@ SERPTripRow = Backbone.View.extend
   render: (model)->
     @template(_.extend(model.toJSON(), { origin: @model.get('origin'), destination: @model.get('destination'), cid: model.cid }))
 
+  destroy: ->
+    @undelegateEvents()
+
+    @collection.off('progress')
+    @collection.off('filtered')
+
+    @carouselEl.off('mod_shifted_right')
+    @carouselEl.off('mod_shifted_left')
+
+    delete @carouselEl
+    delete @carousel
+    delete @model
+    delete @collection
+    delete @opts
+
 app.views.SERPTripRow = SERPTripRow
