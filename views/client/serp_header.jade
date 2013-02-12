@@ -1,17 +1,19 @@
 .p-serp-header.l-wrap
-  ul.p-s-h-tripparams
-    - for (var i = 0, l = trips.length; i < l; i++)
-      - if (i + 1 === l)
-        li.p-s-h-tripparamsitem.flight.last
-          strong #{trips[i].place.name_ru} &ndash; #{trips[0].place.name_ru}
-          small #{app.utils.humanizeDate(trips[i].date)}
+  //- ul.p-s-h-tripparams
+  //-   - for (var i = 0, l = trips.length; i < l; i++)
+  //-     - if (i + 1 === l)
+  //-       li.p-s-h-tripparamsitem.flight.last
+  //-         strong #{trips[i].place.name_ru} &ndash; #{trips[0].place.name_ru}
+  //-         small #{app.utils.humanizeDate(trips[i].date)}
 
-      - else
-        li.p-s-h-tripparamsitem.flight
-          strong #{trips[i].place.name_ru} &ndash; #{trips[i + 1].place.name_ru}
-          small #{app.utils.humanizeDate(trips[i].date)}
-        li.p-s-h-tripparamsitem.hotel
-          strong Проживание в #{trips[i + 1].place.name_ru_inflected}
-          small #{app.utils.humanizeDate(trips[i].date)} &ndash; #{app.utils.humanizeDate(trips[i + 1].date)}
+  //-     - else
+  //-       li.p-s-h-tripparamsitem.flight
+  //-         strong #{trips[i].place.name_ru} &ndash; #{trips[i + 1].place.name_ru}
+  //-         small #{app.utils.humanizeDate(trips[i].date)}
+  //-       li.p-s-h-tripparamsitem.hotel
+  //-         strong Проживание в #{trips[i + 1].place.name_ru_inflected}
+  //-         small #{app.utils.humanizeDate(trips[i].date)} &ndash; #{app.utils.humanizeDate(trips[i + 1].date)}
 
-  span.button.white.small.p-s-h-changetripparams Изменить
+  ul.p-s-h-serpactions
+    li.p-s-h-action.p-s-h-newsearch Новый поиск
+    li.p-s-h-action.p-s-h-bookselected Забронировать выбранное

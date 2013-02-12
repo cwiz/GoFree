@@ -16,7 +16,8 @@ SERP = Backbone.View.extend
     app.log('[app.views.SERP]: initialize')
 
   events:
-    'click .p-s-h-changetripparams'      : 'changeSearchParams'
+    'click .p-s-h-newsearch'      : 'newSearch'
+    'click .p-s-h-bookselected'   : 'bookingOverlay'
 
   setup: (@opts)->
     @hash = @opts.hash
@@ -50,9 +51,12 @@ SERP = Backbone.View.extend
   updatePageHeight: ->
     @serpPart.css('min-height': app.dom.win.height())
 
-  changeSearchParams: ->
+  newSearch: ->
     @destroy()
     app.router.navigate('', trigger: true)
+
+  bookingOverlay: ->
+    confirm 'CUMMING SOON'
 
   # progress: (data) ->
   #   return unless data.hash == @hash
