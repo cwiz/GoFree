@@ -35,7 +35,7 @@ task "db:restoreGeonames", 'populate geonames', ->
 task "devserver", 'development server w/ autoreload', ->
 	exec "npm install ."
 
-	ls = exec "livescript -wc app/server/* app.ls"
+	ls = exec "livescript -wc app/server/ app.ls"
 	ls.stdout.on 'data',  console.log
 	ls.stderr.on 'error', console.log
 
