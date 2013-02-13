@@ -4,19 +4,12 @@ SERPTrip = Backbone.View.extend
 
   _collapsable: true
 
-  _flightPrice: 0
-  _hotelPrice: 0
-
   initialize: (@opts) ->
     @container = @opts.container
     @render()
 
     @bg = @$el.find('.v-s-t-bg-img')
     @preloader = $('<img/>')
-
-    @totalsEl = @$el.find('.v-s-t-totals')
-    @resultsFlightEl = @$el.find('.v-s-t-r-flight')
-    @resultsHotelEl = @$el.find('.v-s-t-r-hotel')
 
     if @model.get('flights_signature')
       @flightsRow = new app.views.SERPTripRow(
@@ -37,8 +30,6 @@ SERPTrip = Backbone.View.extend
         )
 
     @preloader.on('load', _.bind(@updateBG, @))
-    app.on('serp_selected', _.bind(@updateSelected, @))
-    app.on('serp_deselected', _.bind(@removeSelected, @))
 
     @initialCollapse()
     @showTrip()
@@ -48,32 +39,6 @@ SERPTrip = Backbone.View.extend
 
   events:
     'click .v-s-t-places'        : 'toggleCollapse'
-
-  updateSelected: (data)->
-    if @model.get('flights_signature') == data.signature
-      @_flightPrice = data.model.get('price')
-      @resultsFlightEl.addClass('picked').find('.v-s-t-r-value-num').html(@_flightPrice)
-
-    if @model.get('hotels_signature') == data.signature
-      @_hotelPrice = data.model.get('price')
-      @resultsHotelEl.addClass('picked').find('.v-s-t-r-value-num').html(@_hotelPrice)
-
-    if @_flightPrice or @_hotelPrice
-      @totalsEl.addClass('picked').find('.v-s-t-t-value-num').html(@_flightPrice + @_hotelPrice)
-
-  removeSelected: (data)->
-    if @model.get('flights_signature') == data.signature
-      @_flightPrice = 0
-      @resultsFlightEl.removeClass('picked')
-
-    if @model.get('hotels_signature') == data.signature
-      @_hotelPrice = 0
-      @resultsHotelEl.removeClass('picked')
-
-    if @_flightPrice or @_hotelPrice
-      @totalsEl.addClass('picked').find('.v-s-t-t-value-num').html(@_flightPrice + @_hotelPrice)
-    else
-      @totalsEl.removeClass('picked')
 
   initialCollapse: ->
     @heightFull = @$el.outerHeight()
@@ -94,7 +59,7 @@ SERPTrip = Backbone.View.extend
       url:  "#{app.api.images}#{@model.get('destination').place.country_code}/#{@model.get('destination').place.name}"
       success: (resp) =>
         if resp and resp.value
-          @preloader.attr('src', resp.value.resized)
+          @preloader.attr('src', resp.value.blured)
 
   updateBG: (e)->
     @bg.fadeOut(200, =>
@@ -144,9 +109,6 @@ SERPTrip = Backbone.View.extend
     @undelegateEvents()
 
     @preloader.off('load')
-    app.off('serp_selected')
-    app.off('serp_deselected')
-
     delete @preloader
 
     if @model.get('flights_signature')
