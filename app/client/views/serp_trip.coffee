@@ -59,7 +59,7 @@ SERPTrip = Backbone.View.extend
       url:  "#{app.api.images}#{@model.get('destination').place.country_code}/#{@model.get('destination').place.name}"
       success: (resp) =>
         if resp and resp.value
-          @preloader.attr('src', resp.value.blured)
+          @preloader.attr('src', resp.value.resized)
 
   updateBG: (e)->
     @bg.fadeOut(200, =>

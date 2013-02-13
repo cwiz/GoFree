@@ -1,5 +1,6 @@
 _           = require "underscore"
 async       = require "async"
+moment      = require "moment"
 request     = require "request"
 
 exports.name = "airbnb"
@@ -23,10 +24,12 @@ exports.search = (origin, destination, extra, cb) ->
                 
                 listing = r.listing
 
+                days = moment.duration(moment(destination.date) - moment(origin.date)).days()
+
                 return {
                   name      : listing.name
                   stars     : null
-                  price     : listing.price * 30 #todo currency
+                  price     : listing.price * 30 * days
                   rating    : null
                   photo     : listing.medium_url
                   provider  : \airbnb
