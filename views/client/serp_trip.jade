@@ -12,22 +12,24 @@
     .v-s-t-totals
       span.v-s-t-t-value
         span.v-s-t-t-value-num
-        | руб
+        |  руб
 
     .v-s-t-results
-      .v-s-t-r-flight
-        span.v-s-t-r-label Перелет:
-        span.v-s-t-r-value
-          span.v-s-t-r-value-num
-          | руб
-        span.v-s-t-r-default не выбран
+      if flights_signature
+        .v-s-t-r-flight
+          span.v-s-t-r-label Перелет:
+          span.v-s-t-r-value
+            span.v-s-t-r-value-num
+            |  руб
+          span.v-s-t-r-default не выбран
 
-      .v-s-t-r-hotel
-        span.v-s-t-r-label Отель:
-        span.v-s-t-r-value
-          span.v-s-t-r-value-num
-          | руб
-        span.v-s-t-r-default не выбран
+      if hotels_signature
+        .v-s-t-r-hotel
+          span.v-s-t-r-label Отель:
+          span.v-s-t-r-value
+            span.v-s-t-r-value-num
+            |  руб
+          span.v-s-t-r-default не выбран
 
   if flights_signature
     .v-s-t-flights
