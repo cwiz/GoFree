@@ -1,6 +1,6 @@
 {
-    "name": "oxye"
-  , "version": "0.0.6"
+    "name": "gofree"
+  , "version": "0.0.7"
   , "private": true
   , "dependencies": {
       "asset-rack":           "1.1.6",
@@ -10,17 +10,14 @@
       "csv":                  "0.2.4",
       "express":              "3.0.3",
       "jade":                 "0.27.7", 
-      "JSV":                  "*",
       "livescript":           "0.0.1",
       "log4js":               "*",
       "markdown-js":          "0.0.3",
       "MD5":                  "1.0.3",
       "moment":               "1.7.2",
       "mongolian":            "0.1.18",
-      "node-request-caching": "*",
       "progress-bar":         "*",
       "request":              "2.12.0",
-      "semantics":            "*",
       "socket.io":            "0.9.11",
       "socket.io-client":     "*",
       "underscore":           "*",
