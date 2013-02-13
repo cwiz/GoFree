@@ -1,4 +1,5 @@
 # Dependencies
+auth        = require "http-auth"
 backEnd     = require "./app/server"
 cluster     = require "cluster"
 express     = require "express"
@@ -84,11 +85,18 @@ else
       app.locals.__debug = true
 
     # Routes
+
+    # --- auth
+
+    basic = auth({
+      authRealm : "SHTO?",
+      authList  : ['anus:pes'],
+      proxy     : false
+    })
     
     # --- static
-    app.get "/",                            backEnd.about.index
-    app.get "/search/:hash",                backEnd.about.index
-    app.get "/about",                       backEnd.about.about
+    app.get "/",                            (req, res) -> basic.apply req, res, (username) -> backEnd.about.index req, res
+    app.get "/search/:hash",                (req, res) -> basic.apply req, res, (username) -> backEnd.about.index req, res
     
     # --- api
     app.get "/api/v2/autocomplete/:query",  backEnd.api.autocomplete_v2
