@@ -53,9 +53,7 @@
     app.get("/", backEnd.about.index);
     app.get("/search/:hash", backEnd.about.index);
     app.get("/about", backEnd.about.about);
-    app.get("/api/v1/autocomplete/:query", backEnd.api.autocomplete);
     app.get("/api/v2/autocomplete/:query", backEnd.api.autocomplete_v2);
-    app.get("/api/v1/image/:query", backEnd.api.image);
     app.get("/api/v2/image/:country/:city", backEnd.api.image_v2);
     io.sockets.on("connection", backEnd.api.search);
     server.listen(app.get("port"), function(){

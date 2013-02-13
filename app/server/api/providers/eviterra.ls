@@ -15,7 +15,7 @@ exports.name = "eviterra"
 getEviterraId = (place, callback) ->
   return callback(null, place.eviterra_id) if place.eviterra_id
 
-  (error, result) <- exports.autocomplete "#{place.name_ru}"
+  (error, result) <- autocomplete "#{place.name_ru}"
   return callback(error,              null)  if error
   return callback({'nothing found'},  null)  if result.length is 0
 

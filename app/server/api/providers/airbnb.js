@@ -1,7 +1,8 @@
 (function(){
-  var _, async, request;
+  var _, async, moment, request;
   _ = require("underscore");
   async = require("async");
+  moment = require("moment");
   request = require("request");
   exports.name = "airbnb";
   exports.search = function(origin, destination, extra, cb){
@@ -23,12 +24,13 @@
             }, null);
           }
           results = _.map(json.listings, function(r){
-            var listing;
+            var listing, days;
             listing = r.listing;
+            days = moment.duration(moment(destination.date) - moment(origin.date)).days();
             return {
               name: listing.name,
               stars: null,
-              price: listing.price * 30,
+              price: listing.price * 30 * days,
               rating: null,
               photo: listing.medium_url,
               provider: 'airbnb',

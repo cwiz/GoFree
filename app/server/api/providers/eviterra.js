@@ -13,7 +13,7 @@
     if (place.eviterra_id) {
       return callback(null, place.eviterra_id);
     }
-    return exports.autocomplete(place.name_ru + "", function(error, result){
+    return autocomplete(place.name_ru + "", function(error, result){
       var eviterra_id;
       if (error) {
         return callback(error, null);
