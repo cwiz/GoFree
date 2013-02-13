@@ -43,7 +43,7 @@ Index = Backbone.View.extend
       url:  "#{app.api.images}#{place.country_code}/#{place.name}"
       success: (resp) =>
         if resp and resp.value
-          @preloader.attr('src', resp.value.blured)
+          @preloader.attr('src', resp.value.sharp)
 
   showSERP: ->
     height = app.dom.win.height()
