@@ -1,23 +1,25 @@
-_           = require "underscore"
-async       = require "async"
-moment      = require "moment"
-request     = require "request"
+_               = require "underscore"
+async           = require "async"
+moment          = require "moment"
+request         = require "request"
+cache           = require "./../../cache"
 
 exports.name = "airbnb"
 
 exports.search = (origin, destination, extra, cb) ->
 
-    operations = _.map [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], (i) ->
+    numPages  = 20
+
+    operations = _.map [0 til numPages], (i) ->
 
         return (cb) ->
 
             airUrl = "https://m.airbnb.com/api/v1/listings/search?checkin=#{origin.date}&checkout=#{destination.date}&location=#{destination.place.country_name_ru}--#{destination.place.name_ru}&number_of_guests=#{extra.adults}&offset=#{i*20}"
 
-            (error, response, body) <- request airUrl
-            console.log "AIRBNB: Queried serp | #{airUrl} | status #{response.statusCode}"
-            return cb(error, null) if error
+            (error, body) <- cache.request airUrl
+            return cb error, null if error
 
-            json = JSON.parse(response.body)
+            json = JSON.parse body
             return cb({message: 'no listings'}, null) if not json.listings
 
             results = _.map json.listings, (r) ->

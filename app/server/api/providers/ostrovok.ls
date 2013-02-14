@@ -1,6 +1,7 @@
 async     = require "async"
 database  = require "./../../database"
 request   = require "request"
+cache     = require "./../../cache"
 
 exports.name = \ostrovok
 
@@ -26,11 +27,11 @@ query = (origin, destination, extra, cb) ->
 
 	ostUrl = "http://ostrovok.ru/api/v1/search/page/#{extra.page}/?region_id=#{ostrovokId.destination}&arrivalDate=#{origin.date}&departureDate=#{destination.date}&room1_numberOfAdults=#{extra.adults}"
 
-	(error, response, body) <- request ostUrl
-	console.log "OSTROVOK: Queried ostrovok serp | #{ostUrl} | status #{response.statusCode}"
+	(error, body) <- cache.request ostUrl
+	console.log "OSTROVOK: Queried ostrovok serp | #{ostUrl} | success: #{!!body}"
 	return cb(error, null) if error
 
-	json = JSON.parse(response.body)
+	json = JSON.parse(body)
 	page = json._next_page
 
 	cb null, json

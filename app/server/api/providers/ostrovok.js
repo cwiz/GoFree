@@ -1,8 +1,9 @@
 (function(){
-  var async, database, request, getOstrovokId, query, process, autocomplete;
+  var async, database, request, cache, getOstrovokId, query, process, autocomplete;
   async = require("async");
   database = require("./../../database");
   request = require("request");
+  cache = require("./../../cache");
   exports.name = 'ostrovok';
   getOstrovokId = function(place, callback){
     if (place.ostrovok_id) {
@@ -43,13 +44,13 @@
         return cb(error, null);
       }
       ostUrl = "http://ostrovok.ru/api/v1/search/page/" + extra.page + "/?region_id=" + ostrovokId.destination + "&arrivalDate=" + origin.date + "&departureDate=" + destination.date + "&room1_numberOfAdults=" + extra.adults;
-      return request(ostUrl, function(error, response, body){
+      return cache.request(ostUrl, function(error, body){
         var json, page;
-        console.log("OSTROVOK: Queried ostrovok serp | " + ostUrl + " | status " + response.statusCode);
+        console.log("OSTROVOK: Queried ostrovok serp | " + ostUrl + " | success: " + !!body);
         if (error) {
           return cb(error, null);
         }
-        json = JSON.parse(response.body);
+        json = JSON.parse(body);
         page = json._next_page;
         cb(null, json);
         if (page) {

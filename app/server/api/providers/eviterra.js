@@ -1,11 +1,11 @@
 (function(){
-  var async, database, moment, request, xml2js, _, parser, getEviterraId, query, process, autocomplete;
+  var _, async, cache, database, moment, xml2js, parser, getEviterraId, query, process, autocomplete;
+  _ = require("underscore");
   async = require("async");
+  cache = require("./../../cache");
   database = require("./../../database");
   moment = require("moment");
-  request = require("request");
   xml2js = require("xml2js");
-  _ = require("underscore");
   parser = new xml2js.Parser(xml2js.defaults["0.1"]);
   moment.lang('ru');
   exports.name = "eviterra";
@@ -48,12 +48,12 @@
         return cb(error, null);
       }
       evUrl = "http://api.eviterra.com/avia/v1/variants.xml?from=" + eviterraId.origin + "&to=" + eviterraId.destination + "&date1=" + origin.date + "&adults=" + extra.adults;
-      return request(evUrl, function(error, response, body){
-        console.log("EVITERRA: Queried Eviterra serp | " + evUrl + " | status " + response.statusCode);
+      return cache.request(evUrl, function(error, body){
+        console.log("EVITERRA: Queried Eviterra serp | " + evUrl + " | status: " + !!body);
         if (error) {
           return cb(error, null);
         }
-        return parser.parseString(response.body, function(error, json){
+        return parser.parseString(body, function(error, json){
           if (error) {
             return cb(error, null);
           }
@@ -111,6 +111,9 @@
           departureAirport = _.filter(airportsInfo, fn$)[0];
           arrivalAirport = _.filter(airportsInfo, fn1$)[0];
           carrier = _.filter(airlinesInfo, fn2$)[0];
+          if (carrier) {
+            delete carrier._id;
+          }
           if (!(departureAirport && arrivalAirport)) {
             return cb({
               message: "No airport found | departure: " + departureAirport + " | arrival: " + arrivalAirport

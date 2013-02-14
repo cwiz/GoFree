@@ -28,7 +28,6 @@ else
   # Globals
   app     = express()
   server  = http.createServer app
-  #io      = socket.listen server
   io      = socket.listen server
 
   # Assets-Rack
@@ -109,7 +108,7 @@ else
     server.listen app.get("port"), ->
       console.log "Express server listening on port " + app.get("port")
 
-    io.set        "log level",  1
+    # --- Socket.IO settings
 
     pub    = redis.createClient()
     sub    = redis.createClient()
@@ -120,3 +119,8 @@ else
       redisSub    : sub,
       redisClient : client,
     })
+
+    io.enable 'browser client minification'
+    io.enable 'browser client etag'
+    io.enable 'browser client gzip'
+    io.set    'log level', 1

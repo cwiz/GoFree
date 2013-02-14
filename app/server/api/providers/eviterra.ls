@@ -1,9 +1,9 @@
+_           = require "underscore"
 async       = require "async"
+cache       = require "./../../cache"
 database    = require "./../../database"
 moment      = require "moment"
-request     = require "request"
 xml2js      = require "xml2js"
-_           = require "underscore"
 
 # Globals
 parser = new xml2js.Parser(xml2js.defaults["0.1"])
@@ -34,11 +34,11 @@ query = (origin, destination, extra, cb) ->
 
   evUrl = "http://api.eviterra.com/avia/v1/variants.xml?from=#{eviterraId.origin}&to=#{eviterraId.destination}&date1=#{origin.date}&adults=#{extra.adults}"
 
-  (error, response, body) <- request evUrl
-  console.log "EVITERRA: Queried Eviterra serp | #{evUrl} | status #{response.statusCode}"
+  (error, body) <- cache.request evUrl
+  console.log "EVITERRA: Queried Eviterra serp | #{evUrl} | status: #{!!body}"
   return cb(error, null) if error
 
-  (error, json) <- parser.parseString response.body
+  (error, json) <- parser.parseString body
   return cb(error, null) if error
 
   cb null, json
@@ -84,6 +84,7 @@ process = (flights, cb) ->
     arrivalAirport          = _.filter( airportsInfo, (el) -> el.iata is variant.lastFlight.arrival         )[0]
 
     carrier                 = _.filter( airlinesInfo, (el) -> el.iata is variant.lastFlight.marketingCarrier)[0]
+    delete carrier._id if carrier
 
     return cb(
       { message: "No airport found | departure: #{departureAirport} | arrival: #{arrivalAirport}" }, 

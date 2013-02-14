@@ -89,15 +89,18 @@
       server.listen(app.get("port"), function(){
         return console.log("Express server listening on port " + app.get("port"));
       });
-      io.set("log level", 1);
       pub = redis.createClient();
       sub = redis.createClient();
       client = redis.createClient();
-      return io.set('store', new RedisStore({
+      io.set('store', new RedisStore({
         redisPub: pub,
         redisSub: sub,
         redisClient: client
       }));
+      io.enable('browser client minification');
+      io.enable('browser client etag');
+      io.enable('browser client gzip');
+      return io.set('log level', 1);
     });
   }
 }).call(this);
