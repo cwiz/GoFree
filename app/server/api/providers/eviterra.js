@@ -1,10 +1,11 @@
 (function(){
-  var _, async, cache, database, moment, xml2js, parser, getEviterraId, query, process, autocomplete;
+  var _, async, cache, database, moment, request, xml2js, parser, getEviterraId, query, process, autocomplete;
   _ = require("underscore");
   async = require("async");
   cache = require("./../../cache");
   database = require("./../../database");
   moment = require("moment");
+  request = require("request");
   xml2js = require("xml2js");
   parser = new xml2js.Parser(xml2js.defaults["0.1"]);
   moment.lang('ru');

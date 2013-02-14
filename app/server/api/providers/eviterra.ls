@@ -3,6 +3,7 @@ async       = require "async"
 cache       = require "./../../cache"
 database    = require "./../../database"
 moment      = require "moment"
+request     = require "request"
 xml2js      = require "xml2js"
 
 # Globals
