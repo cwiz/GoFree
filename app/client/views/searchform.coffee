@@ -115,7 +115,7 @@ SearchForm = Backbone.View.extend
       @canAddStop = true
 
   adultsChanged: (e) ->
-    @model.set('adults', e.target.value)
+    @model.set('adults', parseInt(e.target.value))
 
   budgetChanged: (e) ->
     @model.set('budget', parseInt(e.target.value, 10))

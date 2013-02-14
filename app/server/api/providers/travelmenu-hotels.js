@@ -1,9 +1,9 @@
 (function(){
-  var request, url;
+  var request, url, autocomplete;
   request = require("request");
   url = require("url");
   exports.name = "travelmenu";
-  exports.autocomplete = function(query, callback){
+  autocomplete = function(query, callback){
     var tmUrl, urlString;
     query = query.replace(' ', '-');
     tmUrl = url.parse("http://www.travelmenu.ru/a_search/hotel.loadLocations?limit=10&language=ru", true);

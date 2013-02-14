@@ -33,4 +33,4 @@ exports.countries.ensureIndex 	{ code: 1 }, 		{ unique: true }
 
 # Cache
 exports.cache			= db.collection 'cache'
-exports.countries.ensureIndex 	{ hash: 1 }, 		{ unique: true }
+exports.cache.ensureIndex 	{ hash: 1 }, 		{ unique: true }

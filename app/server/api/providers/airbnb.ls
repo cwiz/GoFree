@@ -34,6 +34,7 @@ exports.search = (origin, destination, extra, cb) ->
                   photo     : listing.medium_url
                   provider  : \airbnb
                   id        : r.id
+                  type      : 'apartment'
                 }
 
             cb null, results

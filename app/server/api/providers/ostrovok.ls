@@ -2,12 +2,12 @@ async     = require "async"
 database  = require "./../../database"
 request   = require "request"
 
-exports.name = "ostrovok"
+exports.name = \ostrovok
 
 getOstrovokId = (place, callback) ->
 	return callback(null, place.ostrovok_id) if place.ostrovok_id
 
-	(error, result) <- exports.autocomplete "#{place.name_ru}, #{place.country_name_ru}"
+	(error, result) <- autocomplete "#{place.name_ru}, #{place.country_name_ru}"
 	return callback(error,              null)  if error
 	return callback({'nothing found'},  null)  if result.length is 0
 
@@ -15,7 +15,7 @@ getOstrovokId = (place, callback) ->
 	callback null, ostrovok_id
 	database.geonames.update {geoname_id : place.geoname_id}, {$set: {ostrovok_id : ostrovok_id}}
 
-exports.query = (origin, destination, extra, cb) ->
+query = (origin, destination, extra, cb) ->
 
 	(error, ostrovokId) <- async.parallel {
 		origin      : (callback) -> getOstrovokId origin.place,       callback
@@ -37,9 +37,9 @@ exports.query = (origin, destination, extra, cb) ->
 	
 	if page
 		extra.page = page
-		exports.query origin, destination, extra, cb
+		query origin, destination, extra, cb
 
-exports.process = (json, cb) ->
+process = (json, cb) ->
 	return cb 'empty json', null if not json or not json.hotels?
 
 	hotels = json.hotels
@@ -61,13 +61,15 @@ exports.process = (json, cb) ->
 		stars = hotel.star_rating/10.0 if hotel.star_rating
 		
 		newHotel =
+			id      : hotel.id
 			name    : hotel.name
-			stars   : stars
-			price   : price
-			rating  : rating
 			photo   : hotel.thumbnail_url_220
+			price   : price
+			provider: exports.name
+			rating  : rating
+			stars   : stars
+			type    : 'hotel'
 			url     : "http://ostrovok.ru#{hotel.url}&partner_slug=ostroterra"
-			provider: \ostrovok
 		
 		newHotels.push newHotel
 
@@ -77,16 +79,16 @@ exports.process = (json, cb) ->
 	}
 
 exports.search = (origin, destination, extra, cb) ->
-	error, hotelResult <- exports.query origin, destination, extra
+	error, hotelResult <- query origin, destination, extra
 	return cb(error, null) if error
 	
-	error, hotels <- exports.process hotelResult 
+	error, hotels <- process hotelResult 
 	return cb(error, null) if error
 
 	cb null, hotels
 
 
-exports.autocomplete = (query, callback) ->
+autocomplete = (query, callback) ->
 	ostUrl = "http://ostrovok.ru/api/site/multicomplete.json?query=#{query}&regions_ver=v5"
 	(error, response, body) <-! request ostUrl
 	console.log "ostrovok.autocomplete | #{ostUrl} | status #{response.statusCode}"

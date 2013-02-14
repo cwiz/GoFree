@@ -34,7 +34,8 @@
               rating: null,
               photo: listing.medium_url,
               provider: 'airbnb',
-              id: r.id
+              id: r.id,
+              type: 'apartment'
             };
           });
           return cb(null, results);
