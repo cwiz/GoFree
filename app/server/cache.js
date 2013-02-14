@@ -6,15 +6,17 @@
   client = redis.createClient();
   TTL = 3600;
   exports.get = function(key, cb){
+    key = "cache-" + md5(key);
     return client.get(key, cb);
   };
   exports.set = function(key, value){
+    key = "cache-" + md5(key);
     client.set(key, value);
     return client.expire(key, TTL);
   };
   exports.request = function(url, cb){
     return exports.get(url, function(error, body){
-      console.log("CACHE: REDIS | " + url + " | status: " + !!body);
+      console.log("CACHE: REDIS | url: " + url + " | status: " + !!body);
       if (body) {
         return cb(null, body);
       }

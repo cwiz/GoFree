@@ -7,15 +7,20 @@ client = redis.createClient()
 TTL = 3600
 
 exports.get = (key, cb) -> 
+	key = "cache-#{md5(key)}"
+
 	client.get key, cb
 
 exports.set = (key, value) -> 
+	key = "cache-#{md5(key)}"
+
 	client.set key, value
 	client.expire key, TTL
 
 exports.request = (url, cb) ->
+
 	(error, body) <- exports.get url
-	console.log "CACHE: REDIS | #{url} | status: #{!!body}"
+	console.log "CACHE: REDIS | url: #{url} | status: #{!!body}"
 
 	return cb null, body if body
 
