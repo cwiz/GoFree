@@ -16,6 +16,13 @@ app.dom.body = $('body')
 app.dom.header = $('#l-header')
 app.dom.content = $('#l-content')
 
+app.size = {}
+app.dom.win.on('resize', -> 
+  app.size.width = app.dom.win.width()
+  app.size.height = app.dom.win.height()
+  app.trigger('resize')
+  )
+
 # app.modules = {}
 
 app.dom.html.removeClass('no-js').addClass('js')

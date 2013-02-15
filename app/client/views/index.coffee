@@ -22,7 +22,7 @@ Index = Backbone.View.extend
       model : @model
       collection : @collection
 
-    app.dom.win.on('resize', _.bind(@updatePageHeight, @))
+    app.on('resize', @updatePageHeight, @)
     @collection.on('change:place', @placeChanged, @)
     @preloader.on('load', _.bind(@updateBG, @))
     @model.on('save', @showSERP, @)
@@ -30,7 +30,7 @@ Index = Backbone.View.extend
     app.log('[app.views.Index]: initialize')
 
   updatePageHeight: ->
-    @searchPart.css('min-height': app.dom.win.height())
+    @searchPart.css('min-height': app.size.height)
 
   updateBG: (e)->
     @bg.fadeOut(200, =>
