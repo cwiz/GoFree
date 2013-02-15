@@ -1,15 +1,4 @@
-# Dependencies
-auth        = require "http-auth"
-backEnd     = require "./app/server"
 cluster     = require "cluster"
-express     = require "express"
-http        = require "http"
-os          = require "os"
-path        = require "path"
-rack        = require "asset-rack"
-redis       = require "socket.io/node_modules/redis"
-RedisStore  = require "socket.io/lib/stores/redis"
-socket      = require "socket.io"
 
 numCPUs = 1 #os.cpus().length
  
@@ -25,6 +14,19 @@ if cluster.isMaster
     cluster.fork()
 
 else
+
+  auth        = require "http-auth"
+  backEnd     = require "./app/server"
+  cluster     = require "cluster"
+  express     = require "express"
+  http        = require "http"
+  os          = require "os"
+  path        = require "path"
+  rack        = require "asset-rack"
+  redis       = require "socket.io/node_modules/redis"
+  RedisStore  = require "socket.io/lib/stores/redis"
+  socket      = require "socket.io"
+
   # Globals
   app     = express()
   server  = http.createServer app
