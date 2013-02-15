@@ -97,7 +97,6 @@ SERPTrip = Backbone.View.extend
           @preloader.attr('src', resp.value.blured)
 
   updateBG: (e)->
-    console.warn 'LOADED'
     @bg.fadeOut(200, =>
       @bg.attr('src', e.target.src)
       @bg.fadeIn(200)
