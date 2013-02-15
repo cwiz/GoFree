@@ -16,7 +16,10 @@ app.dom.body = $('body')
 app.dom.header = $('#l-header')
 app.dom.content = $('#l-content')
 
-app.size = {}
+app.size =
+  width: app.dom.win.width()
+  height: app.dom.win.height()
+
 app.dom.win.on('resize', -> 
   app.size.width = app.dom.win.width()
   app.size.height = app.dom.win.height()

@@ -7,7 +7,7 @@ SERP = Backbone.View.extend
     @serpHeader = @serpPart.find('.p-s-header-wrap')
     @tripsContent = @serpPart.find('.p-s-t-content')
 
-    app.dom.win.on('resize', _.bind(@updatePageHeight, @))
+    app.on('resize', @updatePageHeight, @)
     # app.socket.on('progress', _.bind(@progress, @))
     app.socket.on('start_search_error', _.bind(@searchError, @))
 
@@ -49,7 +49,7 @@ SERP = Backbone.View.extend
     app.log('[app.views.SERP]: setup with hash: ' + @hash)
 
   updatePageHeight: ->
-    @serpPart.css('min-height': app.dom.win.height())
+    @serpPart.css('min-height': app.size.height)
 
   newSearch: ->
     @destroy()
