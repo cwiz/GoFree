@@ -28,6 +28,11 @@ html.no-js(lang="ru-RU")
       //- block footer
       //-   include includes/footer
 
+      block overlay
+        aslide#l-overlay
+          .l-overlay-content
+            block overlay_parts
+
       script
         var app = {
           env: {
@@ -40,7 +45,8 @@ html.no-js(lang="ru-RU")
           },
           models: {},
           collections: {},
-          views: {}
+          views: {},
+          modules: {}
         };
 
       script(src='/socket.io/socket.io.js')
