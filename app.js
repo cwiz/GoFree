@@ -1,16 +1,6 @@
 (function(){
-  var auth, backEnd, cluster, express, http, os, path, rack, redis, RedisStore, socket, numCPUs, processNumber, app, server, io, assets;
-  auth = require("http-auth");
-  backEnd = require("./app/server");
+  var cluster, numCPUs, processNumber, auth, backEnd, express, http, os, path, rack, redis, RedisStore, socket, app, server, io, assets;
   cluster = require("cluster");
-  express = require("express");
-  http = require("http");
-  os = require("os");
-  path = require("path");
-  rack = require("asset-rack");
-  redis = require("socket.io/node_modules/redis");
-  RedisStore = require("socket.io/lib/stores/redis");
-  socket = require("socket.io");
   numCPUs = 1;
   if (cluster.isMaster) {
     processNumber = 0;
@@ -23,6 +13,17 @@
       return cluster.fork();
     });
   } else {
+    auth = require("http-auth");
+    backEnd = require("./app/server");
+    cluster = require("cluster");
+    express = require("express");
+    http = require("http");
+    os = require("os");
+    path = require("path");
+    rack = require("asset-rack");
+    redis = require("socket.io/node_modules/redis");
+    RedisStore = require("socket.io/lib/stores/redis");
+    socket = require("socket.io");
     app = express();
     server = http.createServer(app);
     io = socket.listen(server);
