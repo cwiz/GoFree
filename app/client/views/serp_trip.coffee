@@ -91,12 +91,13 @@ SERPTrip = Backbone.View.extend
 
   fetchBackground: ->
     $.ajax
-      url:  "#{app.api.images}#{@model.get('destination').place.country_code}/#{@model.get('destination').place.name}"
+      url: "#{app.api.images}#{@model.get('destination').place.country_code}/#{@model.get('destination').place.name}"
       success: (resp) =>
         if resp and resp.value
-          @preloader.attr('src', resp.value.resized)
+          @preloader.attr('src', resp.value.blured)
 
   updateBG: (e)->
+    console.warn 'LOADED'
     @bg.fadeOut(200, =>
       @bg.attr('src', e.target.src)
       @bg.fadeIn(200)
