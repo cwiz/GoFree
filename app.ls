@@ -11,7 +11,7 @@ redis       = require "socket.io/node_modules/redis"
 RedisStore  = require "socket.io/lib/stores/redis"
 socket      = require "socket.io"
 
-numCPUs = os.cpus().length
+numCPUs = 1 #os.cpus().length
  
 if cluster.isMaster
   
