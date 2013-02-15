@@ -52,14 +52,14 @@ SERPTrip = Backbone.View.extend
   updateSelected: (data)->
     if @model.get('flights_signature') == data.signature
       @_flightPrice = data.model.get('price')
-      @resultsFlightEl.addClass('picked').find('.v-s-t-r-value-num').html(@_flightPrice)
+      @resultsFlightEl.addClass('picked').find('.v-s-t-r-value-num').html(app.utils.formatNum(Math.floor(@_flightPrice)))
 
     if @model.get('hotels_signature') == data.signature
       @_hotelPrice = data.model.get('price')
-      @resultsHotelEl.addClass('picked').find('.v-s-t-r-value-num').html(@_hotelPrice)
+      @resultsHotelEl.addClass('picked').find('.v-s-t-r-value-num').html(app.utils.formatNum(Math.floor(@_hotelPrice)))
 
     if @_flightPrice or @_hotelPrice
-      @totalsEl.addClass('picked').find('.v-s-t-t-value-num').html(@_flightPrice + @_hotelPrice)
+      @totalsEl.addClass('picked').find('.v-s-t-t-value-num').html(app.utils.formatNum(Math.floor(@_flightPrice + @_hotelPrice)))
 
   removeSelected: (data)->
     if @model.get('flights_signature') == data.signature
@@ -71,7 +71,7 @@ SERPTrip = Backbone.View.extend
       @resultsHotelEl.removeClass('picked')
 
     if @_flightPrice or @_hotelPrice
-      @totalsEl.addClass('picked').find('.v-s-t-t-value-num').html(@_flightPrice + @_hotelPrice)
+      @totalsEl.addClass('picked').find('.v-s-t-t-value-num').html(app.utils.formatNum(Math.floor(@_flightPrice + @_hotelPrice)))
     else
       @totalsEl.removeClass('picked')
 

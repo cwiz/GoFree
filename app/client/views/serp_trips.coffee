@@ -1,20 +1,76 @@
 SERPTrips = Backbone.View.extend
   trips: {}
   _expandedHash: {}
+  _budgetHash: {}
   el: '.p-s-trips-wrap'
+
+  progress: 0
+  budget: 0
+  spent: 0
 
   expanded: 0
   _locked: null
 
-  initialize: ->
+  initialize: (@opts)->
+    @hash = @opts.hash
     @render()
 
+    @progressMeterEl = @$el.find('.v-s-t-p-meter')
+    @budgetMeterEl = @$el.find('.v-s-t-b-meter')
     @container = @$el.find('.v-serp-trips-container')
+
+    @amountSpentEl = @$el.find('.v-s-t-b-spentamount')
+    @amountLeftEl = @$el.find('.v-s-t-b-leftamount')
+
+    app.socket.on('progress', _.bind(@updateProgress, @))
+    app.on('serp_selected', _.bind(@updateBudgetAdd, @))
+    app.on('serp_deselected', _.bind(@updateBudgetRemove, @))
+    app.on('resize', @updateMeters, @)
 
     @initTrips()
     @expandFirst()
 
     app.log('[app.views.SERPTrips]: initialize')
+
+  setBudget: (num)->
+    @budget = num
+    @setBudgetMeter()
+
+  updateMeters: ->
+    @setProgressMeter()
+    @setBudgetMeter()
+
+  updateProgress: (data) ->
+    return unless data.hash == @hash
+    @progress = data.progress
+    @setProgressMeter()
+    app.log('[app.views.SERPTrips]: progress ' + Math.floor(@progress * 100) + '%')
+
+  updateBudgetAdd: (data)->
+    @_budgetHash[data.signature] = data.model.get('price')
+    @setBudgetMeter()
+
+  updateBudgetRemove: (data)->
+    delete @_budgetHash[data.signature]
+    @setBudgetMeter()
+
+  setProgressMeter: ->
+    pos = app.size.width * @progress
+    @progressMeterEl.css(left: pos)
+
+  setBudgetMeter: ->
+    @spent = _.reduce(_.values(@_budgetHash), (memo, num)->
+      memo + num
+    , 0)
+
+    diff = @budget - @spent
+    perc = Math.min(@spent / @budget, 1) # in case we're going over budget
+    pos = app.size.width * perc
+
+    @amountSpentEl.html(app.utils.formatNum(@spent))
+    @amountLeftEl.html(app.utils.formatNum(diff))
+
+    @budgetMeterEl.css(left: pos)
 
   initTrips: ->
     iterator = (model) =>

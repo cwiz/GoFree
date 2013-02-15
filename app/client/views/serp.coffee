@@ -8,7 +8,6 @@ SERP = Backbone.View.extend
     @tripsContent = @serpPart.find('.p-s-t-content')
 
     app.on('resize', @updatePageHeight, @)
-    # app.socket.on('progress', _.bind(@progress, @))
     app.socket.on('start_search_error', _.bind(@searchError, @))
 
     @setup(opts)
@@ -25,7 +24,6 @@ SERP = Backbone.View.extend
     @collection = @opts.collection
     @selected = @opts.selected
 
-    @progress = 0
     @serpTrips = null
 
     @search.setHash(@hash).observe()
@@ -58,20 +56,19 @@ SERP = Backbone.View.extend
   bookingOverlay: ->
     confirm 'CUMMING SOON'
 
-  # progress: (data) ->
-  #   return unless data.hash == @hash
-  #   @progress = data.progress
-  #   app.log('[app.views.SERP]: progress ' + Math.floor(@progress * 100) + '%')
-
   paramsReady: ->
     @serpHeader.html(app.templates.serp_header(@search.serialize()))
+    @serpTrips.setBudget(@search.get('budget')) if @serpTrips?
 
   collectionReady: ->
     @serpPart.addClass('loaded')
     @serpTrips = new app.views.SERPTrips(
       el: @tripsContent
       collection: @collection
+      hash: @hash
       )
+
+    @serpTrips.setBudget(@search.get('budget'))
 
   searchError: ->
     @serpPart.addClass('error')
