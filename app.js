@@ -38,6 +38,7 @@
       redisClient: client
     });
     FacebookStrategy = require("passport-facebook").Strategy;
+    app.locals.user = null;
     passport.use(new FacebookStrategy({
       clientID: "109097585941390",
       clientSecret: "48d73a1974d63be2513810339c7dbb3d",
@@ -61,7 +62,10 @@
     passport.deserializeUser(function(id, done){
       return database.users.findOne({
         id: id
-      }, done);
+      }, function(error, user){
+        app.locals.user = user;
+        return done(error, user);
+      });
     });
     assets = new rack.AssetRack([
       new rack.LessAsset({
@@ -88,6 +92,7 @@
     assets.on("complete", function(){
       var basic, pub, sub, client;
       app.configure(function(){
+        var _RedisStore, sessionStore;
         app.set("port", process.env.PORT || 3000);
         app.set("views", __dirname + "/views/server");
         app.set("view engine", "jade");
@@ -96,7 +101,10 @@
         app.use(express.bodyParser());
         app.use(express.methodOverride());
         app.use(express.cookieParser());
+        _RedisStore = require('connect-redis')(express);
+        sessionStore = new _RedisStore;
         app.use(express.session({
+          store: sessionStore,
           secret: 'ironmaiden'
         }));
         app.use(passport.initialize());
@@ -130,7 +138,7 @@
       app.get("/api/v2/image/:country/:city", backEnd.api.image_v2);
       app.get("/auth/login/", backEnd.auth.login);
       app.get("/auth/facebook", passport.authenticate('facebook'));
-      app.get("/auth/facebook/callback", passport.authenticate('facebook', {
+      app.get('/auth/facebook/callback', passport.authenticate('facebook', {
         successRedirect: '/',
         failureRedirect: '/login'
       }));

@@ -72,4 +72,15 @@ class Overlay
     app.trigger('l_overlay_add', data: data, id: id)
     @
 
+  remove: (id)->
+    part = @$el.find('.l-o-part' + id)
+
+    if part.length
+      part.remove()
+      @parts = @$el.find('.l-o-part')
+    else
+      app.log('[app.modules.Overlay]: part "' + id + '" doesnt exist')
+
+    @
+
 app.modules.Overlay = Overlay

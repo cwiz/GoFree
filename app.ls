@@ -48,6 +48,7 @@ else
 
 	# Passport.js
 	FacebookStrategy = require("passport-facebook").Strategy
+	app.locals.user = null
 	passport.use new FacebookStrategy(
 		{
 			clientID    : "109097585941390",
