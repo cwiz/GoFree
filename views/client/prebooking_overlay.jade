@@ -1,0 +1,20 @@
+.v-prebooking
+  .v-p-header
+    h3.v-p-headline Осталось совсем чуть-чуть
+    p.v-p-explanation Для отправки вам деталей бронирования нам нужно чтобы вы поделились своей контактной информацией
+    span.l-overlay-close закрыть
+
+  .v-p-login
+    .v-p-social
+      | Авторизуйтесь с помощью одной из соц-сетей
+    .v-p-email
+      | Авторизуйтесь с помощью эл. почты
+
+      form.v-p-e-inputwrap
+        input.v-p-e-input(type="email", name='email', placeholder="Ваш адрес эл. почты", autocomplete="off", autocorrect="off", autocapitalize="off", data-validate="true", data-error="Введите правильный e-mail", data-errorpos="bottom", required)
+        button.button.green.small.v-p-submit Отправить
+
+  .v-p-selected
+    h3.v-p-s-headline Ваш выбор
+
+    .v-p-selected-container

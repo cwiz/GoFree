@@ -16,7 +16,7 @@ SERP = Backbone.View.extend
 
   events:
     'click .p-s-h-newsearch'      : 'newSearch'
-    'click .p-s-h-bookselected'   : 'bookingOverlay'
+    'click .p-s-h-bookselected'   : 'showBookingOverlay'
 
   setup: (@opts)->
     @hash = @opts.hash
@@ -32,6 +32,13 @@ SERP = Backbone.View.extend
 
     @search.on('fetched', @paramsReady, @)
     @collection.on('fetched', @collectionReady, @)
+    @selected.on('save', @bookingReady, @)
+
+    if not app.user
+      @prebookingOverlay = new app.views.PrebookingOverlay(
+        @model = @selected
+        )
+      @prebookingOverlay.show()
 
     app.socket.emit('search_start', hash: @hash)
 
@@ -53,8 +60,14 @@ SERP = Backbone.View.extend
     @destroy()
     app.router.navigate('', trigger: true)
 
-  bookingOverlay: ->
-    confirm 'CUMMING SOON'
+  showBookingOverlay: ->
+    if not app.user
+      @prebookingOverlay.show()
+    else
+      @selected.save()
+
+  bookingReady: (data)->
+    app.router.navigate('/trip/' + data.hash, trigger: true)
 
   paramsReady: ->
     @serpHeader.html(app.templates.serp_header(@search.serialize()))
@@ -101,5 +114,9 @@ SERP = Backbone.View.extend
     delete @collection
     delete @selected
     delete @opts
+
+    if not app.user
+      @prebookingOverlay.destroy()
+      delete @prebookingOverlay
 
 app.views.SERP = SERP

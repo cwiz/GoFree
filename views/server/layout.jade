@@ -36,13 +36,14 @@ html.no-js(lang="ru-RU")
       script
         var app = {
           env: {
-            debug: #{__debug}
+            debug: !{__debug}
           },
           api: {
             root: '/',
             places: '/api/v2/autocomplete/',
             images: '/api/v2/image/'
           },
+          user: !{JSON.stringify(user)},
           models: {},
           collections: {},
           views: {},

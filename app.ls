@@ -48,6 +48,7 @@ else
 
 	# Passport.js
 	FacebookStrategy = require("passport-facebook").Strategy
+	app.locals.user = null
 	passport.use new FacebookStrategy(
 		{
 			clientID    : "109097585941390",
@@ -131,7 +132,7 @@ else
 			app.use express.compress!
 
 			app.use (req, res, next) ->
-				app.locals {user: req.user }
+				app.locals.user = req.user
 				next!
 
 			app.use app.router
