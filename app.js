@@ -9,8 +9,7 @@
       processNumber += 1;
     }
     cluster.on('exit', function(worker, code, signal){
-      console.log("worker " + worker.process.pid + " died");
-      return cluster.fork();
+      return console.log("worker " + worker.process.pid + " died");
     });
   } else {
     auth = require("http-auth");
