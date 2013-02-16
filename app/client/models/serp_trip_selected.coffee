@@ -44,13 +44,4 @@ SERPTripSelected = Backbone.Model.extend
       @set('hotel', null)
       app.log('[app.models.SERPTripSelected]: deselected hotel, signed ' + data.signature)
 
-  save: ->
-    data = @toJSON()
-    @set('hash', data['hash'] = md5(JSON.stringify(data)))
-
-    app.socket.emit('serp_selected', data)
-    @trigger('save', data)
-
-    app.log('[app.models.SERPTripSelected]: save', data)
-
 app.models.SERPTripSelected = SERPTripSelected
