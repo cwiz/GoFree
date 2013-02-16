@@ -67,7 +67,10 @@ else
 	)
 
 	passport.serializeUser 		(user, done) 	-> done null, user.id
-	passport.deserializeUser 	(id, done) 		-> database.users.findOne {id: id}, done
+	passport.deserializeUser 	(id, done) 		-> 
+		(error, user) <- database.users.findOne {id: id}
+		app.locals.user = user
+		done error, user
 	  
 	# Assets-Rack
 	assets = new rack.AssetRack([

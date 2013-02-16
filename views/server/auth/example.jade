@@ -3,9 +3,9 @@ html
   body
     h1 jade
     
-    - if (typeof(usr) != 'undefined')
+    - if (typeof(user) != 'undefined')
     
-      span= "Hi, " + usr
+      span= "Hi, " + JSON.stringify(user)
       a(href='/logout')= "logout"
     
     - else
