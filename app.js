@@ -38,7 +38,6 @@
       redisClient: client
     });
     FacebookStrategy = require("passport-facebook").Strategy;
-    app.locals.user = null;
     passport.use(new FacebookStrategy({
       clientID: "109097585941390",
       clientSecret: "48d73a1974d63be2513810339c7dbb3d",
@@ -113,7 +112,7 @@
         app.use(passport.session());
         app.use(express.compress());
         app.use(function(req, res, next){
-          app.locals.user = req.user;
+          app.locals.user = req.user ? req.user : null;
           return next();
         });
         app.use(app.router);
