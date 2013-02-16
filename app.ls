@@ -132,7 +132,7 @@ else
 			app.use express.compress!
 
 			app.use (req, res, next) ->
-				app.locals {user: req.user }
+				app.locals.user = req.user
 				next!
 
 			app.use app.router

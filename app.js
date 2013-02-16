@@ -48,7 +48,7 @@
         provider: profile.provider,
         id: profile.id
       }, function(err, user){
-        if (!user) {
+        if (!user || err) {
           database.users.insert(profile);
         }
         if (user) {
@@ -63,7 +63,9 @@
       return database.users.findOne({
         id: id
       }, function(error, user){
-        app.locals.user = user;
+        delete user._id;
+        delete user._json;
+        delete user._raw;
         return done(error, user);
       });
     });
@@ -110,6 +112,10 @@
         app.use(passport.initialize());
         app.use(passport.session());
         app.use(express.compress());
+        app.use(function(req, res, next){
+          app.locals.user = req.user;
+          return next();
+        });
         app.use(app.router);
         app.locals.pretty = true;
         return app.locals.__debug = false;
