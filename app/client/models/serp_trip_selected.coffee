@@ -16,8 +16,6 @@ SERPTripSelected = Backbone.Model.extend
     hotels_signature: null
     hotel: null
 
-    hash: null
-
   initialize: ->
     app.log('[app.models.SERPTripSelected]: initialize')
 

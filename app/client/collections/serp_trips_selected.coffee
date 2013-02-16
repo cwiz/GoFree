@@ -29,8 +29,15 @@ SERPTripsSelected = Backbone.Collection.extend
     if @_observing
       model.observe()
 
+  _dump: (json) ->
+    for item in json
+      item.hotel = item.hotel?.toJSON()
+      item.flight = item.flight?.toJSON()
+ 
+    json
+
   serialize: ->
-    @toJSON()
+    @_dump(@toJSON())
 
   save: ->
     data = @serialize()
