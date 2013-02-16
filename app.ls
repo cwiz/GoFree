@@ -62,15 +62,16 @@ else
 				id 			: profile.id
 			}
 
-			database.users.insert profile if not user
-
+			database.users.insert profile if (not user or err)
 			done null, user if user
 	)
 
 	passport.serializeUser 		(user, done) 	-> done null, user.id
 	passport.deserializeUser 	(id, done) 		-> 
 		(error, user) <- database.users.findOne {id: id}
-		app.locals.user = user
+		delete user._id
+		delete user._json
+		delete user._raw
 		done error, user
 	  
 	# Assets-Rack
@@ -129,6 +130,10 @@ else
 			app.use passport.initialize!
 			app.use passport.session!
 			app.use express.compress!
+
+			app.use (req, res, next) ->
+				app.locals {user: req.user }
+				next!
 
 			app.use app.router
 
