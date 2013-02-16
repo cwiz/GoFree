@@ -1,0 +1,12 @@
+!!!5
+html
+  body
+    h1 jade
+    
+    - if (typeof(usr) != 'undefined')
+    
+      span= "Hi, " + usr
+      a(href='/logout')= "logout"
+    
+    - else
+      a(href='/auth/facebook')= "login"

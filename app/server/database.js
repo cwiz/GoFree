@@ -50,9 +50,9 @@
   }, {
     unique: true
   });
-  exports.cache = db.collection('cache');
-  exports.cache.ensureIndex({
-    hash: 1
+  exports.users = db.collection('users');
+  exports.countries.ensureIndex({
+    id: 1
   }, {
     unique: true
   });

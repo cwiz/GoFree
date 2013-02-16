@@ -18,6 +18,7 @@
       "MD5":                  "1.0.3",
       "moment":               "1.7.2",
       "mongolian":            "0.1.18",
+      "passport":             "*",
       "progress-bar":         "*",
       "redis":                "*",
       "request":              "2.12.0",

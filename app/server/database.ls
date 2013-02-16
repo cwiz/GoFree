@@ -31,6 +31,6 @@ exports.countries		= db.collection 'countries'
 exports.countries.ensureIndex 	{ geoname_id: 1 }, 	{ unique: true }
 exports.countries.ensureIndex 	{ code: 1 }, 		{ unique: true }
 
-# Cache
-exports.cache			= db.collection 'cache'
-exports.cache.ensureIndex 	{ hash: 1 }, 		{ unique: true }
+# Users
+exports.users 			= db.collection 'users'
+exports.countries.ensureIndex 	{ id: 1 }, 			{ unique: true }

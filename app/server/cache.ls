@@ -2,7 +2,7 @@ md5 	= require "MD5"
 redis 	= require "redis"
 request	= require "request"
 
-client = redis.createClient()
+client 	= redis.createClient()
 
 TTL = 3600
 
