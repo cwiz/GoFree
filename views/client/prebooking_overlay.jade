@@ -3,19 +3,7 @@
     h3.v-p-headline Ваше путешествие
     span.l-overlay-close закрыть
 
-  .v-p-login
-    .v-p-l-description Для отправки вам деталей бронирования, нам нужны ваши контактные данные    
-    .v-p-l-optionswrap
-      .v-p-social
-        | Авторизуйтесь через соц. сети:
-        .v-p-s-buttonswrap
-          a.v-p-s-fblogin(href="/auth/facebook")
-          a.v-p-s-vklogin(href="/auth/vk")
-      .v-p-email
-        | Или с помощью эл. почты
-        form.v-p-e-inputwrap
-          input.v-p-e-input.tiny(type="email", name='email', placeholder="Ваш адрес эл. почты", autocomplete="off", autocorrect="off", autocapitalize="off", data-validate="true", data-error="Введите правильный e-mail", data-errorpos="bottom", required)
-          button.button.orange.tiny.v-p-submit Войти
+  include _partial_login
 
   .v-p-selected-container
     .v-p-s-loading Загрузка...
