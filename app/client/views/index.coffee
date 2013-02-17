@@ -2,22 +2,27 @@ Index = Backbone.View.extend
   el: '#l-content'
 
   initialize: ->
-    @preRender()
+    @render()
+
     @searchPart = @$el.find('#part-search')
     @serpPart = @$el.find('#part-serp')
 
-    @bg = @searchPart.find('.p-i-bg-img')
+    @searchForm = @searchPart.find('.p-s-formwrap')
+
+    @bg = @searchPart.find('.p-s-bg-img')
     @preloader = $('<img/>')
 
     @collection = @model.get('trips')
 
     @updatePageHeight()
-    @render()
 
-    @searchFormView = new app.views.SearchForm
-      el : @searchPart.find('.block-form')[0]
-      model : @model
-      collection : @collection
+    @searchFormView = new app.views.SearchForm(
+      el: @searchForm
+      model: @model
+      collection: @collection
+    )
+
+    @show()
 
     app.on('resize', @updatePageHeight, @)
     @collection.on('change:place', @placeChanged, @)
@@ -25,6 +30,24 @@ Index = Backbone.View.extend
     @model.on('save', @showSERP, @)
 
     app.log('[app.views.Index]: initialize')
+
+  showSERP: (data)->
+    @serpPart.css('min-height': app.size.height, display: 'block')
+
+    app.utils.scroll(app.size.height, 300, =>
+      @searchPart.hide()
+      app.router.navigate('search/' + data.hash, trigger: true)
+      )
+
+  render: ->
+    return if @$el.find('#part-search').length
+    @$el.html(app.templates.index())
+
+  show: ->
+    @searchForm.hide()
+    @serpPart.hide()
+
+    @searchForm.fadeIn(500)
 
   updatePageHeight: ->
     @searchPart.css('min-height': app.size.height)
@@ -41,23 +64,5 @@ Index = Backbone.View.extend
       success: (resp) =>
         if resp and resp.value
           @preloader.attr('src', resp.value.sharp)
-
-  showSERP: (data)->
-    @serpPart.css('min-height': app.size.height, display: 'block')
-
-    app.utils.scroll(app.size.height, 300, =>
-      @searchPart.hide()
-      app.router.navigate('search/' + data.hash, trigger: true)
-      )
-
-  preRender: ->
-    return if @$el.find('#part-search').length
-    @$el.html(app.templates.index())
-
-  render: ->
-    @searchPart.hide()
-    @serpPart.hide()
-
-    @searchPart.fadeIn(500)
 
 app.views.Index = Index

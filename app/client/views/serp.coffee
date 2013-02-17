@@ -2,10 +2,11 @@ SERP = Backbone.View.extend
   el: '#l-content'
 
   initialize: (opts) ->
-    @preRender()
+    @render()
 
     @searchPart = @$el.find('#part-search')
     @serpPart = @$el.find('#part-serp')
+
     @serpHeader = @serpPart.find('.p-s-header-wrap')
     @tripsContent = @serpPart.find('.p-s-t-content')
 
@@ -44,7 +45,7 @@ SERP = Backbone.View.extend
 
     app.socket.emit('search_start', hash: @hash)
 
-    @render()
+    @show()
 
     # ============================================
     # REMOVE THIS SHIT
@@ -55,8 +56,13 @@ SERP = Backbone.View.extend
 
     app.log('[app.views.SERP]: setup with hash: ' + @hash)
 
-  updatePageHeight: ->
-    @serpPart.css('min-height': app.size.height)
+  render: ->
+    return if @$el.find('#part-search').length
+    @$el.html(app.templates.index())
+
+  show: ->
+    @searchPart.hide()
+    @serpPart.show()
 
   showForm: ->
     @searchPart.css('min-height': app.size.height, display: 'block')
@@ -67,48 +73,6 @@ SERP = Backbone.View.extend
       app.router.navigate('', trigger: true)
       @destroy()
       )
-
-  showBookingOverlay: ->
-    if not app.user
-      @prebookingOverlay.show()
-    else
-      @selected.save()
-
-  bookingReady: (data)->
-    app.router.navigate('/trip/' + data.hash, trigger: true)
-
-  paramsReady: ->
-    @serpHeader.html(app.templates.serp_header(@search.serialize()))
-    @serpTrips.setBudget(@search.get('budget')) if @serpTrips?
-
-  collectionReady: ->
-    @serpPart.addClass('loaded')
-    @serpTrips = new app.views.SERPTrips(
-      el: @tripsContent
-      collection: @collection
-      hash: @hash
-      )
-
-    @serpTrips.setBudget(@search.get('budget'))
-
-  searchError: ->
-    @serpPart.addClass('error')
-
-  # showSERP: ->
-  #   height = app.dom.win.height()
-  #   @serpPart.css('min-height': height, display: 'block')
-
-  #   app.utils.scroll(height, 300, =>
-  #     @render()
-  #     )
-
-  preRender: ->
-    return if @$el.find('#part-search').length
-    @$el.html(app.templates.index())
-
-  render: ->
-    @searchPart.hide()
-    @serpPart.show() # who knows might be loading from a link
 
   destroy: ->
     @tripsContent.html('')
@@ -130,5 +94,36 @@ SERP = Backbone.View.extend
     if not app.user
       @prebookingOverlay?.destroy()
       delete @prebookingOverlay
+
+  updatePageHeight: ->
+    @serpPart.css('min-height': app.size.height)
+
+  showBookingOverlay: ->
+    if not app.user
+      @prebookingOverlay.show()
+    else
+      @selected.save()
+
+  bookingReady: (data)->
+    app.router.navigate('/trip/' + data.hash, trigger: true)
+
+  collectionReady: ->
+    @serpPart.addClass('loaded')
+
+    @serpHeader.html(app.templates.serp_header())
+
+    @serpTrips = new app.views.SERPTrips(
+      el: @tripsContent
+      collection: @collection
+      hash: @hash
+      )
+
+    @serpTrips.setBudget(@search.get('budget'))
+
+  paramsReady: ->
+    @serpTrips.setBudget(@search.get('budget')) if @serpTrips?
+
+  searchError: ->
+    @serpPart.addClass('error')
 
 app.views.SERP = SERP
