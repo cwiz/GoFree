@@ -2,6 +2,8 @@ SERP = Backbone.View.extend
   el: '#l-content'
 
   initialize: (opts) ->
+    @preRender()
+
     @searchPart = @$el.find('#part-search')
     @serpPart = @$el.find('#part-serp')
     @serpHeader = @serpPart.find('.p-s-header-wrap')
@@ -15,7 +17,7 @@ SERP = Backbone.View.extend
     app.log('[app.views.SERP]: initialize')
 
   events:
-    'click .p-s-h-newsearch'      : 'newSearch'
+    'click .p-s-h-newsearch'      : 'showForm'
     'click .p-s-h-bookselected'   : 'showBookingOverlay'
 
   setup: (@opts)->
@@ -38,7 +40,7 @@ SERP = Backbone.View.extend
       @prebookingOverlay = new app.views.PrebookingOverlay(
         @model = @selected
         )
-      @prebookingOverlay.show()
+      # @prebookingOverlay.show()
 
     app.socket.emit('search_start', hash: @hash)
 
@@ -56,9 +58,15 @@ SERP = Backbone.View.extend
   updatePageHeight: ->
     @serpPart.css('min-height': app.size.height)
 
-  newSearch: ->
-    @destroy()
-    app.router.navigate('', trigger: true)
+  showForm: ->
+    @searchPart.css('min-height': app.size.height, display: 'block')
+    app.utils.scroll(app.size.height, 0)
+
+    app.utils.scroll(0, 300, =>
+      @serpPart.hide()
+      app.router.navigate('', trigger: true)
+      @destroy()
+      )
 
   showBookingOverlay: ->
     if not app.user
@@ -93,6 +101,10 @@ SERP = Backbone.View.extend
   #   app.utils.scroll(height, 300, =>
   #     @render()
   #     )
+
+  preRender: ->
+    return if @$el.find('#part-search').length
+    @$el.html(app.templates.index())
 
   render: ->
     @searchPart.hide()

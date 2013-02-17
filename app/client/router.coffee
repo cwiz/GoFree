@@ -26,9 +26,7 @@ Router = Backbone.Router.extend
   index: ->
     app.log('[app.Router]: match "index"')
 
-    if views['index']
-      views['index'].showForm()
-    else
+    unless views['index']
       models['search'] = new app.models.Search(trips: new app.collections.SearchTrips()) unless models['search']
 
       views['index'] = new app.views.Index(
