@@ -188,6 +188,10 @@ else
 	app.get "/auth/vkontakte",              passport.authenticate('vkontakte')
 	app.get('/auth/vkontakte/callback',  	passport.authenticate('vkontakte', { successRedirect: '/', failureRedirect: '/login' }))
 	
+	app.get "/auth/logout", (req, res) ->
+		req.logout!
+		res.redirect '/'
+
 	# --- SocketIO
 	io.sockets.on "connection",             backEnd.api.search
 
