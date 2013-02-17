@@ -175,6 +175,10 @@
         successRedirect: '/',
         failureRedirect: '/login'
       }));
+      app.get("/auth/logout", function(req, res){
+        req.logout();
+        return res.redirect('/');
+      });
       io.sockets.on("connection", backEnd.api.search);
       server.listen(app.get("port"), function(){
         return console.log("Express server listening on port " + app.get("port"));
