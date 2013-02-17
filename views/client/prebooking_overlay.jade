@@ -1,20 +1,21 @@
 .v-prebooking
   .v-p-header
-    h3.v-p-headline Осталось совсем чуть-чуть
-    p.v-p-explanation Для отправки вам деталей бронирования нам нужно чтобы вы поделились своей контактной информацией
+    h3.v-p-headline Ваше путешествие
     span.l-overlay-close закрыть
 
   .v-p-login
-    .v-p-social
-      | Авторизуйтесь с помощью одной из соц-сетей
-    .v-p-email
-      | Авторизуйтесь с помощью эл. почты
+    .v-p-l-description Для отправки вам деталей бронирования, нам нужны ваши контактные данные    
+    .v-p-l-optionswrap
+      .v-p-social
+        | Авторизуйтесь через соц. сети:
+        .v-p-s-buttonswrap
+          a.v-p-s-fblogin(href="/auth/facebook")
+          a.v-p-s-vklogin(href="/auth/vk")
+      .v-p-email
+        | Или с помощью эл. почты
+        form.v-p-e-inputwrap
+          input.v-p-e-input.tiny(type="email", name='email', placeholder="Ваш адрес эл. почты", autocomplete="off", autocorrect="off", autocapitalize="off", data-validate="true", data-error="Введите правильный e-mail", data-errorpos="bottom", required)
+          button.button.orange.tiny.v-p-submit Войти
 
-      form.v-p-e-inputwrap
-        input.v-p-e-input(type="email", name='email', placeholder="Ваш адрес эл. почты", autocomplete="off", autocorrect="off", autocapitalize="off", data-validate="true", data-error="Введите правильный e-mail", data-errorpos="bottom", required)
-        button.button.green.small.v-p-submit Отправить
-
-  .v-p-selected
-    h3.v-p-s-headline Ваш выбор
-
-    .v-p-selected-container
+  .v-p-selected-container
+    .v-p-s-loading Загрузка...
