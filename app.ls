@@ -8,6 +8,7 @@ http        		= require "http"
 os          		= require "os"
 passport    		= require "passport"
 passport-facebook 	= require "passport-facebook"
+passport-vkontakte 	= require "passport-vkontakte"
 path        		= require "path"
 rack        		= require "asset-rack"
 redis       		= require "socket.io/node_modules/redis"
@@ -18,6 +19,9 @@ SocketRedis 		= require "socket.io/lib/stores/redis"
 
 FACEBOOK_ID 		= "109097585941390"
 FACEBOOK_SECRET		= "48d73a1974d63be2513810339c7dbb3d"
+
+VK_ID				= "3436490"
+VK_SECRET			= "uMqrPONr6bxMgxgvL3he"
 
 # GLOBALS
 
@@ -44,17 +48,34 @@ else
 	io      	= socket.listen server
 
 	# Passport.js
-	settings = 
+	facebookSettings = 
 		clientID    : FACEBOOK_ID
 		clientSecret: FACEBOOK_SECRET
 		callbackURL : "http://localhost:3000/auth/facebook/callback"
 		
 	passport.use new passport-facebook.Strategy(
-		settings, 
+		facebookSettings, 
 		(accessToken, refreshToken, profile, done) ->
 
 			(err, user) <- database.users.findOne do
-				provider	: profile.provider,
+				provider	: profile.provider
+				id 			: profile.id
+			
+			database.users.insert profile if (not user or err)
+			done null, user if user
+	)
+
+	vkSettings = 
+		clientID    : VK_ID
+		clientSecret: VK_SECRET
+		callbackURL : "http://localhost:3000/auth/vkontakte/callback"
+
+	passport.use new passport-vkontakte.Strategy(
+		vkSettings, 
+		(accessToken, refreshToken, profile, done) ->
+
+			(err, user) <- database.users.findOne do
+				provider	: profile.provider
 				id 			: profile.id
 			
 			database.users.insert profile if (not user or err)
@@ -160,12 +181,13 @@ else
 	app.get "/api/v2/autocomplete/:query",  backEnd.api.autocomplete_v2
 	app.get "/api/v2/image/:country/:city", backEnd.api.image_v2
 
-	# --- login
-	app.get "/auth/login/",                 backEnd.auth.login
+	# --- login	
 	app.get "/auth/facebook",               passport.authenticate('facebook')
-	app.get('/auth/facebook/callback',  		passport.authenticate('facebook', 		{ successRedirect: '/', failureRedirect: '/login' }))
-	
+	app.get('/auth/facebook/callback',  	passport.authenticate('facebook', { successRedirect: '/', failureRedirect: '/login' }))
 
+	app.get "/auth/vkontakte",              passport.authenticate('vkontakte')
+	app.get('/auth/vkontakte/callback',  	passport.authenticate('vkontakte', { successRedirect: '/', failureRedirect: '/login' }))
+	
 	# --- SocketIO
 	io.sockets.on "connection",             backEnd.api.search
 

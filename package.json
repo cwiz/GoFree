@@ -19,6 +19,8 @@
       "moment":               "1.7.2",
       "mongolian":            "0.1.18",
       "passport":             "*",
+      "passport-facebook":    "*",
+      "passport-vkontakte":    "*",
       "progress-bar":         "*",
       "redis":                "*",
       "request":              "2.12.0",
