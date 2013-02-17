@@ -1,47 +1,52 @@
 (function(){
-  var cluster, numCPUs, processNumber, auth, backEnd, express, http, os, passport, path, rack, redis, RedisStore, socket, database, app, server, io, pub, sub, client, redisStore, FacebookStrategy, assets;
+  var _, auth, cluster, connectRedis, express, http, os, passport, passportFacebook, path, rack, redis, socket, SocketRedis, FACEBOOK_ID, FACEBOOK_SECRET, ROLE, NUM_CPUS, backEnd, database, app, server, io, settings, assets;
+  _ = require("underscore");
+  auth = require("http-auth");
   cluster = require("cluster");
-  numCPUs = process.env.PROCESSES || 1;
+  cluster = require("cluster");
+  connectRedis = require("connect-redis");
+  express = require("express");
+  http = require("http");
+  os = require("os");
+  passport = require("passport");
+  passportFacebook = require("passport-facebook");
+  path = require("path");
+  rack = require("asset-rack");
+  redis = require("socket.io/node_modules/redis");
+  socket = require("socket.io");
+  SocketRedis = require("socket.io/lib/stores/redis");
+  FACEBOOK_ID = "109097585941390";
+  FACEBOOK_SECRET = "48d73a1974d63be2513810339c7dbb3d";
+  ROLE = process.env.NODE_ENV || 'dev';
+  NUM_CPUS = ROLE === 'production' ? os.cpus().length : 1;
   if (cluster.isMaster) {
-    processNumber = 0;
-    while (processNumber < numCPUs) {
-      cluster.fork();
-      processNumber += 1;
-    }
+    _.map((function(){
+      var i$, to$, results$ = [];
+      for (i$ = 0, to$ = NUM_CPUS - 1; i$ <= to$; ++i$) {
+        results$.push(i$);
+      }
+      return results$;
+    }()), function(){
+      return cluster.fork();
+    });
     cluster.on('exit', function(worker, code, signal){
-      return console.log("worker " + worker.process.pid + " died");
+      console.log("worker " + worker.process.pid + " died");
+      if (ROLE === 'production') {
+        return cluster.fork();
+      }
     });
   } else {
-    auth = require("http-auth");
     backEnd = require("./app/server");
-    cluster = require("cluster");
-    express = require("express");
-    http = require("http");
-    os = require("os");
-    passport = require("passport");
-    path = require("path");
-    rack = require("asset-rack");
-    redis = require("socket.io/node_modules/redis");
-    RedisStore = require("socket.io/lib/stores/redis");
-    socket = require("socket.io");
     database = backEnd.database;
     app = express();
     server = http.createServer(app);
     io = socket.listen(server);
-    pub = redis.createClient();
-    sub = redis.createClient();
-    client = redis.createClient();
-    redisStore = new RedisStore({
-      redisPub: pub,
-      redisSub: sub,
-      redisClient: client
-    });
-    FacebookStrategy = require("passport-facebook").Strategy;
-    passport.use(new FacebookStrategy({
-      clientID: "109097585941390",
-      clientSecret: "48d73a1974d63be2513810339c7dbb3d",
+    settings = {
+      clientID: FACEBOOK_ID,
+      clientSecret: FACEBOOK_SECRET,
       callbackURL: "http://localhost:3000/auth/facebook/callback"
-    }, function(accessToken, refreshToken, profile, done){
+    };
+    passport.use(new passportFacebook.Strategy(settings, function(accessToken, refreshToken, profile, done){
       return database.users.findOne({
         provider: profile.provider,
         id: profile.id
@@ -61,9 +66,11 @@
       return database.users.findOne({
         id: id
       }, function(error, user){
-        delete user._id;
-        delete user._json;
-        delete user._raw;
+        if (user) {
+          delete user._id;
+          delete user._json;
+          delete user._raw;
+        }
         return done(error, user);
       });
     });
@@ -90,9 +97,8 @@
       })
     ]);
     assets.on("complete", function(){
-      var basic, pub, sub, client;
+      var basic, redisStore;
       app.configure(function(){
-        var _RedisStore, sessionStore;
         app.set("port", process.env.PORT || 3000);
         app.set("views", __dirname + "/views/server");
         app.set("view engine", "jade");
@@ -101,10 +107,8 @@
         app.use(express.bodyParser());
         app.use(express.methodOverride());
         app.use(express.cookieParser());
-        _RedisStore = require('connect-redis')(express);
-        sessionStore = new _RedisStore;
         app.use(express.session({
-          store: sessionStore,
+          store: new (connectRedis(express)),
           secret: 'ironmaiden'
         }));
         app.use(passport.initialize());
@@ -150,9 +154,11 @@
       server.listen(app.get("port"), function(){
         return console.log("Express server listening on port " + app.get("port"));
       });
-      pub = redis.createClient();
-      sub = redis.createClient();
-      client = redis.createClient();
+      redisStore = new SocketRedis({
+        redisPub: redis.createClient(),
+        redisSub: redis.createClient(),
+        redisClient: redis.createClient()
+      });
       io.set('store', redisStore);
       io.enable('browser client minification');
       io.enable('browser client etag');
