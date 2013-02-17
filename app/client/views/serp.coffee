@@ -71,10 +71,10 @@ SERP = Backbone.View.extend
     app.utils.scroll(0, 300, =>
       @serpPart.hide()
       app.router.navigate('', trigger: true)
-      @destroy()
+      @cleanup()
       )
 
-  destroy: ->
+  cleanup: ->
     @tripsContent.html('')
     @serpPart.removeClass('loaded error')
 
