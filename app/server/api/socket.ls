@@ -116,3 +116,6 @@ exports.search = (socket) ->
 						
 		async.parallel callbacks
 
+	#socket.on 'serp_selected', (data) ->
+
+
