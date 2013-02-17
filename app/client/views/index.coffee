@@ -42,12 +42,12 @@ Index = Backbone.View.extend
         if resp and resp.value
           @preloader.attr('src', resp.value.sharp)
 
-  showSERP: ->
+  showSERP: (data)->
     @serpPart.css('min-height': app.size.height, display: 'block')
 
     app.utils.scroll(app.size.height, 300, =>
       @searchPart.hide()
-      app.router.navigate('search/' + @model.get('hash'), trigger: true)
+      app.router.navigate('search/' + data.hash, trigger: true)
       )
 
   preRender: ->

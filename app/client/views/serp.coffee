@@ -114,8 +114,8 @@ SERP = Backbone.View.extend
     @tripsContent.html('')
     @serpPart.removeClass('loaded error')
 
-    @search.off('fetched')
-    @collection.off('fetched')
+    @search?.off('fetched')
+    @collection?.off('fetched')
 
     if @serpTrips
       @serpTrips.destroy()
@@ -128,7 +128,7 @@ SERP = Backbone.View.extend
     delete @opts
 
     if not app.user
-      @prebookingOverlay.destroy()
+      @prebookingOverlay?.destroy()
       delete @prebookingOverlay
 
 app.views.SERP = SERP
