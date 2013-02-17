@@ -56,7 +56,6 @@ else
 	passport.use new passport-facebook.Strategy(
 		facebookSettings, 
 		(accessToken, refreshToken, profile, done) ->
-
 			(err, user) <- database.users.findOne do
 				provider	: profile.provider
 				id 			: profile.id
@@ -82,16 +81,14 @@ else
 			done null, user if user
 	)
 
-	passport.serializeUser 		(user, done)-> 
-		done null, user.id
+	passport.serializeUser 		(user, done) -> done null, user.id
 	
-	passport.deserializeUser 	(id, done)	-> 
+	passport.deserializeUser 	(id,   done) -> 
 		(error, user) <- database.users.findOne {id: id}
 		
-		if user
-			delete user._id
-			delete user._json
-			delete user._raw
+		delete user._id 	if user
+		delete user._json	if user
+		delete user._raw	if user
 		
 		done error, user
 	  
@@ -100,28 +97,28 @@ else
 		new rack.LessAsset({
 			url: "/app.css"
 			filename: __dirname + "/public/css/app.less"
-			paths: [__dirname + "/public/css"]
+			paths	: [__dirname + "/public/css"]
 			compress: false
 		}), 
 
 		new rack.SnocketsAsset({
-			url: "/libs.js"
+			url 	: "/libs.js"
 			filename: __dirname + "/app/client/libs.js"
 			compress: false
 		}), 
 
 		new rack.SnocketsAsset({
-			url: "/app.js"
+			url 	: "/app.js"
 			filename: __dirname + "/app/client/app.coffee"
 			compress: false
 		}), 
 
 		new rack.JadeAsset({
-			url: "/views.js"
-			dirname: __dirname + "/views/client"
-			separator: "_"
-			clientVariable: "app.templates"
-			compress: false
+			url 			: "/views.js"
+			dirname 	 	: __dirname + "/views/client"
+			separator 		: "_"
+			clientVariable 	: "app.templates"
+			compress		: false
 		})
 	])
 

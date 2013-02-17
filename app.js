@@ -89,7 +89,11 @@
       }, function(error, user){
         if (user) {
           delete user._id;
+        }
+        if (user) {
           delete user._json;
+        }
+        if (user) {
           delete user._raw;
         }
         return done(error, user);
@@ -165,16 +169,24 @@
       });
       app.get("/api/v2/autocomplete/:query", backEnd.api.autocomplete_v2);
       app.get("/api/v2/image/:country/:city", backEnd.api.image_v2);
-      app.get("/auth/facebook", passport.authenticate('facebook'));
-      app.get('/auth/facebook/callback', passport.authenticate('facebook', {
-        successRedirect: '/',
-        failureRedirect: '/login'
-      }));
-      app.get("/auth/vkontakte", passport.authenticate('vkontakte'));
-      app.get('/auth/vkontakte/callback', passport.authenticate('vkontakte', {
-        successRedirect: '/',
-        failureRedirect: '/login'
-      }));
+      app.get("/auth/facebook", function(req, res){
+        req.session.postLoginRedirect = req.header('Referer');
+        return passport.authenticate('facebook')(req, res);
+      });
+      app.get("/auth/facebook/callback", passport.authenticate('facebook'), function(req, res){
+        if (req.session.postLoginRedirect) {
+          return res.redirect(req.session.postLoginRedirect);
+        }
+      });
+      app.get("/auth/vkontakte", function(req, res){
+        req.session.postLoginRedirect = req.header('Referer');
+        return passport.authenticate('vkontakte')(req, res);
+      });
+      app.get("/auth/vkontakte/callback", passport.authenticate('vkontakte'), function(req, res){
+        if (req.session.postLoginRedirect) {
+          return res.redirect(req.session.postLoginRedirect);
+        }
+      });
       app.get("/auth/logout", function(req, res){
         req.logout();
         return res.redirect('/');
