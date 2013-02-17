@@ -1,5 +1,5 @@
 (function(){
-  var JSV, env, START_SEARCH_SCHEMA, SEARCH_SCHEMA, validate;
+  var JSV, env, START_SEARCH_SCHEMA, SEARCH_SCHEMA, SERP_SELECTED_SCHEMA, validate;
   JSV = require("JSV").JSV;
   env = JSV.createEnvironment();
   START_SEARCH_SCHEMA = {
@@ -57,6 +57,23 @@
       }
     }
   };
+  SERP_SELECTED_SCHEMA = {
+    type: 'object',
+    properties: {
+      trip_hash: {
+        type: 'string',
+        required: true
+      },
+      search_hash: {
+        type: 'string',
+        required: true
+      },
+      items: {
+        type: 'array',
+        required: true
+      }
+    }
+  };
   validate = function(data, schema, cb){
     var report;
     report = env.validate(data, schema);
@@ -70,5 +87,8 @@
   };
   exports.start_search = function(data, cb){
     return validate(data, START_SEARCH_SCHEMA, cb);
+  };
+  exports.serp_selected = function(data, cb){
+    return validate(data, SERP_SELECTED_SCHEMA, cb);
   };
 }).call(this);

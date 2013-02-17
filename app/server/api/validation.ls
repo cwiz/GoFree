@@ -52,6 +52,22 @@ SEARCH_SCHEMA =
 						type: 'object'
 						required: true
 
+SERP_SELECTED_SCHEMA = 
+	type: \object
+	properties:
+		
+		trip_hash:
+			type: 'string'
+			required: true
+
+		search_hash:
+			type: 'string'
+			required: true
+		
+		items:
+			type: \array
+			required: true
+				
 validate = (data, schema, cb) ->
 	report  = env.validate(data, schema)
 
@@ -60,3 +76,4 @@ validate = (data, schema, cb) ->
 
 exports.search 			= (data, cb) -> validate(data, SEARCH_SCHEMA, cb)
 exports.start_search 	= (data, cb) -> validate(data, START_SEARCH_SCHEMA, cb)	
+exports.serp_selected 	= (data, cb) -> validate(data, SERP_SELECTED_SCHEMA, cb)	

@@ -54,7 +54,7 @@
         return socket.emit('search_ok', {});
       });
     });
-    return socket.on('search_start', function(data){
+    socket.on('search_start', function(data){
       return validation.start_search(data, function(error, data){
         if (error) {
           return socket.emit('start_search_error', {
@@ -141,6 +141,33 @@
             }();
           });
           return async.parallel(callbacks);
+        });
+      });
+    });
+    return socket.on('serp_selected', function(data){
+      return validation.serp_selected(data, function(error, data){
+        if (error) {
+          return socket.emit('serp_selected_error', {
+            error: error
+          });
+        }
+        return database.search.findOne({
+          hash: data.search_hash
+        }, function(error, searchParams){
+          if (error) {
+            return socket.emit('serp_selected_error', {
+              error: error
+            });
+          }
+          return database.trips.findOne({
+            hash: data.trip_hash
+          }, function(error, trip){
+            if (trip) {
+              return;
+            }
+            database.trips.insert(data);
+            return socket.emit('serp_selected_ok', {});
+          });
         });
       });
     });

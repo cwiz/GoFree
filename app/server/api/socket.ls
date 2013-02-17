@@ -99,7 +99,7 @@ exports.search = (socket) ->
 		
 		_.map pairs, (pair) -> 
 
-			do->
+			do ->
 				with copyPair = pair
 					_.map providers.flightProviders, (provider) -> do ->
 						callbacks.push (callback) ->
@@ -116,6 +116,17 @@ exports.search = (socket) ->
 						
 		async.parallel callbacks
 
-	#socket.on 'serp_selected', (data) ->
+	socket.on 'serp_selected', (data) ->
 
+		(error, data) 			<- validation.serp_selected data
+		return socket.emit 'serp_selected_error', { error : error } if error
 
+		(error, searchParams) 	<- database.search.findOne { hash : data.search_hash }
+		return socket.emit 'serp_selected_error', { error : error } if error
+
+		(error, trip)			<- database.trips.findOne  { hash : data.trip_hash }
+		return if trip
+
+		database.trips.insert data
+
+		socket.emit 'serp_selected_ok', {}
