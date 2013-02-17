@@ -2,8 +2,7 @@ Index = Backbone.View.extend
   el: '#l-content'
 
   initialize: ->
-    @searchPart = @$el.find('#part-search')
-    @serpPart = @$el.find('#part-serp')
+    @render()
 
     @bg = @searchPart.find('.p-i-bg-img')
     @preloader = $('<img/>')
@@ -12,11 +11,6 @@ Index = Backbone.View.extend
 
     @updatePageHeight()
 
-    if app.router.history.length # this is not the first page to load
-      @showForm()
-    else
-      @render()
-    
     @searchFormView = new app.views.SearchForm
       el : @searchPart.find('.block-form')[0]
       model : @model
@@ -64,6 +58,11 @@ Index = Backbone.View.extend
       )
 
   render: ->
+    @$el.html(app.templates.index())
+
+    @searchPart = @$el.find('#part-search')
+    @serpPart = @$el.find('#part-serp')
+
     @searchPart.hide()
     @searchPart.fadeIn(500)
 
