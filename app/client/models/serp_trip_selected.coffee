@@ -20,8 +20,8 @@ SERPTripSelected = Backbone.Model.extend
     app.log('[app.models.SERPTripSelected]: initialize')
 
   observe: ->
-    app.on('serp_selected', _.bind(@selectItem, @))
-    app.on('serp_deselected', _.bind(@deselectItem, @))
+    app.on( 'serp_selected',    _.bind(@selectItem,   @))
+    app.on( 'serp_deselected',  _.bind(@deselectItem, @))
     app.log('[app.models.SERPTripSelected]: observing')
 
   selectItem: (data) ->

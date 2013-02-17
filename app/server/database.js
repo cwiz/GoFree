@@ -56,4 +56,13 @@
   }, {
     unique: true
   });
+  exports.trips = db.collection('trips');
+  exports.trips.ensureIndex({
+    trip_hash: 1
+  }, {
+    unique: true
+  });
+  exports.trips.ensureIndex({
+    search_hash: 1
+  });
 }).call(this);

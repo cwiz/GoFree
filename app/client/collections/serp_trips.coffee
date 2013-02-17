@@ -38,8 +38,8 @@ SERPTrips = Backbone.Collection.extend
 
   _dump: (json) ->
     for item in json
-      item.hotels = item.hotels.toJSON()
-      item.flights = item.flights.toJSON()
+      item.hotels   = item.hotels.toJSON()
+      item.flights  = item.flights.toJSON()
 
       delete item.hotels_filtered
       delete item.flights_filtered

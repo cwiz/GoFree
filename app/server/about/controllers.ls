@@ -1,6 +1,5 @@
 
 exports.index = (req, res) ->
-	console.log req.user
 	res.render "index", { title: "Index Page" }
 
 exports.about = (req, res) ->
