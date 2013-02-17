@@ -219,7 +219,7 @@ app.utils.translate = function() {
 app.utils.scroll = function(pos, duration, callback) {
     $('html, body').animate({
         scrollTop: pos || 0
-    }, duration, callback || void 0);
+    }, duration || 0, callback || void 0);
 };
 
 app.utils.isPopupBlocked = function (poppedWindow) {

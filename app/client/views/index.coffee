@@ -2,7 +2,9 @@ Index = Backbone.View.extend
   el: '#l-content'
 
   initialize: ->
-    @render()
+    @preRender()
+    @searchPart = @$el.find('#part-search')
+    @serpPart = @$el.find('#part-serp')
 
     @bg = @searchPart.find('.p-i-bg-img')
     @preloader = $('<img/>')
@@ -10,6 +12,7 @@ Index = Backbone.View.extend
     @collection = @model.get('trips')
 
     @updatePageHeight()
+    @render()
 
     @searchFormView = new app.views.SearchForm
       el : @searchPart.find('.block-form')[0]
@@ -39,31 +42,22 @@ Index = Backbone.View.extend
         if resp and resp.value
           @preloader.attr('src', resp.value.sharp)
 
-  showSERP: ->
-    height = app.dom.win.height()
-    @serpPart.css('min-height': height, display: 'block')
+  showSERP: (data)->
+    @serpPart.css('min-height': app.size.height, display: 'block')
 
-    app.utils.scroll(height, 300, =>
-      app.router.navigate('search/' + @model.get('hash'), trigger: true)
+    app.utils.scroll(app.size.height, 300, =>
+      @searchPart.hide()
+      app.router.navigate('search/' + data.hash, trigger: true)
       )
 
-  showForm: ->
-    height = app.dom.win.height()
-
-    @searchPart.show()
-    app.utils.scroll(height, 0)
-
-    app.utils.scroll(0, 300, =>
-      @serpPart.hide()
-      )
-
-  render: ->
+  preRender: ->
+    return if @$el.find('#part-search').length
     @$el.html(app.templates.index())
 
-    @searchPart = @$el.find('#part-search')
-    @serpPart = @$el.find('#part-serp')
-
+  render: ->
     @searchPart.hide()
+    @serpPart.hide()
+
     @searchPart.fadeIn(500)
 
 app.views.Index = Index
