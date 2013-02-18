@@ -125,7 +125,7 @@
       })
     ]);
     assets.on("complete", function(){
-      var basic, login, callback, redisStore;
+      var login, callback, redisStore;
       app.configure(function(){
         app.set("port", process.env.PORT || 3000);
         app.set("views", __dirname + "/views/server");
@@ -155,21 +155,8 @@
         app.use(express.logger("dev"));
         return app.locals.__debug = true;
       });
-      basic = auth({
-        authRealm: "SHTO?",
-        authList: ['anus:pes'],
-        proxy: false
-      });
-      app.get("/", function(req, res){
-        return basic.apply(req, res, function(username){
-          return backEnd.about.index(req, res);
-        });
-      });
-      app.get("/search/:hash", function(req, res){
-        return basic.apply(req, res, function(username){
-          return backEnd.about.index(req, res);
-        });
-      });
+      app.get("/", backEnd.about.index);
+      app.get("/search/:hash", backEnd.about.index);
       app.get("/api/v2/autocomplete/:query", backEnd.api.autocomplete_v2);
       app.get("/api/v2/image/:country/:city", backEnd.api.image_v2);
       app.get("/api/v2/get_location", backEnd.api.get_location);

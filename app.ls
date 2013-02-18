@@ -169,24 +169,17 @@ else
 		app.use express.logger "dev"
 		app.locals.__debug = true
 
-	# --- auth
-	basic = auth({
-		authRealm : "SHTO?",
-		authList  : ['anus:pes'],
-		proxy     : false
-	})
-
 	# Routes
 	
 	# --- static
-	app.get "/",                            (req, res) -> basic.apply req, res, (username) -> backEnd.about.index req, res
-	app.get "/search/:hash",                (req, res) -> basic.apply req, res, (username) -> backEnd.about.index req, res
+	app.get "/",                            	backEnd.about.index
+	app.get "/search/:hash",                	backEnd.about.index
 	
 	# --- API --- 
-	app.get "/api/v2/autocomplete/:query",  		backEnd.api.autocomplete_v2
-	app.get "/api/v2/image/:country/:city", 		backEnd.api.image_v2
-	app.get "/api/v2/get_location", 				backEnd.api.get_location
-	app.get "/api/v2/auth/add_email/:email", 		backEnd.api.add_email
+	app.get "/api/v2/autocomplete/:query",  	backEnd.api.autocomplete_v2
+	app.get "/api/v2/image/:country/:city", 	backEnd.api.image_v2
+	app.get "/api/v2/get_location", 			backEnd.api.get_location
+	app.get "/api/v2/auth/add_email/:email", 	backEnd.api.add_email
 
 	# --- login	
 
