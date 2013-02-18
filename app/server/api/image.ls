@@ -54,7 +54,6 @@ exports.image_v2 = (req, res) ->
 			sharp	: flickrBlured
 	}) if flickrExits
 
-
 	(error, image) <- queryFlickr city
 	return res.json({
 		status: 'error'

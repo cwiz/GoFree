@@ -20,13 +20,13 @@ task "test", "run tests", ->
 	test.stdout.on 'data', console.log
 	test.stderr.on 'data', console.log
 
-task "db:populateAirports", 'populate airports', ->
+task "db:populate_airports", 'populate airports', ->
 	airports = exec "coffee scripts/airports/populateAirports.coffee"
 
 	airports.stdout.on 'data', console.log
 	airports.stderr.on 'data', console.log
 
-task "db:restoreGeonames", 'populate geonames', ->
+task "db:restore_geonames", 'populate geonames', ->
 	airports = exec "mongorestore --db ostroterra --verbose --collection geonames #{__dirname}/scripts/autocomplete/geonames/ostroterra/geonames.bson"
 
 	airports.stdout.on 'data', console.log
@@ -44,6 +44,9 @@ task "devserver", 'development server w/ autoreload', ->
 		nodemon.stdout.on 'data', console.log
 		nodemon.stderr.on 'data', console.log
 	), 1000
+
+task "db:copy_geonames", 'copy geonames DB to node modules', ->
+	exec 'cp -r data/* node_modules/geoip-lite/data'
 
 	
 
