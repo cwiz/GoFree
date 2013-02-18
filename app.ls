@@ -59,19 +59,22 @@ else
 			provider	: profile.provider
 			id 			: profile.id
 		
+		profile.email = profile.emails[0].value if profile.emails
+
 		if (not user or err)
 			database.users.insert profile 
+			done null, profile if profile
 
 		else
 			user.username 		= profile.username
 			user.displayName 	= profile.displayName
 			user.name 			= profile.name
 			user.gender			= profile.gender
+			user.emails			= profile.emails
 			user.email			= profile.email
 
-			database.users.save user
-
-		done null, user if user
+			database.users.update {_id: user._id}, user
+			done null, user if user
 		
 	passport.use new passport-facebook.Strategy facebookSettings, postLogin
 	
@@ -86,12 +89,16 @@ else
 	
 	passport.deserializeUser 	(id,   done) -> 
 		(error, user) <- database.users.findOne {id: id}
+
+		if user
+			delete user._id 	
+			delete user._json	
+			delete user._raw	
 		
-		delete user._id 	if user
-		delete user._json	if user
-		delete user._raw	if user
-		
-		done error, user
+			done error, user 
+
+		else
+			done error, false
 	  
 	# Assets-Rack
 	assets = new rack.AssetRack([
@@ -175,9 +182,10 @@ else
 	app.get "/",                            (req, res) -> basic.apply req, res, (username) -> backEnd.about.index req, res
 	app.get "/search/:hash",                (req, res) -> basic.apply req, res, (username) -> backEnd.about.index req, res
 	
-	# --- api
-	app.get "/api/v2/autocomplete/:query",  backEnd.api.autocomplete_v2
-	app.get "/api/v2/image/:country/:city", backEnd.api.image_v2
+	# --- API --- 
+	app.get "/api/v2/autocomplete/:query",  		backEnd.api.autocomplete_v2
+	app.get "/api/v2/image/:country/:city", 		backEnd.api.image_v2
+	app.get "/api/v2/auth/add_email/:email", 		backEnd.api.add_email
 
 	# --- login	
 

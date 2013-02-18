@@ -54,18 +54,27 @@
         provider: profile.provider,
         id: profile.id
       }, function(err, user){
+        if (profile.emails) {
+          profile.email = profile.emails[0].value;
+        }
         if (!user || err) {
           database.users.insert(profile);
+          if (profile) {
+            return done(null, profile);
+          }
         } else {
           user.username = profile.username;
           user.displayName = profile.displayName;
           user.name = profile.name;
           user.gender = profile.gender;
+          user.emails = profile.emails;
           user.email = profile.email;
-          database.users.save(user);
-        }
-        if (user) {
-          return done(null, user);
+          database.users.update({
+            _id: user._id
+          }, user);
+          if (user) {
+            return done(null, user);
+          }
         }
       });
     };
@@ -85,14 +94,12 @@
       }, function(error, user){
         if (user) {
           delete user._id;
-        }
-        if (user) {
           delete user._json;
-        }
-        if (user) {
           delete user._raw;
+          return done(error, user);
+        } else {
+          return done(error, false);
         }
-        return done(error, user);
       });
     });
     assets = new rack.AssetRack([
@@ -165,6 +172,7 @@
       });
       app.get("/api/v2/autocomplete/:query", backEnd.api.autocomplete_v2);
       app.get("/api/v2/image/:country/:city", backEnd.api.image_v2);
+      app.get("/api/v2/auth/add_email/:email", backEnd.api.add_email);
       login = function(provider, req, res){
         req.session.postLoginRedirect = req.header('Referer');
         return passport.authenticate(provider, {
