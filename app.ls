@@ -179,20 +179,23 @@ else
 	app.get "/api/v2/image/:country/:city", backEnd.api.image_v2
 
 	# --- login	
-	app.get "/auth/facebook", 			(req, res) -> 
+
+	login = (provider, req, res) -> 
 		req.session.postLoginRedirect = req.header('Referer')
-		passport.authenticate('facebook')(req, res)
+		passport.authenticate(provider)(req, res)
+
+	callback = (req, res) ->
+		if req.session.postLoginRedirect
+			res.redirect req.session.postLoginRedirect
+		else
+			res.redirect '/#'
+
+	app.get "/auth/facebook", 			(req, res) -> login('facebook', req, res)
+	app.get "/auth/facebook/callback", passport.authenticate('facebook', {scope:'email'}),	callback
+
+	app.get "/auth/vkontakte", 			(req, res) -> login('vkontakte', req, res)
+	app.get "/auth/vkontakte/callback", passport.authenticate('vkontakte'), callback
 	
-	app.get "/auth/facebook/callback", passport.authenticate('facebook'),	(req, res) ->
-		res.redirect req.session.postLoginRedirect if req.session.postLoginRedirect
-
-	app.get "/auth/vkontakte", 			(req, res) -> 
-		req.session.postLoginRedirect = req.header('Referer')
-		passport.authenticate('vkontakte')(req, res)
-
-	app.get "/auth/vkontakte/callback", passport.authenticate('vkontakte'), (req, res) ->
-		res.redirect req.session.postLoginRedirect if req.session.postLoginRedirect
-
 	app.get "/auth/logout", (req, res) ->
 		req.logout!
 		res.redirect '/'

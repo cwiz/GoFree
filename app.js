@@ -122,7 +122,7 @@
       })
     ]);
     assets.on("complete", function(){
-      var basic, redisStore;
+      var basic, login, callback, redisStore;
       app.configure(function(){
         app.set("port", process.env.PORT || 3000);
         app.set("views", __dirname + "/views/server");
@@ -169,24 +169,27 @@
       });
       app.get("/api/v2/autocomplete/:query", backEnd.api.autocomplete_v2);
       app.get("/api/v2/image/:country/:city", backEnd.api.image_v2);
+      login = function(provider, req, res){
+        req.session.postLoginRedirect = req.header('Referer');
+        return passport.authenticate(provider)(req, res);
+      };
+      callback = function(req, res){
+        if (req.session.postLoginRedirect) {
+          return res.redirect(req.session.postLoginRedirect);
+        } else {
+          return res.redirect('/#');
+        }
+      };
       app.get("/auth/facebook", function(req, res){
-        req.session.postLoginRedirect = req.header('Referer');
-        return passport.authenticate('facebook')(req, res);
+        return login('facebook', req, res);
       });
-      app.get("/auth/facebook/callback", passport.authenticate('facebook'), function(req, res){
-        if (req.session.postLoginRedirect) {
-          return res.redirect(req.session.postLoginRedirect);
-        }
-      });
+      app.get("/auth/facebook/callback", passport.authenticate('facebook', {
+        scope: 'email'
+      }), callback);
       app.get("/auth/vkontakte", function(req, res){
-        req.session.postLoginRedirect = req.header('Referer');
-        return passport.authenticate('vkontakte')(req, res);
+        return login('vkontakte', req, res);
       });
-      app.get("/auth/vkontakte/callback", passport.authenticate('vkontakte'), function(req, res){
-        if (req.session.postLoginRedirect) {
-          return res.redirect(req.session.postLoginRedirect);
-        }
-      });
+      app.get("/auth/vkontakte/callback", passport.authenticate('vkontakte'), callback);
       app.get("/auth/logout", function(req, res){
         req.logout();
         return res.redirect('/');
