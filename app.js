@@ -1,5 +1,5 @@
 (function(){
-  var _, auth, cluster, connectRedis, express, http, os, passport, passportFacebook, passportVkontakte, path, rack, redis, socket, SocketRedis, FACEBOOK_ID, FACEBOOK_SECRET, VK_ID, VK_SECRET, ROLE, NUM_CPUS, backEnd, database, app, server, io, facebookSettings, vkSettings, assets;
+  var _, auth, cluster, connectRedis, express, http, os, passport, passportFacebook, passportVkontakte, path, rack, redis, socket, SocketRedis, FACEBOOK_ID, FACEBOOK_SECRET, VK_ID, VK_SECRET, ROLE, NUM_CPUS, backEnd, database, app, server, io, facebookSettings, postLogin, vkSettings, assets;
   _ = require("underscore");
   auth = require("http-auth");
   cluster = require("cluster");
@@ -49,37 +49,33 @@
       clientSecret: FACEBOOK_SECRET,
       callbackURL: "http://localhost:3000/auth/facebook/callback"
     };
-    passport.use(new passportFacebook.Strategy(facebookSettings, function(accessToken, refreshToken, profile, done){
+    postLogin = function(accessToken, refreshToken, profile, done){
       return database.users.findOne({
         provider: profile.provider,
         id: profile.id
       }, function(err, user){
         if (!user || err) {
           database.users.insert(profile);
+        } else {
+          user.username = profile.username;
+          user.displayName = profile.displayName;
+          user.name = profile.name;
+          user.gender = profile.gender;
+          user.email = profile.email;
+          database.users.save(user);
         }
         if (user) {
           return done(null, user);
         }
       });
-    }));
+    };
+    passport.use(new passportFacebook.Strategy(facebookSettings, postLogin));
     vkSettings = {
       clientID: VK_ID,
       clientSecret: VK_SECRET,
       callbackURL: "http://localhost:3000/auth/vkontakte/callback"
     };
-    passport.use(new passportVkontakte.Strategy(vkSettings, function(accessToken, refreshToken, profile, done){
-      return database.users.findOne({
-        provider: profile.provider,
-        id: profile.id
-      }, function(err, user){
-        if (!user || err) {
-          database.users.insert(profile);
-        }
-        if (user) {
-          return done(null, user);
-        }
-      });
-    }));
+    passport.use(new passportVkontakte.Strategy(vkSettings, postLogin));
     passport.serializeUser(function(user, done){
       return done(null, user.id);
     });
@@ -171,7 +167,9 @@
       app.get("/api/v2/image/:country/:city", backEnd.api.image_v2);
       login = function(provider, req, res){
         req.session.postLoginRedirect = req.header('Referer');
-        return passport.authenticate(provider)(req, res);
+        return passport.authenticate(provider, {
+          scope: ['email']
+        })(req, res);
       };
       callback = function(req, res){
         if (req.session.postLoginRedirect) {
@@ -183,9 +181,7 @@
       app.get("/auth/facebook", function(req, res){
         return login('facebook', req, res);
       });
-      app.get("/auth/facebook/callback", passport.authenticate('facebook', {
-        scope: 'email'
-      }), callback);
+      app.get("/auth/facebook/callback", passport.authenticate('facebook'), callback);
       app.get("/auth/vkontakte", function(req, res){
         return login('vkontakte', req, res);
       });

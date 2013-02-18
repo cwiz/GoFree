@@ -52,34 +52,35 @@ else
 		clientID    : FACEBOOK_ID
 		clientSecret: FACEBOOK_SECRET
 		callbackURL : "http://localhost:3000/auth/facebook/callback"
-		
-	passport.use new passport-facebook.Strategy(
-		facebookSettings, 
-		(accessToken, refreshToken, profile, done) ->
-			(err, user) <- database.users.findOne do
-				provider	: profile.provider
-				id 			: profile.id
-			
-			database.users.insert profile if (not user or err)
-			done null, user if user
-	)
 
+	postLogin = (accessToken, refreshToken, profile, done) ->
+		
+		(err, user) <- database.users.findOne do
+			provider	: profile.provider
+			id 			: profile.id
+		
+		if (not user or err)
+			database.users.insert profile 
+
+		else
+			user.username 		= profile.username
+			user.displayName 	= profile.displayName
+			user.name 			= profile.name
+			user.gender			= profile.gender
+			user.email			= profile.email
+
+			database.users.save user
+
+		done null, user if user
+		
+	passport.use new passport-facebook.Strategy facebookSettings, postLogin
+	
 	vkSettings = 
 		clientID    : VK_ID
 		clientSecret: VK_SECRET
 		callbackURL : "http://localhost:3000/auth/vkontakte/callback"
 
-	passport.use new passport-vkontakte.Strategy(
-		vkSettings, 
-		(accessToken, refreshToken, profile, done) ->
-
-			(err, user) <- database.users.findOne do
-				provider	: profile.provider
-				id 			: profile.id
-			
-			database.users.insert profile if (not user or err)
-			done null, user if user
-	)
+	passport.use new passport-vkontakte.Strategy vkSettings, postLogin
 
 	passport.serializeUser 		(user, done) -> done null, user.id
 	
@@ -182,7 +183,7 @@ else
 
 	login = (provider, req, res) -> 
 		req.session.postLoginRedirect = req.header('Referer')
-		passport.authenticate(provider)(req, res)
+		passport.authenticate(provider, { scope: [ 'email' ]} )(req, res)
 
 	callback = (req, res) ->
 		if req.session.postLoginRedirect
@@ -191,7 +192,7 @@ else
 			res.redirect '/#'
 
 	app.get "/auth/facebook", 			(req, res) -> login('facebook', req, res)
-	app.get "/auth/facebook/callback", passport.authenticate('facebook', {scope:'email'}),	callback
+	app.get "/auth/facebook/callback", passport.authenticate('facebook'),	callback
 
 	app.get "/auth/vkontakte", 			(req, res) -> login('vkontakte', req, res)
 	app.get "/auth/vkontakte/callback", passport.authenticate('vkontakte'), callback
