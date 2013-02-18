@@ -1,6 +1,4 @@
 _ 					= require "underscore"
-auth        		= require "http-auth"
-cluster     		= require "cluster"
 cluster     		= require "cluster"
 connect-redis		= require "connect-redis"
 express     		= require "express"
