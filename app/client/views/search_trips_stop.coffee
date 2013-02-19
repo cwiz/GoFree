@@ -27,7 +27,7 @@ SearchTripsStop = Backbone.View.extend
 
   events:
     'click .v-s-t-s-removestop'                  : 'removeStop'
-    'change .m-i-c-input'                      : 'dateChanged'
+    'change .m-i-c-input'                        : 'dateChanged'
     # 'input .v-s-t-s-p-name'                    : 'placeChanged'
     'webkitspeechchange .v-s-t-s-p-name'         : 'placeChanged'
     'keyup .v-s-t-s-p-name'                      : 'placeChanged'
@@ -95,13 +95,15 @@ SearchTripsStop = Backbone.View.extend
     if (@suggestActive and not $target.is(@suggestEl) and not $target.is(@placeInput))
       @clearSuggest()
 
-  placeSelected: (e) ->
-    place = @suggestions[+e.target.getAttribute('data-index')]
-
+  setPlace: (place) ->
     @model.set('place', place)
     @placeInput.val("#{place.name_ru}, #{place.country_name_ru}")
 
     @clearSuggest()
+
+  placeSelected: (e) ->
+    place = @suggestions[+e.target.getAttribute('data-index')]
+    setPlace(place)
 
   renderSuggest: (resp) ->
     @suggestions = resp.value
@@ -127,7 +129,7 @@ SearchTripsStop = Backbone.View.extend
   #   @suggestActive = false
     
   clearSuggest: ->
-    @suggestEl.removeClass('active');
+    @suggestEl.removeClass('active')
     @suggestActive = false
     @suggestEl.html('')
 

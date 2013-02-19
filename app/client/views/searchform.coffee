@@ -13,10 +13,10 @@ SearchForm = Backbone.View.extend
 
     @stopsEl = @$el.find('.v-s-destinations')
 
-    @collection.on('add', @initStop, @)
-    @collection.on('delete', @deleteStop, @)
-    @collection.on('change:date', @dateChanged, @)
-    @collection.on('change:place', @hideError, @)
+    @collection.on('add',           @initStop,    @)
+    @collection.on('delete',        @deleteStop,  @)
+    @collection.on('change:date',   @dateChanged, @)
+    @collection.on('change:place',  @placeChanged,   @)
 
     @$el.find('select.m-input-select').m_inputSelect()
     @form = @$el.find('.v-s-form').m_formValidate()[0]
@@ -25,8 +25,10 @@ SearchForm = Backbone.View.extend
     if @collection.length
       @initStops()
       @resetDatesLimits()
+    
     else
       @populateCollection()
+      @getInitialLocation()
 
     app.log('[app.views.SearchForm]: initialize')
     @
@@ -50,13 +52,21 @@ SearchForm = Backbone.View.extend
 
   populateCollection: ->
     @collection.add([
-      { date: app.utils.dateToYMD(@maxDate), removable: false }
-      { date: null, removable: false }
+      { date: app.utils.dateToYMD(@maxDate),  removable: false }
+      { date: null,                           removable: false }
     ])
 
   initStops: () ->
     iterator = _.bind(@initStop, @)
     @collection.each(iterator)
+
+  getInitialLocation: () ->
+    $.ajax
+      url: app.api.get_location
+      success: (resp) =>
+        if resp and resp.value
+          console.log @collection.at(0)
+          @collection.at(0).set({place: resp.value})
 
   resetDatesLimits: () ->
     iterator = (model) =>
@@ -113,6 +123,11 @@ SearchForm = Backbone.View.extend
     if not model.previous('date')
       @addStopEl.removeClass('disabled')
       @canAddStop = true
+
+  placeChanged: (model, place) ->
+    index = @collection.at(@collection.indexOf(model))
+    @stops[index.cid].setPlace(place)
+    @hideError()
 
   adultsChanged: (e) ->
     @model.set('adults', parseInt(e.target.value))

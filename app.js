@@ -1,8 +1,6 @@
 (function(){
-  var _, auth, cluster, connectRedis, express, http, os, passport, passportFacebook, passportVkontakte, path, rack, redis, socket, SocketRedis, FACEBOOK_ID, FACEBOOK_SECRET, VK_ID, VK_SECRET, ROLE, NUM_CPUS, backEnd, database, app, server, io, facebookSettings, postLogin, vkSettings, assets;
+  var _, cluster, connectRedis, express, http, os, passport, passportFacebook, passportVkontakte, path, rack, redis, socket, SocketRedis, FACEBOOK_ID, FACEBOOK_SECRET, VK_ID, VK_SECRET, ROLE, NUM_CPUS, backEnd, database, app, server, io, facebookSettings, postLogin, vkSettings, assets;
   _ = require("underscore");
-  auth = require("http-auth");
-  cluster = require("cluster");
   cluster = require("cluster");
   connectRedis = require("connect-redis");
   express = require("express");
