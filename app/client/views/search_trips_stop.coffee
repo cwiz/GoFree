@@ -133,6 +133,8 @@ SearchTripsStop = Backbone.View.extend
     @suggestEl.removeClass('active')
     @suggestActive = false
     @suggestEl.html('')
+    
+    @lastQuery = null
 
     app.dom.doc.off('keydown', @manageKeypress);
     app.dom.doc.off('click', @manageClick);
