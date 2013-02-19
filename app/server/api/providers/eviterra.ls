@@ -65,7 +65,7 @@ process = (flights, cb) ->
     allAirports.push variant.lastFlight.arrival
 
   # todo add all list!
-  allCarriers = _.map flights.variant, (variant) -> variant.firstFlight.marketingCarrier
+  allCarriers = _.map flights.variant, (variant) -> variant.firstFlight?.marketingCarrier?
   allCarriers = _.uniq allCarriers
 
   allAirports = _.uniq allAirports
@@ -84,7 +84,7 @@ process = (flights, cb) ->
     departureAirport        = _.filter( airportsInfo, (el) -> el.iata is variant.firstFlight.departure      )[0]
     arrivalAirport          = _.filter( airportsInfo, (el) -> el.iata is variant.lastFlight.arrival         )[0]
 
-    carrier                 = _.filter( airlinesInfo, (el) -> el.iata is variant.lastFlight.marketingCarrier)[0]
+    carrier                 = _.filter( airlinesInfo, (el) -> el.iata is variant.lastFlight?.marketingCarrier?)[0]
     delete carrier._id if carrier
 
     return cb(

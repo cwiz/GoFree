@@ -89,7 +89,8 @@
       allAirports.push(variant.lastFlight.arrival);
     }
     allCarriers = _.map(flights.variant, function(variant){
-      return variant.firstFlight.marketingCarrier;
+      var ref$;
+      return ((ref$ = variant.firstFlight) != null ? ref$.marketingCarrier : void 8) != null;
     });
     allCarriers = _.uniq(allCarriers);
     allAirports = _.uniq(allAirports);
@@ -149,7 +150,8 @@
           return el.iata === variant.lastFlight.arrival;
         }
         function fn2$(el){
-          return el.iata === variant.lastFlight.marketingCarrier;
+          var ref$;
+          return el.iata === (((ref$ = variant.lastFlight) != null ? ref$.marketingCarrier : void 8) != null);
         }
       });
     });
