@@ -20,6 +20,8 @@ SearchTripsStop = Backbone.View.extend
 
     @calendar = @$el.find('input.m-input-calendar').m_inputCalendar()[0]
 
+    @model.on('change:place', @updatePlaceValue, @)
+
     @updateCalendar()
 
     app.log('[app.views.SearchTripsStop]: initialize')
@@ -51,6 +53,9 @@ SearchTripsStop = Backbone.View.extend
     if @minDate then @calendar.lockDates(null, @minDate)
     if @maxDate then @calendar.lockDates(@maxDate, null)
 
+  updatePlaceValue: (model, place)->
+    @placeInput.val("#{place.name_ru}, #{place.country_name_ru}")
+
   manageKeypress: (e) ->
     switch e.keyCode
       #up
@@ -78,7 +83,6 @@ SearchTripsStop = Backbone.View.extend
           place = @suggestions[+@suggestSelected.data('index')]
 
           @model.set('place', place)
-          @placeInput.val("#{place.name_ru}, #{place.country_name_ru}")
 
           @suggestSelected = null
 
@@ -99,7 +103,6 @@ SearchTripsStop = Backbone.View.extend
     place = @suggestions[+e.target.getAttribute('data-index')]
 
     @model.set('place', place)
-    @placeInput.val("#{place.name_ru}, #{place.country_name_ru}")
 
     @clearSuggest()
 
@@ -127,7 +130,7 @@ SearchTripsStop = Backbone.View.extend
   #   @suggestActive = false
     
   clearSuggest: ->
-    @suggestEl.removeClass('active');
+    @suggestEl.removeClass('active')
     @suggestActive = false
     @suggestEl.html('')
 

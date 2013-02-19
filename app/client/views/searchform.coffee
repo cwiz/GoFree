@@ -27,6 +27,7 @@ SearchForm = Backbone.View.extend
       @resetDatesLimits()
     else
       @populateCollection()
+      @getInitialLocation()
 
     app.log('[app.views.SearchForm]: initialize')
     @
@@ -57,6 +58,15 @@ SearchForm = Backbone.View.extend
   initStops: () ->
     iterator = _.bind(@initStop, @)
     @collection.each(iterator)
+
+  getInitialLocation: () ->
+    $.ajax(
+      url: app.api.get_location
+      success: (resp) =>
+        if resp and resp.value
+          @collection.at(0).set('place', resp.value)
+    )
+
 
   resetDatesLimits: () ->
     iterator = (model) =>
