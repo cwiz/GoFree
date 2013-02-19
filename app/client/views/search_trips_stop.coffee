@@ -1,142 +1,165 @@
-SearchForm = Backbone.View.extend
-  stops: {}
-  maxDate: app.utils.pureDate(app.now)
-  canAddStop: false
+SearchTripsStop = Backbone.View.extend
+  tagName: 'li'
+  className: 'v-s-t-stop'
 
-  initialize: ->
+  initialize: (options) ->
+    @list = options.list
+    @minDate = if options.minDate then options.minDate else null
+    @maxDate = if options.maxDate then options.maxDate else null
+
+    @manageKeypress = _.bind(@manageKeypress, @)
+    @manageClick = _.bind(@manageClick, @)
+
     @render()
-    @addStopEl = @$el.find('.v-s-d-add')
-    @errorEl = @$el.find('.v-s-error')
-    @errorVisible = false
 
-    @maxDate.setDate(@maxDate.getDate() + 1) # shift it to tomorrow
+    @suggestActive = false
+    @suggestEl = @$el.find('.v-s-t-s-p-suggestions')
+    @placeInput = @$el.find('.v-s-t-s-p-name')
+    @suggestSelected = null
+    @lastQuery = null
 
-    @stopsEl = @$el.find('.v-s-destinations')
+    @calendar = @$el.find('input.m-input-calendar').m_inputCalendar()[0]
 
-    @collection.on('add', @initStop, @)
-    @collection.on('delete', @deleteStop, @)
-    @collection.on('change:date', @dateChanged, @)
-    @collection.on('change:place', @hideError, @)
+    @updateCalendar()
 
-    @$el.find('select.m-input-select').m_inputSelect()
-    @form = @$el.find('.v-s-form').m_formValidate()[0]
-    @restrictBudget()
-
-    if @collection.length
-      @initStops()
-      @resetDatesLimits()
-    else
-      @populateCollection()
-
-    app.log('[app.views.SearchForm]: initialize')
+    app.log('[app.views.SearchTripsStop]: initialize')
     @
 
   events:
-    'click .v-s-d-add'        : 'addStop'
-    'change .m-i-s-select'    : 'adultsChanged'
-    'change .v-s-amount'      : 'budgetChanged'
-    'valid form'              : 'handleSubmit'
-    'click .v-s-error'        : 'hideError'
+    'click .v-s-t-s-removestop'                  : 'removeStop'
+    'change .m-i-c-input'                      : 'dateChanged'
+    # 'input .v-s-t-s-p-name'                    : 'placeChanged'
+    'webkitspeechchange .v-s-t-s-p-name'         : 'placeChanged'
+    'keyup .v-s-t-s-p-name'                      : 'placeChanged'
+    'click .v-s-t-s-p-suggestion'                : 'placeSelected'
+
+  dateChanged: (e) ->
+    @model.set('date', e.target.value)
+    @$el.find('.v-s-t-s-date').find('.m-validate-error').remove()
+
+  setMinDate: (date) ->
+    @minDate = date
+    @updateCalendar()
+
+  setMaxDate: (date) ->
+    @maxDate = date
+    @updateCalendar()
+
+  updateCalendar: ->
+    @calendar.unlockDates()
+
+    if @minDate then @calendar.lockDates(null, @minDate)
+    if @maxDate then @calendar.lockDates(@maxDate, null)
+
+  manageKeypress: (e) ->
+    switch e.keyCode
+      #up
+      when 38, 40
+        app.e(e)
+
+        if not @suggestSelected?.length
+          @suggestSelected = @suggestEl.find(if e.keyCode == 38 then 'li:last-child' else 'li:first-child')
+          @suggestSelected.addClass('selected')
+        else
+          next = if e.keyCode == 38 then @suggestSelected.prev() else @suggestSelected.next()
+          @suggestSelected.removeClass('selected')
+
+          if next.length            
+            @suggestSelected = next
+            @suggestSelected.addClass('selected')
+          else
+            @suggestSelected = null
+
+      #enter
+      when 13
+        app.e(e)
+
+        if @suggestSelected?.length
+          place = @suggestions[+@suggestSelected.data('index')]
+
+          @model.set('place', place)
+          @placeInput.val("#{place.name_ru}, #{place.country_name_ru}")
+
+          @suggestSelected = null
+
+          @clearSuggest()
+
+      # when 27
+      #   @suggestSelected = null
+      #   @clearSuggest()
+              
+
+  manageClick: (e) ->
+    $target = $(e.target)
+
+    if (@suggestActive and not $target.is(@suggestEl) and not $target.is(@placeInput))
+      @clearSuggest()
+
+  placeSelected: (e) ->
+    place = @suggestions[+e.target.getAttribute('data-index')]
+
+    @model.set('place', place)
+    @placeInput.val("#{place.name_ru}, #{place.country_name_ru}")
+
+    @clearSuggest()
+
+  renderSuggest: (resp) ->
+    @suggestions = resp.value
+    
+    list = for o, i in @suggestions
+      """<li class="v-s-t-s-p-suggestion" data-index="#{i}">
+            <strong>#{o.name_ru}</strong>, #{o.country_name_ru}
+          </li>"""
+
+    @suggestEl.html(list.join(''))
+
+    if not @suggestActive
+      @suggestEl.addClass('active')
+      @suggestActive = true
+
+      app.dom.doc.on('keydown', @manageKeypress)
+      app.dom.doc.on('click', @manageClick)
+
+    @suggestSelected = null
+
+  # hideSuggest: ->
+  #   @suggestEl.removeClass('active');
+  #   @suggestActive = false
+    
+  clearSuggest: ->
+    @suggestEl.removeClass('active');
+    @suggestActive = false
+    @suggestEl.html('')
+
+    app.dom.doc.off('keydown', @manageKeypress);
+    app.dom.doc.off('click', @manageClick);
+
+  placeChanged: _.debounce((e) ->
+    place = $.trim(e.target.value)
+    return unless place.length
+
+    if @model.get('place').name != place and (@lastQuery != place or not @suggestActive)
+      $.ajax
+        url: app.api.places + place
+        success: @renderSuggest
+        error: @clearSuggest
+        context: @
+
+      @lastQuery = place
+
+  , 100)
 
   render: ->
-    @$el.html(app.templates.searchform(@model.toJSON()))
+    @$el.html(app.templates.search_trips_stop(@model.toJSON()))
+    @list.append(@$el)
 
-  restrictBudget: ->
-    validate = (e) ->
-      if (e.keyCode < 48 or e.keyCode > 57)
-         app.e(e)
+  removeStop: ->
+    @undelegateEvents()
 
-    @$el.find('.v-s-amount').on('keypress input', validate)
+    @calendar.destroy()
+    delete @calendar
 
-  populateCollection: ->
-    @collection.add([
-      { date: app.utils.dateToYMD(@maxDate), removable: false }
-      { date: null, removable: false }
-    ])
+    @model.trigger('delete', @model)
+    @remove()
 
-  initStops: () ->
-    iterator = _.bind(@initStop, @)
-    @collection.each(iterator)
-
-  resetDatesLimits: () ->
-    iterator = (model) =>
-      @dateChanged(model, model.get('date'))
-
-    @collection.each(iterator)
-
-  initStop: (item) ->
-    index     = @collection.indexOf(item)
-    prevDate  = @collection.at(index - 1)?.get('date')
-    minDate   = if prevDate then prevDate else app.utils.dateToYMD(@maxDate)
-
-    @stops[item.cid] = new app.views.SearchTripsStop
-      list: @stopsEl
-      model: item
-      minDate: if index == 0 then null else minDate
-
-  deleteStop: (item) ->
-    index = @collection.indexOf(item)
-    prev = @collection.at(index - 1)
-    next = @collection.at(index + 1)
-
-    if (prev and next)
-      @stops[prev.cid].setMaxDate(next.get('date'))
-      @stops[next.cid].setMinDate(prev.get('date'))
-    else
-      @stops[prev.cid].setMaxDate(null)
-
-    @collection.remove(item)
-    delete @stops[item.cid]
-
-    if @collection.last().get('date')
-      @addStopEl.removeClass('disabled')
-      @canAddStop = true
-
-  addStop: (e) ->
-    return unless @canAddStop
-    @collection.add(date: null, removable: true)
-
-    @addStopEl.addClass('disabled')
-    @canAddStop = false
-
-  dateChanged: (model, date) ->
-    index = @collection.indexOf(model)
-    prev = @collection.at(index - 1)
-    next = @collection.at(index + 1)
-
-    if (prev) then @stops[prev.cid].setMaxDate(date)
-    if (next) then @stops[next.cid].setMinDate(date)
-
-    dateObj = app.utils.YMDToDate(date)
-    if (+dateObj > +@maxDate) then @maxDate = dateObj
-
-    if not model.previous('date')
-      @addStopEl.removeClass('disabled')
-      @canAddStop = true
-
-  adultsChanged: (e) ->
-    @model.set('adults', parseInt(e.target.value))
-
-  budgetChanged: (e) ->
-    @model.set('budget', parseInt(e.target.value, 10))
-
-  showError: ->
-    unless @errorVisible
-      @errorEl.show()
-      @errorVisible = true
-
-  hideError: ->
-    if @errorVisible
-      @errorEl.hide()
-      @errorVisible = false
-
-  handleSubmit: (evt, e) ->
-    app.e(e)
-    @hideError()
-
-    if (@model.isValid())
-      @model.save()
-    else
-      @showError()
-
-app.views.SearchForm = SearchForm
+app.views.SearchTripsStop = SearchTripsStop
