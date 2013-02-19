@@ -7,6 +7,7 @@ PrebookingOverlay = Backbone.View.extend
     app.log('[app.views.PrebookingOverlay]: initialize')
 
   show: ->
+    @$el.find('.v-p-selected-container').html(app.templates.selected_list(selected: @collection.serialize()))
     app.overlay.show(block: '.l-o-prebooking')
 
   render: ->

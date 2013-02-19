@@ -39,9 +39,8 @@ SERP = Backbone.View.extend
 
     if not app.user
       @prebookingOverlay = new app.views.PrebookingOverlay(
-        @model = @selected
+        collection: @selected
         )
-      # @prebookingOverlay.show()
 
     app.socket.emit('search_start', hash: @hash)
 
