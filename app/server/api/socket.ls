@@ -28,13 +28,16 @@ makePairs = (data) ->
 			
 		pairs.push pair
 
-	allSignatures = _.map( pairs, (pair) -> pair.flights_signature).concat( _.map( pairs, (pair) -> pair.hotels_signature ) )
-	allSignatures.pop()
+	flightSignatures= _.map( pairs, (pair) -> pair.flights_signature)
+	
+	hotelSignatures = _.map( pairs, (pair) -> pair.hotels_signature )
+	hotelSignatures.pop()
 
-	return {
-		pairs 		: pairs,
-		signatures 	: allSignatures 
-	}
+	allSignatures 	= flightSignatures.concat hotelSignatures
+
+	return do
+		pairs 			: pairs
+		signatures 		: allSignatures
 
 exports.search = (socket) ->
 	
@@ -47,20 +50,21 @@ exports.search = (socket) ->
 
 	socket.on 'search_start', (data) ->
 
-		(error, data) <- validation.start_search data
+		(error, data) 			<- validation.start_search data
 		return socket.emit 'start_search_error', {error: error} if error
 
-		(error, searchParams) <- database.search.findOne(data)
-		return socket.emit 'start_search_error', {error: error} if (error or not searchParams)
+		(error, searchParams) 	<- database.search.findOne data
+		return socket.emit 'start_search_error', {error: error} if not searchParams
 
 		delete searchParams._id
 
-		result 			= makePairs(searchParams)
-		pairs 			= result.pairs
-		
-		signatures 		= _.map(result.signatures, (signature) -> [signature, 0] )  |> _.object
+		result 				= makePairs searchParams
+		pairs 				= result.pairs
+		signatures 			= _.map(result.signatures, (signature) -> [signature, 0]) |> _.object
 
-		socket.emit 'search_started', { form : searchParams, trips : pairs }
+		socket.emit 'search_started', do
+			form  : searchParams
+			trips : pairs 
 
 		# --- start helper functions --- 
 		resultReady = (error, result, eventName, signature, totalProviders) ->
@@ -71,25 +75,24 @@ exports.search = (socket) ->
 
 			signatures[signature] += 1.0 / totalProviders if complete or error
 
-			console.log "SOCKET: #{eventName}
-			| Complete: #{complete} 
-			| Error: #{error}
-			| \# results: #{items.length}"
+			console.log "SOCKET: #{eventName} | Complete: #{complete} | Error: #{error} | \# results: #{items.length}"
 			
-			socket.emit eventName , {
-				error     	: error
-				items   	: items
-				signature 	: signature
-				progress	: signatures[signature]
-			}
+			socket.emit eventName, do
+				error     : error
+				items     : items
+				signature : signature
+				progress  : 1
 
 			complete = _.filter(_.values(signatures), (elem) -> elem).length
 			total    = _.values(signatures).length
 
-			socket.emit 'progress', {
+			progress = complete.toFixed(2) / total
+
+			console.log "SOCKET: progress | value: #{progress}"
+			
+			socket.emit 'progress', do
 				hash	: searchParams.hash
-				progress: complete.toFixed(2) / total
-			}
+				progress: progress
 
 		flightsReady 	= (error, items, signature) -> resultReady error, items, 'flights_ready', signature, providers.flightProviders.length
 		hotelsReady		= (error, items, signature) -> resultReady error, items, 'hotels_ready',  signature, providers.hotelProviders.length

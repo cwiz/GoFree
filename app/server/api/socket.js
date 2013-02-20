@@ -7,7 +7,7 @@
   providers = require("./providers");
   validation = require("./validation");
   makePairs = function(data){
-    var pairs, i$, ref$, len$, tripNumber, trip, isLastTrip, destinationIndex, pair, allSignatures;
+    var pairs, i$, ref$, len$, tripNumber, trip, isLastTrip, destinationIndex, pair, flightSignatures, hotelSignatures, allSignatures;
     pairs = [];
     for (i$ = 0, len$ = (ref$ = data.trips).length; i$ < len$; ++i$) {
       tripNumber = i$;
@@ -31,12 +31,14 @@
       }
       pairs.push(pair);
     }
-    allSignatures = _.map(pairs, function(pair){
+    flightSignatures = _.map(pairs, function(pair){
       return pair.flights_signature;
-    }).concat(_.map(pairs, function(pair){
+    });
+    hotelSignatures = _.map(pairs, function(pair){
       return pair.hotels_signature;
-    }));
-    allSignatures.pop();
+    });
+    hotelSignatures.pop();
+    allSignatures = flightSignatures.concat(hotelSignatures);
     return {
       pairs: pairs,
       signatures: allSignatures
@@ -63,7 +65,7 @@
         }
         return database.search.findOne(data, function(error, searchParams){
           var result, pairs, signatures, resultReady, flightsReady, hotelsReady, callbacks;
-          if (error || !searchParams) {
+          if (!searchParams) {
             return socket.emit('start_search_error', {
               error: error
             });
@@ -80,27 +82,29 @@
             trips: pairs
           });
           resultReady = function(error, result, eventName, signature, totalProviders){
-            var items, complete, total;
+            var items, complete, total, progress;
             items = (result != null ? result.results : void 8) || [];
             complete = result != null ? result.complete : void 8;
             error = (error != null ? error.message : void 8) || null;
             if (complete || error) {
               signatures[signature] += 1.0 / totalProviders;
             }
-            console.log("SOCKET: " + eventName + "| Complete: " + complete + " | Error: " + error + "| # results: " + items.length);
+            console.log("SOCKET: " + eventName + " | Complete: " + complete + " | Error: " + error + " | # results: " + items.length);
             socket.emit(eventName, {
               error: error,
               items: items,
               signature: signature,
-              progress: signatures[signature]
+              progress: 1
             });
             complete = _.filter(_.values(signatures), function(elem){
               return elem;
             }).length;
             total = _.values(signatures).length;
+            progress = complete.toFixed(2) / total;
+            console.log("SOCKET: progress | value: " + progress);
             return socket.emit('progress', {
               hash: searchParams.hash,
-              progress: complete.toFixed(2) / total
+              progress: progress
             });
           };
           flightsReady = function(error, items, signature){
