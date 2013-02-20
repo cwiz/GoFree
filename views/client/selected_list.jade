@@ -1,5 +1,5 @@
 ul.v-selected-list
-  - var slen = selected.length
+  - var slen = selected.length, failed = 0;
   each trip, i in selected
     if trip.flight || trip.hotel
       li.v-selected-item
@@ -54,3 +54,8 @@ ul.v-selected-list
                     else
                       strong.v-s-i-c-name= app.utils.shortenString(trip.hotel.name, 20, 'right')
                     span.v-s-i-c-stars!= app.utils.formatStars(trip.hotel.stars)
+    else 
+      - failed++
+
+  if failed == slen
+    li.v-s-emptyset Ничего не выбрано

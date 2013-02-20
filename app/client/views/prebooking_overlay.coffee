@@ -4,6 +4,9 @@ PrebookingOverlay = Backbone.View.extend
   initialize: (@opts)->
     @render()
 
+    @formEl = @$el.find('.v-l-e-inputwrap')
+    @formEl.m_formValidate()
+
     app.log('[app.views.PrebookingOverlay]: initialize')
 
   show: ->
