@@ -1,5 +1,5 @@
 ul.v-selected-list
-  - var slen = selected.length
+  - var slen = selected.length, failed = 0;
   each trip, i in selected
     if trip.flight || trip.hotel
       li.v-selected-item
@@ -21,10 +21,41 @@ ul.v-selected-list
         .v-s-i-content
           if trip.flight
             .v-s-i-flight
-              strong.v-s-i-f-header Перелет &ndash; #{app.utils.formatNum(trip.flight.price)} руб.
+              strong.v-s-i-subheader Перелет &ndash; #{app.utils.formatNum(trip.flight.price)} руб.
+              .v-s-i-subcontent
+                p.v-s-i-c-meta
+                  span.v-s-i-c-airline
+                    i(data-type=trip.flight.airline)
+                .v-s-i-c-flightdetails
+                  .v-s-i-c-route #{trip.origin.place.name_ru} &ndash; #{trip.destination.place.name_ru}
+                  p.v-s-i-c-flighttime Вылет &ndash; 
+                    span= trip.flight.departure
+                  p.v-s-i-c-flighttime Прилет &ndash; 
+                    span= trip.flight.arrival
+
+                  p.v-s-i-c-stops
+                    if trip.flight.stops
+                      =app.utils.choosePlural(trip.flight.stops, ['пересадка', 'пересадки', 'пересадок'])
+                    else
+                      | Без пересадок
+
 
 
 
           if trip.hotel
             .v-s-i-hotel
-              strong.v-s-i-f-header Проживание &ndash; #{app.utils.formatNum(trip.hotel.price)} руб.
+              strong.v-s-i-subheader Проживание &ndash; #{app.utils.formatNum(trip.hotel.price)} руб.
+              .v-s-i-subcontent
+                .v-s-i-c-hotelphoto(style='background: url(\'#{trip.hotel.photo}\') no-repeat center center')
+                .v-s-i-c-hoteldetails
+                  .v-s-i-c-hoteldata
+                    if trip.hotel.provider == 'airbnb'
+                      strong.v-s-i-c-name= app.utils.shortenString(trip.hotel.name, 30, 'right')
+                    else
+                      strong.v-s-i-c-name= app.utils.shortenString(trip.hotel.name, 20, 'right')
+                    span.v-s-i-c-stars!= app.utils.formatStars(trip.hotel.stars)
+    else 
+      - failed++
+
+  if failed == slen
+    li.v-s-emptyset Ничего не выбрано

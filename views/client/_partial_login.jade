@@ -8,6 +8,7 @@
         a.v-l-s-vklogin(href="/auth/vkontakte")
     .v-l-email
       | Или с помощью эл. почты
-      form.v-l-e-inputwrap
-        input.v-l-e-input.tiny(type="email", name='email', placeholder="Ваш адрес эл. почты", autocomplete="off", autocorrect="off", autocapitalize="off", data-validate="true", data-error="Введите правильный e-mail", data-errorpos="bottom", required)
+      form.v-l-e-inputwrap(method='POST', action='/INSERTCONTROLLER')
+        span.m-validate-container(data-for="email")
+          input.v-l-e-input.tiny(type="email", name='email', placeholder="Ваш адрес эл. почты", autocorrect="off", autocapitalize="off", data-validate="true", data-filter="email", data-error="Введите правильный e-mail", data-errorpos="top", required)
         button.button.orange.tiny.v-l-e-submit Войти

@@ -1,0 +1,121 @@
+.v-selected-list {
+  padding: 20px;
+
+  .v-s-emptyset {
+    padding-top: 50px;
+    text-align: center;
+    font-size: 16px;
+  }
+
+  .v-selected-item {
+    margin-bottom: 20px;
+    padding: 10px;
+    background: #f4f4f4;
+    border-bottom: 1px solid #c8c7c7;
+
+    .v-s-i-header {
+      padding-bottom: 10px;
+      overflow: hidden;
+      border-bottom: 1px solid #c8c7c7;
+
+      .v-s-i-h-location {
+        float: left;
+      }
+
+      .v-s-i-h-price {
+        float: right;
+      }
+
+      .v-s-i-destination,
+      .v-s-i-h-price {
+        font-weight: 300;
+        font-size: 24px;
+      }
+      .v-s-i-dates {
+        margin-left: 10px;
+        display: inline-block;
+        font-size: 14px;
+        color: #7b7b7b;
+      }
+      .v-s-i-h-amount {
+        font-weight: 400;
+      } 
+    }
+
+    .v-s-i-content {
+      margin-top: 10px;
+      overflow: hidden;
+    }    
+
+    .v-s-i-flight {
+      width: 48%;
+      float: left;
+    }
+    .v-s-i-hotel {
+      width: 48%;
+      float: right;
+    }
+
+    .v-s-i-subheader {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .v-s-i-subcontent {
+      margin-top: 10px;
+      overflow: hidden;
+
+      .v-s-i-c-meta {
+        width: 40px;
+        float: left;
+
+        .v-s-i-c-airline {
+          display: block;
+          text-align: center;
+
+          i {
+            width: 28px;
+            height: 11px;
+            display: inline-block;
+
+            background: url('/img/sprites/sprite_airlines.png') no-repeat 0 0;
+          }
+        }
+      }
+      .v-s-i-c-flightdetails {
+        margin-left: 50px;
+      }
+
+      .v-s-i-c-route,
+      .v-s-i-c-name {
+        font-weight: 400;
+        font-size: 14px;
+      }
+      .v-s-i-c-flighttime {
+        font-size: 12px;
+        color: #7d7d7d;
+
+        span {
+          color: #333;
+        }
+      }
+      .v-s-i-c-stops {
+        font-size: 12px;
+      }
+
+      .v-s-i-c-hotelphoto {
+        width: 65px;
+        height: 45px;
+        float: left;
+      }
+      .v-s-i-c-hoteldetails {
+        margin-left: 75px;
+      }
+      .v-s-i-c-stars {
+        margin-left: 5px;
+        display: inline-block;
+        vertical-align: top;
+      }
+    }
+  }
+}
