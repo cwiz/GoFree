@@ -1,7 +1,7 @@
 SERPTripsSelected = Backbone.Collection.extend
   _searchHash: null
   _observing: false
-  hash: null
+  _hash: null
 
   model: app.models.SERPTripSelected
 
@@ -41,10 +41,10 @@ SERPTripsSelected = Backbone.Collection.extend
 
   save: ->
     data = @serialize()
-    @hash = data['hash'] = md5(JSON.stringify(data))
+    @_hash = data['hash'] = md5(JSON.stringify(data))
 
     app.socket.emit('serp_selected', {
-      trip_hash   : @hash
+      trip_hash   : @_hash
       search_hash : @_searchHash
       items       : data
     })
@@ -52,6 +52,6 @@ SERPTripsSelected = Backbone.Collection.extend
     @trigger('save', data)
 
     app.log('[app.models.SERPTripSelected]: save', data)
-    @hash
+    @_hash
 
 app.collections.SERPTripsSelected = SERPTripsSelected

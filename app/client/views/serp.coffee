@@ -84,7 +84,7 @@ SERP = Backbone.View.extend
       @prebookingOverlay.show()
     else
       @cleanup()
-      app.router.navigate('/trip/' + data.hash, trigger: true)
+      app.router.navigate('/journey/' + data.hash, trigger: true)
 
   collectionReady: ->
     @serpPart.addClass('loaded')

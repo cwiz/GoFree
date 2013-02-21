@@ -9,6 +9,7 @@ Router = Backbone.Router.extend
   routes:
     '':                          'index'
     'search/:hash':              'search'
+    'journey/:hash':             'journey'
 
   initialize: ->
     @on('all', @_manageHistory)
@@ -52,5 +53,14 @@ Router = Backbone.Router.extend
         collection: new app.collections.SERPTrips()
         selected: new app.collections.SERPTripsSelected()
       )
+
+  journey: (hash)->
+    app.log('[app.Router]: match "journey", hash: "' + hash + '"')
+
+    views['journey'] = new app.views.Journey(
+      hash: hash
+      collection: new app.collections.Journey()
+    )
+
 
 app.Router = Router
