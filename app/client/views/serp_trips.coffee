@@ -23,8 +23,8 @@ SERPTrips = Backbone.View.extend
     @amountLeftEl = @$el.find('.v-s-t-b-leftamount')
 
     app.socket.on('progress', _.bind(@updateProgress, @))
-    app.on('serp_selected', _.bind(@updateBudgetAdd, @))
-    app.on('serp_deselected', _.bind(@updateBudgetRemove, @))
+    app.on('serp_selected', @updateBudgetAdd, @)
+    app.on('serp_deselected', @updateBudgetRemove, @)
     app.on('resize', @updateMeters, @)
 
     @initTrips()
@@ -114,6 +114,10 @@ SERPTrips = Backbone.View.extend
     @$el.html(app.templates.serp_trips())
 
   destroy: ->
+    app.off('serp_selected', @updateBudgetAdd, @)
+    app.off('serp_deselected', @updateBudgetRemove, @)
+    app.off('resize', @updateMeters, @)
+
     for k, v of @trips
       v.destroy()
       delete @trips[k]

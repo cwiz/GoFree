@@ -19,7 +19,7 @@ SERP = Backbone.View.extend
 
   events:
     'click .p-s-h-newsearch'      : 'showForm'
-    'click .p-s-h-bookselected'   : 'showBookingOverlay'
+    'click .p-s-h-bookselected'   : 'selectedSave'
 
   setup: (@opts)->
     @hash = @opts.hash
@@ -35,7 +35,7 @@ SERP = Backbone.View.extend
 
     @search.on('fetched', @paramsReady, @)
     @collection.on('fetched', @collectionReady, @)
-    @selected.on('save', @bookingReady, @)
+    @selected.on('save', @selectedSaved, @)
 
     if not app.user
       @prebookingOverlay = new app.views.PrebookingOverlay(
@@ -73,38 +73,18 @@ SERP = Backbone.View.extend
       @cleanup()
       )
 
-  cleanup: ->
-    @tripsContent.html('')
-    @serpPart.removeClass('loaded error')
-
-    @search?.off('fetched')
-    @collection?.off('fetched')
-
-    if @serpTrips
-      @serpTrips.destroy()
-      delete @serpTrips
-
-    delete @hash
-    delete @search
-    delete @collection
-    delete @selected
-    delete @opts
-
-    if not app.user
-      @prebookingOverlay?.destroy()
-      delete @prebookingOverlay
-
   updatePageHeight: ->
     @serpPart.css('min-height': app.size.height)
 
-  showBookingOverlay: ->
+  selectedSave: ->
+    @selected.save()
+
+  selectedSaved: (data)->
     if not app.user
       @prebookingOverlay.show()
     else
-      @selected.save()
-
-  bookingReady: (data)->
-    app.router.navigate('/trip/' + data.hash, trigger: true)
+      @cleanup()
+      app.router.navigate('/trip/' + data.hash, trigger: true)
 
   collectionReady: ->
     @serpPart.addClass('loaded')
@@ -124,5 +104,27 @@ SERP = Backbone.View.extend
 
   searchError: ->
     @serpPart.addClass('error')
+
+  cleanup: ->
+    @tripsContent.html('')
+    @serpPart.removeClass('loaded error')
+
+    @search?.off('fetched', @paramsReady, @)
+    @collection?.off('fetched', @collectionReady, @)
+    @selected?.off('save', @selectedSaved, @)
+
+    if @serpTrips
+      @serpTrips.destroy()
+      delete @serpTrips
+
+    delete @hash
+    delete @search
+    delete @collection
+    delete @selected
+    delete @opts
+
+    if not app.user
+      @prebookingOverlay?.destroy()
+      delete @prebookingOverlay
 
 app.views.SERP = SERP
