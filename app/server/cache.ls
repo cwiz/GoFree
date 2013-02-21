@@ -1,3 +1,4 @@
+exec	= require("child_process").exec
 md5 	= require "MD5"
 redis 	= require "redis"
 request	= require "request"
@@ -31,3 +32,15 @@ exports.request = (url, cb) ->
 	cb null, body
 	exports.set url, body
 
+exports.exec = (command, cb) ->
+	(error, body) <- exports.get command
+	console.log "CACHE: REDIS | url: #{command} | status: #{!!body}"
+
+	return cb null, body if body
+
+	(error, body) <- exec command
+	console.log "CACHE: EXEC | #{command} | status: #{!!body}"
+	return cb error, null if error
+
+	cb null, body
+	exports.set command, body

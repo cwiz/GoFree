@@ -74,14 +74,14 @@ else
 			database.users.update {_id: user._id}, user
 			done null, user if user
 		
-	passport.use new passport-facebook.Strategy facebookSettings, postLogin
+	passport.use(new passport-facebook.Strategy(facebookSettings, postLogin))
 	
 	vkSettings = 
 		clientID    : VK_ID
 		clientSecret: VK_SECRET
 		callbackURL : "http://localhost:3000/auth/vkontakte/callback"
 
-	passport.use new passport-vkontakte.Strategy vkSettings, postLogin
+	passport.use(new passport-vkontakte.Strategy(vkSettings, postLogin))
 
 	passport.serializeUser 		(user, done) -> done null, user.id
 	

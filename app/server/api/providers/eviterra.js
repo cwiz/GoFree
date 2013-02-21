@@ -1,5 +1,5 @@
 (function(){
-  var _, async, cache, database, moment, request, xml2js, parser, getEviterraId, query, process, autocomplete;
+  var _, async, cache, database, moment, request, xml2js, parser, query, process;
   _ = require("underscore");
   async = require("async");
   cache = require("./../../cache");
@@ -10,56 +10,19 @@
   parser = new xml2js.Parser(xml2js.defaults["0.1"]);
   moment.lang('ru');
   exports.name = "eviterra";
-  getEviterraId = function(place, callback){
-    if (place.eviterra_id) {
-      return callback(null, place.eviterra_id);
-    }
-    return autocomplete(place.name_ru + "", function(error, result){
-      var eviterra_id;
-      if (error) {
-        return callback(error, null);
-      }
-      if (result.length === 0) {
-        return callback({
-          'nothing found': 'nothing found'
-        }, null);
-      }
-      eviterra_id = result[0].iata;
-      callback(null, eviterra_id);
-      return database.geonames.update({
-        geoname_id: place.geoname_id
-      }, {
-        $set: {
-          eviterra_id: eviterra_id
-        }
-      });
-    });
-  };
   query = function(origin, destination, extra, cb){
-    return async.parallel({
-      origin: function(callback){
-        return getEviterraId(origin.place, callback);
-      },
-      destination: function(callback){
-        return getEviterraId(destination.place, callback);
-      }
-    }, function(error, eviterraId){
-      var evUrl;
+    var evUrl;
+    evUrl = "http://api.eviterra.com/avia/v1/variants.xml?from=" + origin.place.iata + "&to=" + destination.place.iata + "&date1=" + origin.date + "&adults=" + extra.adults;
+    return cache.request(evUrl, function(error, body){
+      console.log("EVITERRA: Queried Eviterra serp | " + evUrl + " | status: " + !!body);
       if (error) {
         return cb(error, null);
       }
-      evUrl = "http://api.eviterra.com/avia/v1/variants.xml?from=" + eviterraId.origin + "&to=" + eviterraId.destination + "&date1=" + origin.date + "&adults=" + extra.adults;
-      return cache.request(evUrl, function(error, body){
-        console.log("EVITERRA: Queried Eviterra serp | " + evUrl + " | status: " + !!body);
+      return parser.parseString(body, function(error, json){
         if (error) {
           return cb(error, null);
         }
-        return parser.parseString(body, function(error, json){
-          if (error) {
-            return cb(error, null);
-          }
-          return cb(null, json);
-        });
+        return cb(null, json);
       });
     });
   };
@@ -99,7 +62,7 @@
         $in: allAirports
       }
     }).toArray(function(err, airportsInfo){
-      return database.airlines.find({
+      return database.airports.find({
         iata: {
           $in: allCarriers
         }
@@ -128,14 +91,14 @@
             flightTimeSpan = 1;
           }
           newFlight = {
-            price: parseInt(variant.price),
             arrival: arrivalDestinationDate.format("hh:mm"),
+            carrier: carrier,
             departure: departureOriginDate.format("hh:mm"),
             duration: flightTimeSpan * 60 * 60,
-            stops: variant.transferNumber - 1,
-            url: variant.url + 'ostroterra',
+            price: parseInt(variant.price),
             provider: 'eviterra',
-            carrier: carrier
+            stops: variant.transferNumber - 1,
+            url: variant.url + 'ostroterra'
           };
           newFlights.push(newFlight);
         }
@@ -167,39 +130,6 @@
         }
         return cb(null, results);
       });
-    });
-  };
-  autocomplete = function(query, callback){
-    var eviterraUrl;
-    eviterraUrl = "https://eviterra.com/complete.json?val=" + query;
-    return request(eviterraUrl, function(error, response, body){
-      var json, finalJson, i$, ref$, len$, item, name, country, iata, displayName;
-      console.log("Queried eviterra autocomplete | " + eviterraUrl + " | error: " + error + " | status: " + (response != null ? response.statusCode : void 8));
-      if (error) {
-        return callback(error, null);
-      }
-      json = JSON.parse(response.body);
-      finalJson = [];
-      for (i$ = 0, len$ = (ref$ = json.data).length; i$ < len$; ++i$) {
-        item = ref$[i$];
-        if (item.type === 'city') {
-          name = item.name;
-          country = item.area;
-          iata = item.iata;
-          displayName = name;
-          if (country !== "Россия") {
-            displayName += ", " + country;
-          }
-          finalJson.push({
-            name: name,
-            iata: iata,
-            country: country,
-            displayName: displayName,
-            provider: exports.name
-          });
-        }
-      }
-      return callback(null, finalJson);
     });
   };
 }).call(this);

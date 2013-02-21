@@ -1,37 +1,109 @@
 assert 		= require 'assert'
 chai 		= require 'chai'
-eviterra 	= require './../app/server/api/providers/eviterra'
 io 			= require 'socket.io-client'
-ostrovok 	= require './../app/server/api/providers/ostrovok'
-airbnb 		= require './../app/server/api/providers/airbnb'
 md5			= require 'MD5'
 moment		= require 'moment'
 
+# providers
+airbnb 		= require './../app/server/api/providers/airbnb'
+aviasales 	= require './../app/server/api/providers/aviasales'
+eviterra 	= require './../app/server/api/providers/eviterra'
+ostrovok 	= require './../app/server/api/providers/ostrovok'
+
 # globals
 expect = chai.expect
+
+generateTrips = () ->
+	data = 
+		trips: 
+			[
+				{
+					date: moment().add('days', 7).format("YYYY-MM-DD")
+					removable: false
+					place: 
+						iata			: "MOW"
+						name_ru			: "Москва"
+						country_name_ru	: "Россия"
+					signature:  md5(moment().format('MMMM Do YYYY, h:mm:ss a'))
+				}
+				{
+					date: moment().add('days', 14).format("YYYY-MM-DD")
+					removable: false
+					place: 
+						iata			: "LON"
+						name_ru			: "Лондон"
+						country_name_ru	: "Великобритания"
+					signature: md5(moment().format('MMMM Do YYYY, h:mm:ss a'))
+				}
+			]
+		adults: 1
+		budget: 100000
+		hash:  md5(moment().format('MMMM Do YYYY, h:mm:ss a'))
+
+	return data
+
+generateData = () ->
+	data 		= generateTrips()
+	origin 		= data.trips[0]
+	destination = data.trips[1]
+	extra =
+		adults: data.adults
+		page: 1
+
+	return {
+		origin		: origin
+		destination : destination
+		extra		: extra
+	}
+
+describe 'Aviasales', ->
+
+	describe '#search',  ->
+		it 'should find MOW -> LON flights', (done) ->
+
+			data = generateData()
+
+			aviasales.search data.origin, data.destination, data.extra, (err, flights) ->
+				expect(err).to.be.equal null
+				expect(flights.results.length).to.be.above 	0
+				done()
 
 describe 'AirBnb', ->
 
 	describe '#search', ->
 		it 'should find something in Moscow', (done) ->
-			destination =
-				place:
-					city_ru: 'Москва'
-					country_name_ru: 'Россия'
-				date: '2013-02-07'
-			origin = 
-				date: '2013-02-01'
-				place:
-					city_ru: 'Москва'
-					country_name_ru: 'Россия'
-			extra =
-				page: 1
-				adults: 2
+
+			data = generateData()
 			
-			airbnb.search origin, destination, extra, (error, hotels) ->
+			airbnb.search data.origin, data.destination, data.extra, (error, hotels) ->
 				expect(error).to.be.equal 					null
 				expect(hotels.results.length).to.be.above 	0
-				#done() 
+				done() 
+
+
+describe 'Ostrovok', ->
+
+	describe '#search', ->
+		it 'should find something in Moscow', (done) ->
+			
+			data = generateData()
+			
+			ostrovok.search data.origin, data.destination, data.extra, (error, hotels) ->
+				expect(error).to.be.equal 					null
+				expect(hotels.results.length).to.be.above 	0
+				done() if hotels.complete
+					
+
+describe 'Eviterra', ->
+
+	describe '#search',  ->
+		it 'should find MOW -> LED flights', (done) ->
+
+			data = generateData()
+			
+			eviterra.search data.origin, data.destination, data.extra, (err, results) ->
+				expect(err).to.be.equal null
+				done()
 
 
 # socketURL = 'http://localhost:3000'
@@ -39,104 +111,6 @@ describe 'AirBnb', ->
 # 	transports: ['websocket']
 # 	'force new connection': true
 
-# describe 'Ostrovok', ->
-# 	describe '#autocomplete',  ->
-# 		it 'should work with "Москва" input', (done) -> 
-
-# 			moscowOutput = 
-# 				name: 'Москва'
-# 				oid: 2395
-# 				country: 'Россия'
-# 				displayName: 'Москва'
-# 				provider: 'ostrovok'
-
-# 			ostrovok.autocomplete "Москва", (err, result) ->
-# 				expect(err).to.be.equal 			null
-# 				expect(result.length).to.be.equal 	3
-# 				expect(result[0]).to.be.deep.equal 	moscowOutput	
-# 				done()
-
-# 	describe '#search', ->
-# 		it 'should find something in Moscow', (done) ->
-# 			destination =
-# 				place:
-# 					oid: 2395
-# 				date: '2013-02-07'
-# 			origin = 
-# 				date: '2013-02-01'
-# 			extra =
-# 				page: 1
-# 				adults: 2
-			
-# 			ostrovok.search origin, destination, extra, (error, hotels) ->
-# 				expect(error).to.be.equal 					null
-# 				expect(hotels.results.length).to.be.above 	0
-# 				done() if hotels.complete
-					
-
-# describe 'Eviterra', ->
-# 	describe '#autocomplete',  ->
-# 		it 'should work with "Москва" input', (done) -> 
-			
-# 			moscowOutput = 
-# 				name: 'Москва'
-# 				iata: 'MOW'
-# 				country: 'Россия'
-# 				displayName: 'Москва'
-# 				provider: 'eviterra' 
-
-# 			eviterra.autocomplete "Москва", (err, result) ->
-# 				expect(err).to.be.equal null
-# 				expect(result[0]).to.be.deep.equal moscowOutput	
-# 				done()
-
-# 	describe '#search',  ->
-# 		it 'should find MOW -> LED flights', (done) ->
-
-# 			destination =
-# 				place:
-# 					iata: 'LED'
-			
-# 			origin = 
-# 				place:
-# 					iata: 'MOW'
-# 				date: '2013-02-07'
-			
-# 			extra =
-# 				adults: 2
-			
-# 			eviterra.search origin, destination, extra, (err, results) ->
-# 				expect(err).to.be.equal null
-# 				done()
-
-# generateData = () ->
-# 	data = 
-# 		trips: 
-# 			[
-# 				{
-# 					date: moment().add('days', 7).format("YYYY-MM-DD")
-# 					removable: false
-# 					place: 
-# 						oid: 2395
-# 						iata: "MOW"
-# 						name: "Москва°"
-# 					signature:  md5(moment().format('MMMM Do YYYY, h:mm:ss a'))
-# 				}
-# 				{
-# 					date: moment().add('days', 14).format("YYYY-MM-DD")
-# 					removable: false
-# 					place: 
-# 						oid: 2114
-# 						iata: "LON"
-# 						name: "Лондон"
-# 					signature: md5(moment().format('MMMM Do YYYY, h:mm:ss a'))
-# 				}
-# 			]
-# 		adults: 1
-# 		budget: 100000
-# 		hash:  md5(moment().format('MMMM Do YYYY, h:mm:ss a'))
-
-# 	return data
 
 # describe 'Search API', ->
 # 	describe '#search', ->

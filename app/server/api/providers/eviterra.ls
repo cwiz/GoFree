@@ -13,146 +13,94 @@ moment.lang('ru')
 # Providers
 exports.name = "eviterra"
 
-getEviterraId = (place, callback) ->
-  return callback(null, place.eviterra_id) if place.eviterra_id
-
-  (error, result) <- autocomplete "#{place.name_ru}"
-  return callback(error,              null)  if error
-  return callback({'nothing found'},  null)  if result.length is 0
-
-  eviterra_id = result[0].iata
-  callback null, eviterra_id
-  database.geonames.update {geoname_id : place.geoname_id}, {$set: {eviterra_id : eviterra_id}}
-
 query = (origin, destination, extra, cb) ->
 
-  (error, eviterraId) <- async.parallel {
-    origin      : (callback) -> getEviterraId origin.place,       callback
-    destination : (callback) -> getEviterraId destination.place,  callback
-  }
+	evUrl = "http://api.eviterra.com/avia/v1/variants.xml?from=#{origin.place.iata}&to=#{destination.place.iata}&date1=#{origin.date}&adults=#{extra.adults}"
 
-  return cb(error, null) if error
+	(error, body) <- cache.request evUrl
+	console.log "EVITERRA: Queried Eviterra serp | #{evUrl} | status: #{!!body}"
+	return cb(error, null) if error
 
-  evUrl = "http://api.eviterra.com/avia/v1/variants.xml?from=#{eviterraId.origin}&to=#{eviterraId.destination}&date1=#{origin.date}&adults=#{extra.adults}"
+	(error, json) <- parser.parseString body
+	return cb(error, null) if error
 
-  (error, body) <- cache.request evUrl
-  console.log "EVITERRA: Queried Eviterra serp | #{evUrl} | status: #{!!body}"
-  return cb(error, null) if error
-
-  (error, json) <- parser.parseString body
-  return cb(error, null) if error
-
-  cb null, json
+	cb null, json
 
 process = (flights, cb) -> 
-  if not flights or not flights.variant
-    return cb({message: 'No flights found'}, null)
+	if not flights or not flights.variant
+		return cb({message: 'No flights found'}, null)
 
-  for variant in flights.variant
-    if variant.segment.flight.length?
-      variant.transferNumber  = variant.segment.flight.length
-      variant.firstFlight     = variant.segment.flight[0]
-      variant.lastFlight      = variant.segment.flight[variant.transferNumber-1]
-    
-    else
-      variant.transferNumber  = 1
-      variant.firstFlight     = variant.segment.flight
-      variant.lastFlight      = variant.firstFlight    
+	for variant in flights.variant
+		if variant.segment.flight.length?
+			variant.transferNumber  = variant.segment.flight.length
+			variant.firstFlight     = variant.segment.flight[0]
+			variant.lastFlight      = variant.segment.flight[variant.transferNumber-1]
+		
+		else
+			variant.transferNumber  = 1
+			variant.firstFlight     = variant.segment.flight
+			variant.lastFlight      = variant.firstFlight    
 
-  allAirports   = []
-  for variant in flights.variant
-    allAirports.push variant.firstFlight.departure
-    allAirports.push variant.lastFlight.arrival
+	allAirports   = []
+	for variant in flights.variant
+		allAirports.push variant.firstFlight.departure
+		allAirports.push variant.lastFlight.arrival
 
-  # todo add all list!
-  allCarriers = _.map flights.variant, (variant) -> variant.firstFlight?.marketingCarrier?
-  allCarriers = _.uniq allCarriers
+	# todo add all list!
+	allCarriers = _.map flights.variant, (variant) -> variant.firstFlight?.marketingCarrier?
+	allCarriers = _.uniq allCarriers
 
-  allAirports = _.uniq allAirports
+	allAirports = _.uniq allAirports
 
-  (err, airportsInfo) <- database.airports.find({iata:{$in:allAirports}}).toArray()
+	(err, airportsInfo) <- database.airports.find({iata:{$in:allAirports}}).toArray()
+	(err, airlinesInfo) <- database.airports.find({iata:{$in:allCarriers}}).toArray()
 
-  (err, airlinesInfo) <- database.airlines.find({iata:{$in:allCarriers}}).toArray()
+	newFlights = []
 
-  newFlights = []
+	for variant in flights.variant
+		
+		arrivalDestinationDate  = moment variant.lastFlight.arrivalDate     + 'T' + variant.lastFlight.arrivalTime
+		departureOriginDate     = moment variant.firstFlight.departureDate  + 'T' + variant.firstFlight.departureTime
 
-  for variant in flights.variant
-    
-    arrivalDestinationDate  = moment variant.lastFlight.arrivalDate     + 'T' + variant.lastFlight.arrivalTime
-    departureOriginDate     = moment variant.firstFlight.departureDate  + 'T' + variant.firstFlight.departureTime
+		departureAirport        = _.filter( airportsInfo, (el) -> el.iata is variant.firstFlight.departure      )[0]
+		arrivalAirport          = _.filter( airportsInfo, (el) -> el.iata is variant.lastFlight.arrival         )[0]
 
-    departureAirport        = _.filter( airportsInfo, (el) -> el.iata is variant.firstFlight.departure      )[0]
-    arrivalAirport          = _.filter( airportsInfo, (el) -> el.iata is variant.lastFlight.arrival         )[0]
+		carrier                 = _.filter( airlinesInfo, (el) -> el.iata is variant.lastFlight?.marketingCarrier?)[0]
+		delete carrier._id if carrier
 
-    carrier                 = _.filter( airlinesInfo, (el) -> el.iata is variant.lastFlight?.marketingCarrier?)[0]
-    delete carrier._id if carrier
+		return cb(
+			{ message: "No airport found | departure: #{departureAirport} | arrival: #{arrivalAirport}" }, 
+			null
+		) if not(departureAirport and arrivalAirport)
 
-    return cb(
-      { message: "No airport found | departure: #{departureAirport} | arrival: #{arrivalAirport}" }, 
-      null
-    ) if not(departureAirport and arrivalAirport)
+		# UTC massage
+		utcArrivalDate          = arrivalDestinationDate.clone().subtract 'hours', arrivalAirport.timezone  
+		utcDepartureDate        = departureOriginDate.clone().subtract    'hours', departureAirport.timezone
 
-    # UTC massage
-    utcArrivalDate          = arrivalDestinationDate.clone().subtract 'hours', arrivalAirport.timezone  
-    utcDepartureDate        = departureOriginDate.clone().subtract    'hours', departureAirport.timezone
+		flightTimeSpan          = utcArrivalDate.diff utcDepartureDate,   'hours'
+		flightTimeSpan          = 1 if (flightTimeSpan is 0)
 
-    flightTimeSpan          = utcArrivalDate.diff utcDepartureDate,   'hours'
-    flightTimeSpan          = 1 if (flightTimeSpan is 0)
+		newFlight = 
+			arrival   : arrivalDestinationDate.format "hh:mm"#\LL
+			carrier   : carrier
+			departure : departureOriginDate.format "hh:mm"#\LL
+			duration  : flightTimeSpan * 60 * 60
+			price     : parseInt variant.price
+			provider  : \eviterra
+			stops     : variant.transferNumber - 1
+			url       : variant.url + \ostroterra
 
-    newFlight = 
-      price     : parseInt variant.price
-      
-      arrival   : arrivalDestinationDate.format "hh:mm"#\LL
-      departure : departureOriginDate.format "hh:mm"#\LL
-      duration  : flightTimeSpan * 60 * 60
-      stops     : variant.transferNumber - 1
-      
-      url       : variant.url + \ostroterra
-      provider  : \eviterra
-      carrier   : carrier
+		newFlights.push newFlight
 
-    newFlights.push newFlight
-
-  cb null, {
-    results: newFlights,
-    complete: true
-  }
+	cb null, do
+		results : newFlights
+		complete: true
 
 exports.search = (origin, destination, extra, cb) ->
-  (error, json)     <- query origin, destination, extra
-  return cb(error, null) if error
-  
-  (error, results)  <- process json
-  return cb(error, null) if error
+	(error, json)     <- query origin, destination, extra
+	return cb(error, null) if error
+	
+	(error, results)  <- process json
+	return cb(error, null) if error
 
-  cb null, results
-
-autocomplete = (query, callback) ->
-  eviterraUrl = "https://eviterra.com/complete.json?val=#{query}"
-  (error, response, body) <- request eviterraUrl
-  console.log "Queried eviterra autocomplete | #{eviterraUrl} | error: #{error} | status: #{response?.statusCode}"
-  return callback(error, null) if error
-
-  json = JSON.parse(response.body)  
-  finalJson = []
-  
-  for item in json.data when item.type is 'city'
-    name        = item.name
-    country     = item.area
-    iata        = item.iata
-    displayName = name
-
-    if country isnt "Россия"
-      displayName += ", #{country}"
-
-    finalJson.push {
-      name:         name
-      iata:         iata
-      country:      country
-      displayName:  displayName
-      provider:     exports.name
-    }
-
-  callback null, finalJson
-
-
+	cb null, results
