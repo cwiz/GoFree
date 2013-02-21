@@ -1,7 +1,7 @@
 Journey = Backbone.View.extend
   el: '#l-content'
 
-  initialize: (opts) ->
+  initialize: (@opts) ->
     @render()
 
     @hash = @opts.hash
@@ -17,7 +17,7 @@ Journey = Backbone.View.extend
     'click .p-s-h-bookselected'   : 'selectedSave'
 
   render: ->
-    @$el.html('DICK')
+    @$el.html('FETCHING ' + @hash)
 
   collectionReady: ->
     @$el.html('READY')
