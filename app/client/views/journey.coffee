@@ -12,10 +12,6 @@ Journey = Backbone.View.extend
 
     app.log('[app.views.Journey]: initialize')
 
-  events:
-    'click .p-s-h-newsearch'      : 'showForm'
-    'click .p-s-h-bookselected'   : 'selectedSave'
-
   render: ->
     @$el.html('FETCHING ' + @hash)
 
