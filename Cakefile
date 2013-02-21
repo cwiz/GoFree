@@ -14,7 +14,7 @@ task "test", "run tests", ->
 		--require test/test_helper.coffee
 		--colors
 		--reporter #{REPORTER}
-		--timeout 15000
+		--timeout 60000
 		"
 
 	test.stdout.on 'data', console.log

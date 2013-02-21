@@ -1,5 +1,6 @@
 (function(){
-  var md5, redis, request, client, TTL;
+  var exec, md5, redis, request, client, TTL;
+  exec = require("child_process").exec;
   md5 = require("MD5");
   redis = require("redis");
   request = require("request");
@@ -27,6 +28,22 @@
         }
         cb(null, body);
         return exports.set(url, body);
+      });
+    });
+  };
+  exports.exec = function(command, cb){
+    return exports.get(command, function(error, body){
+      console.log("CACHE: REDIS | url: " + command + " | status: " + !!body);
+      if (body) {
+        return cb(null, body);
+      }
+      return exec(command, function(error, body){
+        console.log("CACHE: EXEC | " + command + " | status: " + !!body);
+        if (error) {
+          return cb(error, null);
+        }
+        cb(null, body);
+        return exports.set(command, body);
       });
     });
   };
