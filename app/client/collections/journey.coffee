@@ -18,7 +18,7 @@ Journey = Backbone.Collection.extend
   fetched: (resp)->
     return unless resp.hash == @_hash
 
-    data = resp.list
+    data = resp.data
     @add(data)
 
     @trigger('fetched', data)
