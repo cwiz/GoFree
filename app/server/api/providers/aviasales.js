@@ -8,6 +8,7 @@
   request = require("request");
   TOKEN = "734301ac8a847e3845a2d89527aefcba";
   MARKER = "19041";
+  exports.name = 'aviasales';
   query = function(origin, destination, extra, cb){
     var searchParams, sortedKeys, paramsString, signature, command;
     searchParams = {

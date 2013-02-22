@@ -88,7 +88,7 @@
             items = ((ref$ = params.result) != null ? ref$.results : void 8) || [];
             complete = ((ref$ = params.result) != null ? ref$.complete : void 8) || false;
             error = ((ref$ = params.error) != null ? ref$.message : void 8) || null;
-            console.log("SOCKET: " + params.event + " | Complete: " + complete + " | Error: " + error + " | # results: " + items.length);
+            console.log("SOCKET: " + params.event + " | Complete: " + complete + " | Provider: " + params.provider.name + " | Error: " + error + " | # results: " + items.length);
             if (complete || error) {
               providersReady += 1;
             }

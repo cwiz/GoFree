@@ -73,7 +73,11 @@ exports.search = (socket) ->
 			complete = params.result?.complete  or false
 			error    = params.error?.message 	or null
 
-			console.log "SOCKET: #{params.event} | Complete: #{complete} | Error: #{error} | \# results: #{items.length}"
+			console.log "SOCKET: #{params.event} 
+			| Complete: #{complete} 
+			| Provider: #{params.provider.name} 
+			| Error: #{error} 
+			| \# results: #{items.length}"
 			
 			providersReady += 1 if (complete or error)
 
