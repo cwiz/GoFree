@@ -61,8 +61,6 @@ process = (json, cb) ->
 
 	allAirports = _.uniq allAirports
 
-	console.log allAirports
-
 	allCarriers = _.map json.tickets,  (ticket) -> ticket.firstFlight.airline
 	allCarriers = _.uniq allCarriers
 
