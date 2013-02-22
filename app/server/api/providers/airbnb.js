@@ -24,7 +24,12 @@
           if (error) {
             return cb(error, null);
           }
-          json = JSON.parse(body);
+          try {
+            json = JSON.parse(body);
+          } catch (e$) {
+            error = e$;
+            return cb(error, null);
+          }
           if (!json.listings) {
             return cb({
               message: 'no listings'
@@ -50,6 +55,9 @@
       };
     });
     return async.parallel(operations, function(error, results){
+      if (error) {
+        return cb(error, {});
+      }
       return cb(null, {
         results: _.flatten(results),
         complete: true

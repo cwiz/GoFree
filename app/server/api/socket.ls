@@ -10,8 +10,7 @@ makePairs = (data) ->
 	
 	for trip, tripNumber in data.trips
 
-		isLastTrip 		= tripNumber is (data.trips.length-1) 
-
+		isLastTrip 		 = tripNumber is (data.trips.length-1) 
 		destinationIndex = if isLastTrip then 0 else tripNumber + 1
 			
 		pair = 
@@ -61,61 +60,64 @@ exports.search = (socket) ->
 		result 				= makePairs searchParams
 		pairs 				= result.pairs
 		signatures 			= _.map(result.signatures, (signature) -> [signature, 0]) |> _.object
-
+		totalProviders 		= (pairs.length - 1) * providers.allProviders.length + providers.flightProviders.length
+		providersReady		= 0
+		
 		socket.emit 'search_started', do
 			form  : searchParams
 			trips : pairs 
 
-		# --- start helper functions --- 
-		resultReady = (error, result, eventName, signature, totalProviders) ->
+		resultReady = (params) ->
 
-			items 	 = result?.results 	or []
-			complete = result?.complete
-			error    = error?.message 	or null
+			items 	 = params.result?.results 	or []
+			complete = params.result?.complete  or false
+			error    = params.error?.message 	or null
 
-			signatures[signature] += 1.0 / totalProviders if complete or error
-
-			console.log "SOCKET: #{eventName} | Complete: #{complete} | Error: #{error} | \# results: #{items.length}"
+			console.log "SOCKET: #{params.event} | Complete: #{complete} | Error: #{error} | \# results: #{items.length}"
 			
-			socket.emit eventName, do
+			providersReady += 1 if (complete or error)
+
+			socket.emit params.event, do
 				error     : error
 				items     : items
-				signature : signature
+				signature : params.signature
 				progress  : 1
 
-			complete = _.filter(_.values(signatures), (elem) -> elem).length
-			total    = _.values(signatures).length
-
-			progress = complete.toFixed(2) / total
+			progress = providersReady.toFixed(2) / totalProviders
 
 			console.log "SOCKET: progress | value: #{progress}"
 			
 			socket.emit 'progress', do
 				hash	: searchParams.hash
 				progress: progress
-
-		flightsReady 	= (error, items, signature) -> resultReady error, items, 'flights_ready', signature, providers.flightProviders.length
-		hotelsReady		= (error, items, signature) -> resultReady error, items, 'hotels_ready',  signature, providers.hotelProviders.length
-		# --- end helper functions ---  
-
-		callbacks = []
 		
-		_.map pairs, (pair) -> 
+		callbacks = []
+		_.map pairs, (pair) -> do ->
 
-			do ->
-				with copyPair = pair
-					_.map providers.flightProviders, (provider) -> do ->
-						callbacks.push (callback) ->
-							(error, items) <- provider.search copyPair.origin, copyPair.destination, copyPair.extra
-							flightsReady error, items, copyPair.flights_signature
+			# flights
+			_.map providers.flightProviders, (provider) -> do ->
+				callbacks.push (callback) ->
+					(error, result) <- provider.search pair.origin, pair.destination, pair.extra
+					resultReady do
+						error 		: error
+						event 		: \flights_ready
+						result 		: result
+						pair 		: pair
+						provider 	: provider
+						signature 	: pair.flights_signature
 
-				return if not pair.hotels_signature
-					
-				hotelOperations = _.map providers.hotelProviders, (provider) -> do ->
-					with copyPair = pair
-						callbacks.push (callback) ->
-							(error, items) <- provider.search copyPair.origin, copyPair.destination, copyPair.extra
-							hotelsReady error, items, copyPair.hotels_signature
+			# hotels
+			return if not pair.hotels_signature
+			_.map providers.hotelProviders, (provider) -> do ->
+				callbacks.push (callback) ->
+					(error, result) <- provider.search pair.origin, pair.destination, pair.extra
+					resultReady do
+						error 		: error
+						event 		: \hotels_ready
+						result 		: result
+						pair 		: pair
+						provider 	: provider
+						signature 	: pair.hotels_signature
 						
 		async.parallel callbacks
 

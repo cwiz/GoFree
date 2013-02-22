@@ -64,7 +64,7 @@
           });
         }
         return database.search.findOne(data, function(error, searchParams){
-          var result, pairs, signatures, resultReady, flightsReady, hotelsReady, callbacks;
+          var result, pairs, signatures, totalProviders, providersReady, resultReady, callbacks;
           if (!searchParams) {
             return socket.emit('start_search_error', {
               error: error
@@ -77,52 +77,49 @@
           _.map(result.signatures, function(signature){
             return [signature, 0];
           }));
+          totalProviders = (pairs.length - 1) * providers.allProviders.length + providers.flightProviders.length;
+          providersReady = 0;
           socket.emit('search_started', {
             form: searchParams,
             trips: pairs
           });
-          resultReady = function(error, result, eventName, signature, totalProviders){
-            var items, complete, total, progress;
-            items = (result != null ? result.results : void 8) || [];
-            complete = result != null ? result.complete : void 8;
-            error = (error != null ? error.message : void 8) || null;
+          resultReady = function(params){
+            var items, ref$, complete, error, progress;
+            items = ((ref$ = params.result) != null ? ref$.results : void 8) || [];
+            complete = ((ref$ = params.result) != null ? ref$.complete : void 8) || false;
+            error = ((ref$ = params.error) != null ? ref$.message : void 8) || null;
+            console.log("SOCKET: " + params.event + " | Complete: " + complete + " | Error: " + error + " | # results: " + items.length);
             if (complete || error) {
-              signatures[signature] += 1.0 / totalProviders;
+              providersReady += 1;
             }
-            console.log("SOCKET: " + eventName + " | Complete: " + complete + " | Error: " + error + " | # results: " + items.length);
-            socket.emit(eventName, {
+            socket.emit(params.event, {
               error: error,
               items: items,
-              signature: signature,
+              signature: params.signature,
               progress: 1
             });
-            complete = _.filter(_.values(signatures), function(elem){
-              return elem;
-            }).length;
-            total = _.values(signatures).length;
-            progress = complete.toFixed(2) / total;
+            progress = providersReady.toFixed(2) / totalProviders;
             console.log("SOCKET: progress | value: " + progress);
             return socket.emit('progress', {
               hash: searchParams.hash,
               progress: progress
             });
           };
-          flightsReady = function(error, items, signature){
-            return resultReady(error, items, 'flights_ready', signature, providers.flightProviders.length);
-          };
-          hotelsReady = function(error, items, signature){
-            return resultReady(error, items, 'hotels_ready', signature, providers.hotelProviders.length);
-          };
           callbacks = [];
           _.map(pairs, function(pair){
             return function(){
-              var x$, copyPair, hotelOperations;
-              x$ = copyPair = pair;
               _.map(providers.flightProviders, function(provider){
                 return function(){
                   return callbacks.push(function(callback){
-                    return provider.search(copyPair.origin, copyPair.destination, copyPair.extra, function(error, items){
-                      return flightsReady(error, items, copyPair.flights_signature);
+                    return provider.search(pair.origin, pair.destination, pair.extra, function(error, result){
+                      return resultReady({
+                        error: error,
+                        event: 'flights_ready',
+                        result: result,
+                        pair: pair,
+                        provider: provider,
+                        signature: pair.flights_signature
+                      });
                     });
                   });
                 }();
@@ -130,16 +127,20 @@
               if (!pair.hotels_signature) {
                 return;
               }
-              return hotelOperations = _.map(providers.hotelProviders, function(provider){
+              return _.map(providers.hotelProviders, function(provider){
                 return function(){
-                  var x$, copyPair;
-                  x$ = copyPair = pair;
-                  callbacks.push(function(callback){
-                    return provider.search(copyPair.origin, copyPair.destination, copyPair.extra, function(error, items){
-                      return hotelsReady(error, items, copyPair.hotels_signature);
+                  return callbacks.push(function(callback){
+                    return provider.search(pair.origin, pair.destination, pair.extra, function(error, result){
+                      return resultReady({
+                        error: error,
+                        event: 'hotels_ready',
+                        result: result,
+                        pair: pair,
+                        provider: provider,
+                        signature: pair.hotels_signature
+                      });
                     });
                   });
-                  return x$;
                 }();
               });
             }();

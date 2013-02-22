@@ -60,7 +60,6 @@
       return ticket.lastFlight.destination;
     }));
     allAirports = _.uniq(allAirports);
-    console.log(allAirports);
     allCarriers = _.map(json.tickets, function(ticket){
       return ticket.firstFlight.airline;
     });

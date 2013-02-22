@@ -18,8 +18,12 @@ exports.search = (origin, destination, extra, cb) ->
             (error, body) <- cache.request airUrl
             return cb error, null if error
 
-            json = JSON.parse body
-            return cb({message: 'no listings'}, null) if not json.listings
+            try
+              json = JSON.parse body
+            catch error
+              return cb error, null
+            
+            return cb {message: 'no listings'}, null if not json.listings
 
             results = _.map json.listings, (r) ->
                 
@@ -42,6 +46,9 @@ exports.search = (origin, destination, extra, cb) ->
 
 
     async.parallel operations, (error, results) ->
+
+        if error
+          return cb error, {}
 
         cb null, {
             results : _.flatten(results),
