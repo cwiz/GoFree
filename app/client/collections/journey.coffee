@@ -11,14 +11,14 @@ Journey = Backbone.Collection.extend
 
   observe: ->
     @_observing = true
-    app.socket.on('selected_list', _.bind(@fetched, @))
+    app.socket.on('selected_list_fetch_ok', _.bind(@fetched, @))
 
   setHash: (@_hash) -> @
 
   fetched: (resp)->
-    return unless resp.hash == @_hash
+    return unless resp.trip_hash == @_hash
 
-    data = resp.data
+    data = resp.items
     @add(data)
 
     @trigger('fetched', data)

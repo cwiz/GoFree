@@ -1,6 +1,5 @@
 (function(){
   exports.index = function(req, res){
-    console.log(req.user);
     return res.render("index", {
       title: "Index Page"
     });

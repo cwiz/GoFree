@@ -23,7 +23,7 @@ VK_SECRET			= "uMqrPONr6bxMgxgvL3he"
 
 # GLOBALS
 
-ROLE 		= process.env.NODE_ENV or 'dev'
+ROLE 		= process.env.NODE_ENV or 'development'
 NUM_CPUS 	= if ROLE is 'production' then os.cpus().length else 1
 
 

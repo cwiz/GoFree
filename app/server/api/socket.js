@@ -149,7 +149,7 @@
         });
       });
     });
-    return socket.on('serp_selected', function(data){
+    socket.on('serp_selected', function(data){
       return validation.serp_selected(data, function(error, data){
         if (error) {
           return socket.emit('serp_selected_error', {
@@ -165,7 +165,7 @@
             });
           }
           return database.trips.findOne({
-            hash: data.trip_hash
+            trip_hash: data.trip_hash
           }, function(error, trip){
             if (trip) {
               return;
@@ -174,6 +174,19 @@
             return socket.emit('serp_selected_ok', {});
           });
         });
+      });
+    });
+    return socket.on('selected_list_fetch', function(data){
+      return database.trips.findOne({
+        trip_hash: data.trip_hash
+      }, function(error, trip){
+        if (error) {
+          socket.emit('selected_list_fetch_error', {
+            error: error
+          });
+        }
+        delete trip._id;
+        return socket.emit('selected_list_fetch_ok', trip);
       });
     });
   };

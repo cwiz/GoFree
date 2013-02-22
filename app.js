@@ -18,7 +18,7 @@
   FACEBOOK_SECRET = "48d73a1974d63be2513810339c7dbb3d";
   VK_ID = "3436490";
   VK_SECRET = "uMqrPONr6bxMgxgvL3he";
-  ROLE = process.env.NODE_ENV || 'dev';
+  ROLE = process.env.NODE_ENV || 'development';
   NUM_CPUS = ROLE === 'production' ? os.cpus().length : 1;
   if (cluster.isMaster) {
     _.map((function(){

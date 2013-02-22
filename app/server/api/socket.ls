@@ -130,12 +130,27 @@ exports.search = (socket) ->
 		(error, data) 			<- validation.serp_selected data
 		return socket.emit 'serp_selected_error', { error : error } if error
 
-		(error, searchParams) 	<- database.search.findOne { hash : data.search_hash }
+		(error, searchParams) 	<- database.search.findOne { hash 		: data.search_hash }
 		return socket.emit 'serp_selected_error', { error : error } if error
 
-		(error, trip)			<- database.trips.findOne  { hash : data.trip_hash }
+		(error, trip)			<- database.trips.findOne  { trip_hash : data.trip_hash }
 		return if trip
 
 		database.trips.insert data
 
 		socket.emit 'serp_selected_ok', {}
+
+	socket.on 'selected_list_fetch', (data) ->
+		
+		(error, trip)			<- database.trips.findOne  { trip_hash : data.trip_hash }
+		socket.emit 'selected_list_fetch_error', error: error if error
+
+		delete trip._id
+
+		socket.emit 'selected_list_fetch_ok', trip 
+
+
+
+
+
+

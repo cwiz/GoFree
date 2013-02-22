@@ -89,7 +89,7 @@ process = (json, cb) ->
 			price     : ticket.total
 			provider  : \aviasales
 			stops     : ticket.transferNumber - 1
-			url       : 'yoyoy!' #variant.url + \aviasales
+			url       : 'yoyoy!'
 
 	cb null, results
 

@@ -9,7 +9,7 @@ Journey = Backbone.View.extend
     @collection.setHash(@hash).observe()
     @collection.on('fetched', @collectionReady, @)
 
-    app.socket.emit('selected_list_fetch', hash: @hash)
+    app.socket.emit('selected_list_fetch', trip_hash: @hash)
 
     app.log('[app.views.Journey]: initialize with hash: ' + @hash)
 
