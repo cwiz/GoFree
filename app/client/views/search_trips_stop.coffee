@@ -29,7 +29,7 @@ SearchTripsStop = Backbone.View.extend
 
   events:
     'click .v-s-t-s-removestop'                  : 'removeStop'
-    'change .m-i-c-input'                      : 'dateChanged'
+    'change .m-i-c-input'                        : 'dateChanged'
     # 'input .v-s-t-s-p-name'                    : 'placeChanged'
     'webkitspeechchange .v-s-t-s-p-name'         : 'placeChanged'
     'keyup .v-s-t-s-p-name'                      : 'placeChanged'

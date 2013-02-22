@@ -22,7 +22,7 @@
         return cb(null, body);
       }
       return request(url, function(error, response, body){
-        console.log("CACHE: HTTP | " + url + " | status: " + !!body);
+        console.log("CACHE: HTTP | url: " + url + " | status: " + !!body);
         if (error) {
           return cb(error, null);
         }
@@ -33,12 +33,12 @@
   };
   exports.exec = function(command, cb){
     return exports.get(command, function(error, body){
-      console.log("CACHE: REDIS | url: " + command + " | status: " + !!body);
+      console.log("CACHE: REDIS | command: " + command + " | status: " + !!body);
       if (body) {
         return cb(null, body);
       }
       return exec(command, function(error, body){
-        console.log("CACHE: EXEC | " + command + " | status: " + !!body);
+        console.log("CACHE: EXEC | command: " + command + " | status: " + !!body);
         if (error) {
           return cb(error, null);
         }

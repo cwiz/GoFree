@@ -1,5 +1,6 @@
 _		= require "underscore"
 cache   = require "./../../cache"
+database= require "./../../database"
 md5 	= require "MD5"
 moment 	= require "moment"
 request = require "request"
@@ -45,21 +46,49 @@ query = (origin, destination, extra, cb) ->
 	cb null, JSON.parse result
 
 process = (json, cb) -> 
+	return cb {message: 'no flights found'}, null if not json or not json.tickets
+
+	for ticket in json.tickets
+		ticket.transferNumber 	= ticket.direct_flights.length
+		ticket.firstFlight 		= ticket.direct_flights[0]
+		ticket.lastFlight		= ticket.direct_flights[ticket.transferNumber-1]
+
+	allAirports  = _.map json.tickets, (ticket) -> ticket.firstFlight.origin
+	allAirports  = allAirports.concat _.map json.tickets, (ticket) -> ticket.firstFlight.destination
 	
+	allAirports  = allAirports.concat _.map json.tickets, (ticket) -> ticket.lastFlight.origin
+	allAirports  = allAirports.concat _.map json.tickets, (ticket) -> ticket.lastFlight.destination
+
+	allAirports = _.uniq allAirports
+
+	console.log allAirports
+
+	allCarriers = _.map json.tickets,  (ticket) -> ticket.firstFlight.airline
+	allCarriers = _.uniq allCarriers
+
+	(err, airportsInfo) <- database.airports.find({iata:{$in:allAirports}}).toArray()
+	(err, airlinesInfo) <- database.airports.find({iata:{$in:allCarriers}}).toArray()
+
 	results = _.map json.tickets, (ticket) ->
 
-		departure 	= moment ticket.direct_flights[0].departure, 'X'
-		arrival 	= moment ticket.direct_flights[0].arrival, 	 'X'
+		departureAirport        = _.filter( airportsInfo, (el) -> el.iata is ticket.firstFlight.origin      )[0]
+		arrivalAirport          = _.filter( airportsInfo, (el) -> el.iata is ticket.firstFlight.destination )[0]
+
+		carrier                 = _.filter( airlinesInfo, (el) -> el.iata is ticket.firstFlight.airline)[0]
+		delete carrier._id if carrier
+
+		departure 	= moment.unix(ticket.direct_flights[0						].departure).clone().subtract 'hours', departureAirport.timezone
+		arrival 	= moment.unix(ticket.direct_flights[ticket.transferNumber-1 ].arrival  ).clone().subtract 'hours', arrivalAirport.timezone
 		duration 	= arrival.diff departure, 'hours'
 
 		result = 
 			arrival   : arrival.format "hh:mm"
-			carrier   : null
+			carrier   : carrier
 			departure : departure.format "hh:mm"
 			duration  : duration * 60 * 60
 			price     : ticket.total
 			provider  : \aviasales
-			stops     : ticket.direct_flights.length - 1
+			stops     : ticket.transferNumber - 1
 			url       : 'yoyoy!' #variant.url + \aviasales
 
 	cb null, results

@@ -1,7 +1,8 @@
 (function(){
-  var _, cache, md5, moment, request, TOKEN, MARKER, query, process;
+  var _, cache, database, md5, moment, request, TOKEN, MARKER, query, process;
   _ = require("underscore");
   cache = require("./../../cache");
+  database = require("./../../database");
   md5 = require("MD5");
   moment = require("moment");
   request = require("request");
@@ -34,24 +35,78 @@
     });
   };
   process = function(json, cb){
-    var results;
-    results = _.map(json.tickets, function(ticket){
-      var departure, arrival, duration, result;
-      departure = moment(ticket.direct_flights[0].departure, 'X');
-      arrival = moment(ticket.direct_flights[0].arrival, 'X');
-      duration = arrival.diff(departure, 'hours');
-      return result = {
-        arrival: arrival.format("hh:mm"),
-        carrier: null,
-        departure: departure.format("hh:mm"),
-        duration: duration * 60 * 60,
-        price: ticket.total,
-        provider: 'aviasales',
-        stops: ticket.direct_flights.length - 1,
-        url: 'yoyoy!'
-      };
+    var i$, ref$, len$, ticket, allAirports, allCarriers;
+    if (!json || !json.tickets) {
+      return cb({
+        message: 'no flights found'
+      }, null);
+    }
+    for (i$ = 0, len$ = (ref$ = json.tickets).length; i$ < len$; ++i$) {
+      ticket = ref$[i$];
+      ticket.transferNumber = ticket.direct_flights.length;
+      ticket.firstFlight = ticket.direct_flights[0];
+      ticket.lastFlight = ticket.direct_flights[ticket.transferNumber - 1];
+    }
+    allAirports = _.map(json.tickets, function(ticket){
+      return ticket.firstFlight.origin;
     });
-    return cb(null, results);
+    allAirports = allAirports.concat(_.map(json.tickets, function(ticket){
+      return ticket.firstFlight.destination;
+    }));
+    allAirports = allAirports.concat(_.map(json.tickets, function(ticket){
+      return ticket.lastFlight.origin;
+    }));
+    allAirports = allAirports.concat(_.map(json.tickets, function(ticket){
+      return ticket.lastFlight.destination;
+    }));
+    allAirports = _.uniq(allAirports);
+    console.log(allAirports);
+    allCarriers = _.map(json.tickets, function(ticket){
+      return ticket.firstFlight.airline;
+    });
+    allCarriers = _.uniq(allCarriers);
+    return database.airports.find({
+      iata: {
+        $in: allAirports
+      }
+    }).toArray(function(err, airportsInfo){
+      return database.airports.find({
+        iata: {
+          $in: allCarriers
+        }
+      }).toArray(function(err, airlinesInfo){
+        var results;
+        results = _.map(json.tickets, function(ticket){
+          var departureAirport, arrivalAirport, carrier, departure, arrival, duration, result;
+          departureAirport = _.filter(airportsInfo, function(el){
+            return el.iata === ticket.firstFlight.origin;
+          })[0];
+          arrivalAirport = _.filter(airportsInfo, function(el){
+            return el.iata === ticket.firstFlight.destination;
+          })[0];
+          carrier = _.filter(airlinesInfo, function(el){
+            return el.iata === ticket.firstFlight.airline;
+          })[0];
+          if (carrier) {
+            delete carrier._id;
+          }
+          departure = moment.unix(ticket.direct_flights[0].departure).clone().subtract('hours', departureAirport.timezone);
+          arrival = moment.unix(ticket.direct_flights[ticket.transferNumber - 1].arrival).clone().subtract('hours', arrivalAirport.timezone);
+          duration = arrival.diff(departure, 'hours');
+          return result = {
+            arrival: arrival.format("hh:mm"),
+            carrier: carrier,
+            departure: departure.format("hh:mm"),
+            duration: duration * 60 * 60,
+            price: ticket.total,
+            provider: 'aviasales',
+            stops: ticket.transferNumber - 1,
+            url: 'yoyoy!'
+          };
+        });
+        return cb(null, results);
+      });
+    });
   };
   exports.search = function(origin, destination, extra, cb){
     return query(origin, destination, extra, function(error, json){
