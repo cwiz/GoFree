@@ -37,8 +37,8 @@ SERPTrip = Backbone.View.extend
         )
 
     @preloader.on('load', _.bind(@updateBG, @))
-    app.on('serp_selected', _.bind(@updateSelected, @))
-    app.on('serp_deselected', _.bind(@removeSelected, @))
+    app.on('serp_selected', @updateSelected, @)
+    app.on('serp_deselected', @removeSelected, @)
 
     @initialCollapse()
     @showTrip()
@@ -144,8 +144,8 @@ SERPTrip = Backbone.View.extend
     @undelegateEvents()
 
     @preloader.off('load')
-    app.off('serp_selected')
-    app.off('serp_deselected')
+    app.off('serp_selected', @updateSelected, @)
+    app.off('serp_deselected', @removeSelected, @)
 
     delete @preloader
 

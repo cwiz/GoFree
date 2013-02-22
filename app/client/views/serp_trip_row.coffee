@@ -117,8 +117,8 @@ SERPTripRow = Backbone.View.extend
   destroy: ->
     @undelegateEvents()
 
-    @collection.off('progress')
-    @collection.off('filtered')
+    @collection.off('progress', @newData, @)
+    @collection.off('filtered', @update, @)
 
     @carouselEl.off('mod_shifted_right')
     @carouselEl.off('mod_shifted_left')
