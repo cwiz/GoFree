@@ -10,7 +10,14 @@
       if (error) {
         return cb(error, null);
       }
-      json = JSON.parse(body);
+      try {
+        json = JSON.parse(body);
+      } catch (e$) {
+        error = e$;
+        return cb({
+          message: error
+        }, null);
+      }
       routes = json.routes;
       if (routes.length === 0) {
         return cb({

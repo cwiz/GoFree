@@ -7,7 +7,11 @@ exports.getNeareasAirport = (origin, destniation, cb) ->
 	(error, body) <- cache.request r2rUrl
 	return cb error, null if error
 
-	json = JSON.parse body
+	try
+		json = JSON.parse body
+	catch error
+		return cb message : error, null
+
 	routes = json.routes
 	return cb {message : 'no routes dound'}, null if routes.length is 0
 
