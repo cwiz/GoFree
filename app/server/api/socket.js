@@ -10,7 +10,7 @@
   fixDestination = function(pair, cb){
     var operations;
     if (pair.origin.place.iata && pair.destination.place.iata) {
-      return cb(null, {});
+      return cb(null, pair);
     }
     operations = [];
     if (!pair.destination.place.iata) {

@@ -8,7 +8,7 @@ validation 	= require "./validation"
 
 fixDestination = (pair, cb) ->
 	if pair.origin.place.iata and pair.destination.place.iata
-		return cb null, {}
+		return cb null, pair
 
 	operations = []
 
