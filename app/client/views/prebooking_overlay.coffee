@@ -5,12 +5,29 @@ PrebookingOverlay = Backbone.View.extend
     @render()
 
     @validation = @$el.find('.v-l-e-inputwrap').m_formValidate()[0]
+    @emailInput = @$el.find('.v-l-e-inputwrap input')
 
     app.log('[app.views.PrebookingOverlay]: initialize')
+
+  events:
+    'valid .v-l-e-inputwrap':         'submitEmail'
 
   show: ->
     @$el.find('.v-p-selected-container').html(app.templates.selected_list(selected: @collection.serialize()))
     app.overlay.show(block: '.l-o-prebooking')
+
+  submitEmail: (evt, e)->
+    app.e(e)
+
+    email = $.trim(@emailInput.val())
+    $.ajax(
+      url: app.api.email_auth + email
+      type: 'get'
+      success: =>
+        @trigger('confirmed')
+      )
+
+
 
   render: ->
     @$el.html(app.templates.prebooking_overlay())
