@@ -5,7 +5,7 @@ exports.add_email = (req, res) ->
 	user 	= req.user
 	email 	= req.params.email
 
-	res.json({
+	return res.json({
 		status	: 'error'
 		message	: 'this method works only for logged in users'
 	}) if not user

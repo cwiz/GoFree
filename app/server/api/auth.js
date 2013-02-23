@@ -7,7 +7,7 @@
     user = req.user;
     email = req.params.email;
     if (!user) {
-      res.json({
+      return res.json({
         status: 'error',
         message: 'this method works only for logged in users'
       });
