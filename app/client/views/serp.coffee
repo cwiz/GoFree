@@ -35,7 +35,7 @@ SERP = Backbone.View.extend
 
     @search.on('fetched', @paramsReady, @)
     @collection.on('fetched', @collectionReady, @)
-    @selected.on('save', @selectedSaved, @)
+    @selected.on('saved', @selectedSaved, @)
 
     if not app.user
       @prebookingOverlay = new app.views.PrebookingOverlay(
@@ -79,12 +79,12 @@ SERP = Backbone.View.extend
   selectedSave: ->
     @selected.save()
 
-  selectedSaved: (data)->
+  selectedSaved: (hash)->
     if not app.user
       @prebookingOverlay.show()
     else
       @cleanup()
-      app.router.navigate('/journey/' + data.hash, trigger: true)
+      app.router.navigate('/journey/' + hash, trigger: true)
 
   collectionReady: ->
     @serpPart.addClass('loaded')
