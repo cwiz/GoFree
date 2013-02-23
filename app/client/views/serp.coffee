@@ -35,12 +35,13 @@ SERP = Backbone.View.extend
 
     @search.on('fetched', @paramsReady, @)
     @collection.on('fetched', @collectionReady, @)
-    @selected.on('save', @selectedSaved, @)
+    @selected.on('saved', @selectedSaved, @)
 
     if not app.user
       @prebookingOverlay = new app.views.PrebookingOverlay(
         collection: @selected
         )
+      @prebookingOverlay.on('confirmed', )
 
     app.socket.emit('search_start', hash: @hash)
 
@@ -79,12 +80,15 @@ SERP = Backbone.View.extend
   selectedSave: ->
     @selected.save()
 
-  selectedSaved: (data)->
+  selectedSaved: ->
     if not app.user
       @prebookingOverlay.show()
     else
       @cleanup()
-      app.router.navigate('/journey/' + data.hash, trigger: true)
+      @selectedConfirmed()
+      
+  selectedConfirmed: ->
+    app.router.navigate('/journey/' + @selected._hash, trigger: true)
 
   collectionReady: ->
     @serpPart.addClass('loaded')
@@ -111,7 +115,7 @@ SERP = Backbone.View.extend
 
     @search?.off('fetched', @paramsReady, @)
     @collection?.off('fetched', @collectionReady, @)
-    @selected?.off('save', @selectedSaved, @)
+    @selected?.off('saved', @selectedSaved, @)
 
     if @serpTrips
       @serpTrips.destroy()
