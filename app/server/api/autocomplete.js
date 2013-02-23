@@ -25,9 +25,6 @@
       population: {
         $gte: 10000
       },
-      iata: {
-        $ne: null
-      },
       name_ru: {
         $ne: null
       }

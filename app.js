@@ -1,5 +1,5 @@
 (function(){
-  var _, cluster, connectRedis, express, http, os, passport, passportFacebook, passportVkontakte, path, rack, redis, socket, SocketRedis, FACEBOOK_ID, FACEBOOK_SECRET, VK_ID, VK_SECRET, ROLE, NUM_CPUS, backEnd, database, app, server, io, facebookSettings, postLogin, vkSettings, assets;
+  var _, cluster, connectRedis, express, http, os, passport, passportFacebook, passportVkontakte, path, rack, redis, socket, SocketRedis, FACEBOOK_ID, FACEBOOK_SECRET, VK_ID, VK_SECRET, ROLE, NUM_CPUS, DOMAIN, PORT, SITE_URL, backEnd, database, app, server, io, facebookSettings, postLogin, vkSettings, assets;
   _ = require("underscore");
   cluster = require("cluster");
   connectRedis = require("connect-redis");
@@ -20,6 +20,11 @@
   VK_SECRET = "uMqrPONr6bxMgxgvL3he";
   ROLE = process.env.NODE_ENV || 'development';
   NUM_CPUS = ROLE === 'production' ? os.cpus().length : 1;
+  DOMAIN = ROLE === 'production' ? 'gofree.ru' : 'localhost';
+  PORT = ROLE === 'production' ? 80 : 3000;
+  SITE_URL = PORT === 'production'
+    ? DOMAIN
+    : DOMAIN + ":" + PORT;
   if (cluster.isMaster) {
     _.map((function(){
       var i$, to$, results$ = [];
@@ -125,7 +130,7 @@
     assets.on("complete", function(){
       var login, callback, redisStore;
       app.configure(function(){
-        app.set("port", process.env.PORT || 3000);
+        app.set("port", PORT);
         app.set("views", __dirname + "/views/server");
         app.set("view engine", "jade");
         app.use(assets);

@@ -3,29 +3,64 @@ async		= require "async"
 database 	= require "./../database"
 md5 		= require "MD5"
 providers 	= require "./providers"
+rome2rio 	= require "./providers/rome2rio"
 validation 	= require "./validation"
 
-makePairs = (data) ->
-	pairs = []
+fixDestination = (pair, cb) ->
+	if pair.origin.place.iata and pair.destination.place.iata
+		return cb null, {}
+
+	operations = []
+
+	if not pair.destination.place.iata
+		operations.push (callback) ->
+			(error, destinationIata) <- rome2rio.getNeareasAirport pair.origin, pair.destination
+			return callback error, null if error
+			
+			pair.destination.place.iata = destinationIata
+			callback null, {}
+
+	if not pair.origin.place.iata
+		operations.push (callback) ->
+			(error, originIata) <- rome2rio.getNeareasAirport pair.destination, pair.origin
+			return callback error, null if error
+			
+			pair.origin.place.iata = originIata
+			callback null, {}
+
+	async.parallel operations, (error, result) ->
+		cb null, pair
+
+
+makePairs = (data, cb) ->
 	
 	for trip, tripNumber in data.trips
+		trip.tripNumber 		= tripNumber
+		trip.isLast 			= tripNumber is (data.trips.length-1)
+		trip.destinationIndex	= if trip.isLast then 0 else tripNumber + 1
 
-		isLastTrip 		 = tripNumber is (data.trips.length-1) 
-		destinationIndex = if isLastTrip then 0 else tripNumber + 1
-			
+	pairs 		= []
+	
+	(error, pairs) <- async.map data.trips, (trip, callback) ->
+
 		pair = 
-			destination : data.trips[destinationIndex]
-			origin		: data.trips[tripNumber]
+			destination : data.trips[trip.destinationIndex]
+			origin		: data.trips[trip.tripNumber]
 			extra		: 
 				adults	: data.adults
 				page	: 1
 
+		(error, pair) <- fixDestination pair
+
 		pair.flights_signature 	= md5(JSON.stringify(pair.origin.place) 		+ JSON.stringify(pair.destination.place) 	+ pair.origin.date)
 		
 		pair.hotels_signature 	= md5(JSON.stringify(pair.destination.place) 	+ pair.origin.date 							+ pair.destination.date)
-		pair.hotels_signature 	= null if isLastTrip
+		pair.hotels_signature 	= null if trip.isLast
 			
-		pairs.push pair
+		callback null, pair
+
+	console.log error
+	console.log pairs
 
 	flightSignatures= _.map( pairs, (pair) -> pair.flights_signature)
 	
@@ -34,7 +69,7 @@ makePairs = (data) ->
 
 	allSignatures 	= flightSignatures.concat hotelSignatures
 
-	return do
+	cb null, do
 		pairs 			: pairs
 		signatures 		: allSignatures
 
@@ -57,7 +92,7 @@ exports.search = (socket) ->
 
 		delete searchParams._id
 
-		result 				= makePairs searchParams
+		(error, result)		<- makePairs searchParams
 		pairs 				= result.pairs
 		signatures 			= _.map(result.signatures, (signature) -> [signature, 0]) |> _.object
 		totalProviders 		= (pairs.length - 1) * providers.allProviders.length + providers.flightProviders.length
@@ -136,6 +171,8 @@ exports.search = (socket) ->
 		(error, trip)			<- database.trips.findOne  { trip_hash : data.trip_hash }
 		return if trip
 
+		console.log data
+
 		database.trips.insert data
 
 		socket.emit 'serp_selected_ok', {}
@@ -143,7 +180,9 @@ exports.search = (socket) ->
 	socket.on 'selected_list_fetch', (data) ->
 		
 		(error, trip)			<- database.trips.findOne  { trip_hash : data.trip_hash }
-		socket.emit 'selected_list_fetch_error', error: error if error
+		return socket.emit 'selected_list_fetch_error', error: error if (error or not trip)
+
+		console.log trip
 
 		delete trip._id
 

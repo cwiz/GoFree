@@ -24,8 +24,11 @@ VK_SECRET			= "uMqrPONr6bxMgxgvL3he"
 # GLOBALS
 
 ROLE 		= process.env.NODE_ENV or 'development'
-NUM_CPUS 	= if ROLE is 'production' then os.cpus().length else 1
 
+NUM_CPUS 	= if ROLE is \production 	then os.cpus().length 		else 1
+DOMAIN		= if ROLE is \production 	then \gofree.ru 			else \localhost
+PORT        = if ROLE is \production 	then 80						else 3000
+SITE_URL    = if PORT is \production	then DOMAIN					else "#{DOMAIN}:#{PORT}"
 
 if cluster.isMaster
 
@@ -132,7 +135,7 @@ else
 		
 	# Configuration
 	app.configure ->
-		app.set "port",                 (process.env.PORT or 3000)
+		app.set "port",                 PORT
 		app.set "views",                __dirname + "/views/server"
 		app.set "view engine",          "jade"
 		
