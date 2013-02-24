@@ -26,10 +26,13 @@ fixDestination = (pair, cb) ->
 			pair.destination.place.iata = destinationIata
 
 			(error, destination_airport) <- database.geonames.findOne iata: destinationIata
-			return callback error, null if (error or not destination_airport)
-			delete destination_airport._id
+			return callback error, null if error
 
-			pair.destination.nearest_airport = destination_airport
+			if destination_airport
+				delete destination_airport._id
+				pair.destination.nearest_airport = destination_airport
+			else
+				pair.destination.nearest_airport = pair.destination.place
 
 			callback null, {}
 
@@ -41,10 +44,15 @@ fixDestination = (pair, cb) ->
 			pair.origin.place.iata = originIata
 
 			(error, origin_airport) <- database.geonames.findOne iata: originIata
-			return callback error, null if (error or not origin_airport)
-			delete origin_airport._id
+			return callback error, null if error
 
-			pair.origin.nearest_airport = origin_airport
+			if origin_airport
+				delete origin_airport._id
+				pair.origin.nearest_airport = origin_airport
+			else
+				pair.origin.nearest_airport = pair.origin.place
+
+
 			callback null, {}
 
 	async.parallel operations, (error, result) ->
