@@ -24,7 +24,9 @@ exports.autocomplete = (req, res) ->
 	}
 
 	.limit(10)
+	
 	.sort { population: -1 }
+	
 	.toArray (err, results) ->
 		res.send { status: 'error', error: err } if err
 
@@ -36,6 +38,10 @@ exports.autocomplete = (req, res) ->
 					
 					r.name_ru = r.name_ru_collection[i]
 					r.name_ru_inflected = r.name_ru_inflected_collection[i]
+
+			r.name_ru 			= r.name_ru_collection[0] 			if not r.name_ru 
+			r.name_ru_inflected = r.name_ru_inflected_collection[0] if not r.name_ru_inflected 
+			r.name_ru_lower 	= r.name_ru_lower_collection[0] 	if not r.name_ru_lower 
 
 			delete r._id
 

@@ -49,6 +49,15 @@
             r.name_ru_inflected = r.name_ru_inflected_collection[i];
           }
         }
+        if (!r.name_ru) {
+          r.name_ru = r.name_ru_collection[0];
+        }
+        if (!r.name_ru_inflected) {
+          r.name_ru_inflected = r.name_ru_inflected_collection[0];
+        }
+        if (!r.name_ru_lower) {
+          r.name_ru_lower = r.name_ru_lower_collection[0];
+        }
         delete r._id;
       }
       return res.send({
