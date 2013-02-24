@@ -1,9 +1,13 @@
-section.p-journey.l-wrap
-  header.p-j-header
-    span.p-s-h-action.p-s-h-newsearch Новый поиск
-    span.p-s-h-action.p-s-h-bookselected Результаты поиска
+section.p-journey
+  header.p-j-header-wrap
+    .p-j-header.l-wrap
+      span.p-j-h-action.p-j-h-newsearch Новый поиск
+      span.p-j-h-action.p-j-h-bookselected Результаты поиска
 
-  .p-s-trips-wrap
-    .p-s-t-loading Загрузка...
-    .p-s-t-error Произошла ошибка. Неверные параметры пойска?
-    .p-s-t-content
+  if !app.user
+    include _partial_login
+
+  .p-j-wrap
+    .p-j-loading Загрузка...
+    .p-j-error Произошла ошибка. Неверная ссылка?
+    .p-j-content

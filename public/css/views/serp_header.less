@@ -1,10 +1,10 @@
 .p-serp-header {
   height: 60px;
   line-height: 60px;
-  text-align: right;
+
+  overflow: hidden;
 
   .p-s-h-action {
-    margin-left: 15px;
     display: inline-block;
     color: #169fb8;
 
@@ -13,6 +13,13 @@
     &:hover {
       text-decoration: underline;
     }
+  }
+
+  .p-s-h-newsearch {
+    float: left;
+  }
+  .p-s-h-bookselected {
+    float: right;
   }
 
   // .cf;

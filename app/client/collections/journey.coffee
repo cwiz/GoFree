@@ -11,6 +11,7 @@ Journey = Backbone.Collection.extend
   observe: ->
     @_observing = true
     app.socket.on('selected_list_fetch_ok', _.bind(@fetched, @))
+    app.socket.on('selected_list_fetch_error', _.bind(@error, @))
 
   setHash: (@_hash) -> @
 
@@ -24,14 +25,11 @@ Journey = Backbone.Collection.extend
     @trigger('fetched', data)
     app.log('[app.collections.SERPTrips]: fetched', data)
 
-  _dump: (json) ->
-    for item in json
-      item.hotel = item.hotel?.toJSON()
-      item.flight = item.flight?.toJSON()
- 
-    json
+  error: ->
+    @trigger('error')
+    app.log('[app.collections.SERPTrips]: failed to fetch')
 
   serialize: ->
-    @_dump(@toJSON())
+    @toJSON()
 
 app.collections.Journey = Journey

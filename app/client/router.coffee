@@ -12,7 +12,7 @@ Router = Backbone.Router.extend
     'journey/:hash':             'journey'
 
   initialize: ->
-    @on('all', @_manageHistory)
+    @on('route', @_manageHistory)
 
     app.log('[app.Router]: initialize')
 
