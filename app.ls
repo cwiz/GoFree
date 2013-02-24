@@ -176,6 +176,7 @@ else
 	app.get "/",                            	backEnd.about.index
 	app.get "/search/:hash",                	backEnd.about.index
 	app.get "/journey/:hash",                	backEnd.about.index
+	app.get "/add_email",            		    	backEnd.about.add_email
 	
 	# --- API --- 
 	app.get "/api/v2/autocomplete/:query",  	backEnd.api.autocomplete_v2
@@ -204,6 +205,9 @@ else
 	app.get "/auth/logout", (req, res) ->
 		req.logout!
 		res.redirect '/'
+
+	# --- 404
+	app.get "*",            		  					  	backEnd.about.error
 
 	# --- SocketIO
 	io.sockets.on "connection",             backEnd.api.search
