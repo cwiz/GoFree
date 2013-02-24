@@ -1,12 +1,11 @@
 Journey = Backbone.Collection.extend
   _observing: false
   _hash: null
+  _searchHash: null
 
   model: app.models.SERPTripSelected
 
   initialize: () ->
-    @on('add', @instantiateCollections, @)
-
     app.log('[app.collections.Journey]: initialize')
 
   observe: ->
@@ -20,13 +19,10 @@ Journey = Backbone.Collection.extend
 
     data = resp.items
     @add(data)
+    @_searchHash = resp.search_hash
 
     @trigger('fetched', data)
     app.log('[app.collections.SERPTrips]: fetched', data)
-
-  instantiateCollections: (model) ->
-    if @_observing
-      model.observe()
 
   _dump: (json) ->
     for item in json
