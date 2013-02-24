@@ -26,11 +26,20 @@ task "db:populate_airports", 'populate airports', ->
 	airports.stdout.on 'data', console.log
 	airports.stderr.on 'data', console.log
 
+task "db:populate_airlines", 'populate airports', ->
+	airports = exec "livescript scripts/airlines/populateAirlines.ls"
+
+	airports.stdout.on 'data', console.log
+	airports.stderr.on 'data', console.log
+
 task "db:restore_geonames", 'populate geonames', ->
 	airports = exec "mongorestore --db ostroterra --verbose --collection geonames #{__dirname}/scripts/autocomplete/geonames/ostroterra/geonames.bson"
 
 	airports.stdout.on 'data', console.log
 	airports.stderr.on 'data', console.log
+
+task "db:copy_geonames", 'copy geonames DB to node modules', ->
+	exec 'cp -r data/* node_modules/geoip-lite/data'
 
 task "dev", 'development server w/ autoreload', ->
 	exec "npm install ."
@@ -44,9 +53,3 @@ task "dev", 'development server w/ autoreload', ->
 		nodemon.stdout.on 'data', console.log
 		nodemon.stderr.on 'data', console.log
 	), 1000
-
-task "db:copy_geonames", 'copy geonames DB to node modules', ->
-	exec 'cp -r data/* node_modules/geoip-lite/data'
-
-	
-
