@@ -27,8 +27,6 @@ PrebookingOverlay = Backbone.View.extend
         @trigger('confirmed')
       )
 
-
-
   render: ->
     @$el.html(app.templates.prebooking_overlay())
     app.overlay.add(@$el, '.l-o-prebooking')
