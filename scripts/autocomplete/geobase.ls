@@ -220,8 +220,6 @@ syncWithAirports = (callback) ->
 			airport.iata 	= airport.iata.trim!
 
 			return cb message : 'no airport found', null if not airport.iata
-			
-			console.log country, city, airport.iata
 
 			complete += 1
 
@@ -229,7 +227,7 @@ syncWithAirports = (callback) ->
 				{ country_name_lower: country, name_lower: city },
 				{ $set: { iata: airport.iata } },
 				(error, result) ->
-					#bar.update(complete.toFixed(2)/airports.length);
+					bar.update(complete.toFixed(2)/airports.length);
 					cb error, result
 			)
 
@@ -251,9 +249,7 @@ addInflectedNames = (callback) ->
 		callback(null, 'done')
 
 	(err, results) <- database.geonames.find({
-		name_ru 	: {$ne: null}, 
-		iata		: {$ne: null},
-		population	: {$gte: 10000}
+		name_ru 	: {$ne: null},
 	}).toArray()
 
 	callbacks = _.map results, (result) ->
@@ -262,14 +258,19 @@ addInflectedNames = (callback) ->
 			
 			(error, stdout, stderr) <- exec "python #{__dirname}/python/inflect.py -d #{__dirname}/python/dicts/ -w #{result.name_ru}"
 
-			if error or stderr
-				return cb(error, null)
-			
-			name_ru_inflected = stdout.toLowerCase().capitalize().replace('\n', '')
+			if stdout and stdout.toLowerCase!.capitalize!.replace('\n', '')
+				name_ru_inflected = stdout.toLowerCase!.capitalize!.replaceAll('\n', '')
+
+			else
+				name_ru_inflected = "городе #{result.name_ru}"
 
 			database.geonames.update( 
 				{ geoname_id: result.geoname_id }, 
-				{ $set: { name_ru_inflected: name_ru_inflected } }
+				{ $set: { 
+					name_ru_inflected: name_ru_inflected.toLowerCase!.capitalize!
+					name_ru : result.name_ru.toLowerCase!.capitalize!
+					}
+				},
 				(error, result) -> 
 					bar.update done.toFixed(2) / results.length
 					done += 1
@@ -287,8 +288,8 @@ setTimeout( (
 			# importRuGeonames, 
 			# importRuCountries, 
 			# importEnCountries, 
-			syncWithAirports,
-			# addInflectedNames,
+			# syncWithAirports,
+			addInflectedNames,
 			(callback) -> process.exit()
 		])
 	), 1000

@@ -31,13 +31,10 @@
           return database.geonames.findOne({
             iata: destinationIata
           }, function(error, destination_airport){
-            console.log('!!!!!!!!!');
-            console.log(destination_airport);
-            console.log(error);
-            console.log('!!!!!!!!!');
             if (error) {
               return callback(error, null);
             }
+            delete destination_airport._id;
             pair.destination.nearest_airport = destination_airport;
             return callback(null, {});
           });
@@ -57,6 +54,7 @@
             if (error) {
               return callback(error, null);
             }
+            delete origin_airport._id;
             pair.origin.nearest_airport = origin_airport;
             return callback(null, {});
           });

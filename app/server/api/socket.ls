@@ -26,12 +26,8 @@ fixDestination = (pair, cb) ->
 			pair.destination.place.iata = destinationIata
 
 			(error, destination_airport) <- database.geonames.findOne iata: destinationIata
-			console.log '!!!!!!!!!'
-			console.log destination_airport
-			console.log error
-			console.log '!!!!!!!!!'
-
 			return callback error, null if error
+			delete destination_airport._id
 
 			pair.destination.nearest_airport = destination_airport
 
@@ -46,6 +42,7 @@ fixDestination = (pair, cb) ->
 
 			(error, origin_airport) <- database.geonames.findOne iata: originIata
 			return callback error, null if error
+			delete origin_airport._id
 
 			pair.origin.nearest_airport = origin_airport
 			callback null, {}

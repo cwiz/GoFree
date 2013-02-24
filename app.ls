@@ -1,6 +1,7 @@
 _ 					= require "underscore"
 cluster     		= require "cluster"
 connect-redis		= require "connect-redis"
+domain 				= require "domain"
 express     		= require "express"
 http        		= require "http"
 os          		= require "os"
@@ -44,9 +45,10 @@ else
 	database	= backEnd.database
 
 	# Globals
-	app     	= express()
-	server  	= http.createServer app
-	io      	= socket.listen server
+	app     		= express()
+	serverDomain 	= domain.create()
+	server  		= http.createServer app
+	io      		= socket.listen server
 
 	# Passport.js
 	facebookSettings = 
@@ -220,8 +222,8 @@ else
 
 	io.set 'store', redisStore
 
-	io.enable 'browser client minification'
-	io.enable 'browser client etag'
-	io.enable 'browser client gzip'
+	#io.enable 'browser client minification'
+	#io.enable 'browser client etag'
+	#io.enable 'browser client gzip'
 	
 	io.set    'log level', 1

@@ -6,7 +6,7 @@
 .v-serp-trip-content.l-wrap
   header.v-s-t-header
     .v-s-t-meta
-      h2.v-s-t-places #{origin.nearest_airport.name_ru} &ndash; #{destination.nearest_airport.name_ru}
+      h2.v-s-t-places #{origin.place.name_ru} &ndash; #{destination.place.name_ru}
       small.v-s-t-dates #{app.utils.humanizeDatesSpan(origin.date, destination.date)}
 
     .v-s-t-totals
