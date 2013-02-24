@@ -16,6 +16,10 @@ Journey = Backbone.View.extend
 
     app.log('[app.views.Journey]: initialize with hash: ' + @hash)
 
+  events:
+    'click .p-j-h-newsearch':        'newSearch'
+    'click .p-j-h-backtoserp':       'repeatSearch'
+
   render: ->
     @$el.html(app.templates.journey())
 
@@ -24,9 +28,20 @@ Journey = Backbone.View.extend
     @wrapEl.find('.p-j-content').html(app.templates.selected_list(selected: @collection.serialize()))
 
   collectionFailed: ->
-    @wrapEl.addClass('failed')   
+    @wrapEl.addClass('failed')
 
-  cleanup: ->
+  newSearch: ->
+    @destroy()
+    app.router.navigate('', trigger: true)
+
+  repeatSearch: ->
+    hash = @collection._searchHash
+
+    @destroy()
+    app.router.navigate('search/' + hash, trigger: true)
+
+  destroy: ->
     @collection?.off('fetched', @collectionReady, @)
+    @collection?.off('error', @collectionFailed, @)
 
 app.views.Journey = Journey
