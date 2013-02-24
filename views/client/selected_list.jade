@@ -22,6 +22,8 @@ ul.v-selected-list
           if trip.flight
             .v-s-i-flight
               strong.v-s-i-subheader Перелет &ndash; #{app.utils.formatNum(trip.flight.price)} руб.
+              if app.user
+                a.v-s-i-booking(href=trip.flight.url) Купить
               .v-s-i-subcontent
                 p.v-s-i-c-meta
                   span.v-s-i-c-airline
@@ -40,11 +42,11 @@ ul.v-selected-list
                       | Без пересадок
 
 
-
-
           if trip.hotel
             .v-s-i-hotel
               strong.v-s-i-subheader Проживание &ndash; #{app.utils.formatNum(trip.hotel.price)} руб.
+              if app.user
+                a.v-s-i-booking(href=trip.hotel.url) Забронировать
               .v-s-i-subcontent
                 .v-s-i-c-hotelphoto(style='background: url(\'#{trip.hotel.photo}\') no-repeat center center')
                 .v-s-i-c-hoteldetails
@@ -54,6 +56,7 @@ ul.v-selected-list
                     else
                       strong.v-s-i-c-name= app.utils.shortenString(trip.hotel.name, 20, 'right')
                     span.v-s-i-c-stars!= app.utils.formatStars(trip.hotel.stars)
+
     else 
       - failed++
 
