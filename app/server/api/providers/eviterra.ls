@@ -53,7 +53,7 @@ process = (flights, cb) ->
 	allAirports = _.uniq allAirports
 
 	(err, airportsInfo) <- database.airports.find({iata:{$in:allAirports}}).toArray()
-	(err, airlinesInfo) <- database.airports.find({iata:{$in:allCarriers}}).toArray()
+	(err, airlinesInfo) <- database.airlines.find({iata:{$in:allCarriers}}).toArray()
 
 	newFlights = []
 

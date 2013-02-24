@@ -62,7 +62,7 @@
         $in: allAirports
       }
     }).toArray(function(err, airportsInfo){
-      return database.airports.find({
+      return database.airlines.find({
         iata: {
           $in: allCarriers
         }

@@ -41,7 +41,7 @@ syncAirlines = (callback)->
 			(data, index) ->
 				object = {
 					iata 	: data[0]
-					name 	: data[1]
+					name 	: data[2]
 				}
 
 				return object

@@ -66,8 +66,10 @@ process = (json, cb) ->
 	allCarriers = _.map json.tickets,  (ticket) -> ticket.firstFlight.airline
 	allCarriers = _.uniq allCarriers
 
-	(err, airportsInfo) <- database.airports.find({iata:{$in:allAirports}}).toArray()
-	(err, airlinesInfo) <- database.airports.find({iata:{$in:allCarriers}}).toArray()
+	(err, airportsInfo) <- database.airports.find( iata: $in: allAirports ).toArray()
+	(err, airlinesInfo) <- database.airlines.find( iata: $in: allCarriers ).toArray()
+
+	console.log airlinesInfo
 
 	results = _.map json.tickets, (ticket) ->
 
