@@ -10,7 +10,15 @@
   fixDestination = function(pair, cb){
     var operations;
     if (pair.origin.place.iata && pair.destination.place.iata) {
+      pair.origin.nearest_airport = pair.origin.place;
+      pair.destination.nearest_airport = pair.destination.place;
       return cb(null, pair);
+    }
+    if (pair.origin.place.iata) {
+      pair.origin.nearest_airport = pair.origin.place;
+    }
+    if (pair.destination.place.iata) {
+      pair.destination.nearest_airport = pair.destination.place;
     }
     operations = [];
     if (!pair.destination.place.iata) {
@@ -20,7 +28,19 @@
             return callback(error, null);
           }
           pair.destination.place.iata = destinationIata;
-          return callback(null, {});
+          return database.geonames.findOne({
+            iata: destinationIata
+          }, function(error, destination_airport){
+            console.log('!!!!!!!!!');
+            console.log(destination_airport);
+            console.log(error);
+            console.log('!!!!!!!!!');
+            if (error) {
+              return callback(error, null);
+            }
+            pair.destination.nearest_airport = destination_airport;
+            return callback(null, {});
+          });
         });
       });
     }
@@ -31,7 +51,15 @@
             return callback(error, null);
           }
           pair.origin.place.iata = originIata;
-          return callback(null, {});
+          return database.geonames.findOne({
+            iata: originIata
+          }, function(error, origin_airport){
+            if (error) {
+              return callback(error, null);
+            }
+            pair.origin.nearest_airport = origin_airport;
+            return callback(null, {});
+          });
         });
       });
     }
@@ -71,8 +99,6 @@
       });
     }, function(error, pairs){
       var flightSignatures, hotelSignatures, allSignatures;
-      console.log(error);
-      console.log(pairs);
       flightSignatures = _.map(pairs, function(pair){
         return pair.flights_signature;
       });
@@ -212,10 +238,8 @@
             trip_hash: data.trip_hash
           }, function(error, trip){
             if (trip) {
-              return;
+              database.trips.insert(data);
             }
-            console.log(data);
-            database.trips.insert(data);
             return socket.emit('serp_selected_ok', {});
           });
         });
@@ -230,7 +254,6 @@
             error: error
           });
         }
-        console.log(trip);
         delete trip._id;
         return socket.emit('selected_list_fetch_ok', trip);
       });

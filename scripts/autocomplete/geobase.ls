@@ -8,6 +8,11 @@ progressBar = require "progress-bar"
 String.prototype.capitalize = ->
 	return this.charAt(0).toUpperCase() + this.slice(1)
 
+String.prototype.replaceAll = (search, replace) ->
+	return this.split(search).join(replace);
+
+String.prototype.trim = ->
+	return this.replace(/^\s+|\s+$/g, "")
 
 importFile = (filename, singleOperation, collectionOperation, callback)->
 
@@ -60,11 +65,11 @@ importBaseGeonames = (callback)->
 					country_name    : null
 				}
 
-				object.name_lower = object.name.toLowerCase().replace('-', '_').replace(' ', '_')
+				object.name_lower = object.name.toLowerCase().replaceAll('-', '_').replaceAll(' ', '_')
 
 				valid_geo_ids[object.geoname_id] = true
 
-				if population <= 10000
+				if object.population <= 10000
 					return null
 
 				return object
@@ -205,25 +210,28 @@ syncWithAirports = (callback) ->
 	console.log 'Syncing with airports'
 	bar = progressBar.create process.stdout
 
-	(err, airports) <- database.airports.find().toArray()
-	operations = []
+	(err, airports) <- database.airports.find(iata: $ne: [null, '']).toArray()
 
-	for airport, number in airports
-		let object = airport, number = number
-			operation = (cb) ->
-				country = object.country.toLowerCase().replace('-', '_').replace(' ', '_')
-				city	= object.city.toLowerCase().replace('-', '_').replace(' ', '_')
+	complete = 0
+	operations = _.map airports, (airport) ->
+		operation = (cb) ->
+			country 		= airport.country.toLowerCase().replaceAll('-', '_').replaceAll(' ', '_')
+			city			= airport.city.toLowerCase().replaceAll('-', '_').replaceAll(' ', '_')
+			airport.iata 	= airport.iata.trim!
 
-				database.geonames.update(
-					{ country_name_lower: country, name_lower: city },
-					{ $set: { iata: object.iata } },
-					(error, result) ->
-						bar.update(number.toFixed(2)/airports.length);
-						cb error, result
-				)
+			return cb message : 'no airport found', null if not airport.iata
+			
+			console.log country, city, airport.iata
 
-			operations.push operation
+			complete += 1
 
+			database.geonames.update(
+				{ country_name_lower: country, name_lower: city },
+				{ $set: { iata: airport.iata } },
+				(error, result) ->
+					#bar.update(complete.toFixed(2)/airports.length);
+					cb error, result
+			)
 
 	console.log "Performing DB operation on #{operations.length} operations."
 	async.series operations, callback
@@ -274,13 +282,13 @@ addInflectedNames = (callback) ->
 setTimeout( (
 	->
 		async.series([
-			(callback) -> database.geonames.drop(callback), 
-			importBaseGeonames, 
-			importRuGeonames, 
-			importRuCountries, 
-			importEnCountries, 
+			# (callback) -> database.geonames.drop(callback), 
+			# importBaseGeonames, 
+			# importRuGeonames, 
+			# importRuCountries, 
+			# importEnCountries, 
 			syncWithAirports,
-			addInflectedNames,
+			# addInflectedNames,
 			(callback) -> process.exit()
 		])
 	), 1000

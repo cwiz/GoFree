@@ -7,17 +7,34 @@ rome2rio 	= require "./providers/rome2rio"
 validation 	= require "./validation"
 
 fixDestination = (pair, cb) ->
+
 	if pair.origin.place.iata and pair.destination.place.iata
+		pair.origin.nearest_airport 		= pair.origin.place
+		pair.destination.nearest_airport 	= pair.destination.place
+		
 		return cb null, pair
 
-	operations = []
+	pair.origin.nearest_airport 	 = pair.origin.place 	  if pair.origin.place.iata
+	pair.destination.nearest_airport = pair.destination.place if pair.destination.place.iata
 
+	operations = []
 	if not pair.destination.place.iata
 		operations.push (callback) ->
 			(error, destinationIata) <- rome2rio.getNeareasAirport pair.origin, pair.destination
 			return callback error, null if error
 			
 			pair.destination.place.iata = destinationIata
+
+			(error, destination_airport) <- database.geonames.findOne iata: destinationIata
+			console.log '!!!!!!!!!'
+			console.log destination_airport
+			console.log error
+			console.log '!!!!!!!!!'
+
+			return callback error, null if error
+
+			pair.destination.nearest_airport = destination_airport
+
 			callback null, {}
 
 	if not pair.origin.place.iata
@@ -26,6 +43,11 @@ fixDestination = (pair, cb) ->
 			return callback error, null if error
 			
 			pair.origin.place.iata = originIata
+
+			(error, origin_airport) <- database.geonames.findOne iata: originIata
+			return callback error, null if error
+
+			pair.origin.nearest_airport = origin_airport
 			callback null, {}
 
 	async.parallel operations, (error, result) ->
@@ -59,9 +81,6 @@ makePairs = (data, cb) ->
 			
 		callback null, pair
 
-	console.log error
-	console.log pairs
-
 	flightSignatures= _.map( pairs, (pair) -> pair.flights_signature)
 	
 	hotelSignatures = _.map( pairs, (pair) -> pair.hotels_signature )
@@ -77,7 +96,7 @@ exports.search = (socket) ->
 	
 	socket.on 'search', (data) ->
 		(error, data) <- validation.search data
-		return socket.emit 'search_error', {error: error} if error
+		return socket.emit 'search_error', error: error if error
 
 		database.search.insert(data)
 		socket.emit 'search_ok', {} 
@@ -85,11 +104,10 @@ exports.search = (socket) ->
 	socket.on 'search_start', (data) ->
 
 		(error, data) 			<- validation.start_search data
-		return socket.emit 'start_search_error', {error: error} if error
+		return socket.emit 'start_search_error', error: error if error
 
 		(error, searchParams) 	<- database.search.findOne data
-		return socket.emit 'start_search_error', {error: error} if not searchParams
-
+		return socket.emit 'start_search_error', error: error if not searchParams
 		delete searchParams._id
 
 		(error, result)		<- makePairs searchParams
@@ -163,33 +181,20 @@ exports.search = (socket) ->
 	socket.on 'serp_selected', (data) ->
 
 		(error, data) 			<- validation.serp_selected data
-		return socket.emit 'serp_selected_error', { error : error } if error
+		return socket.emit 'serp_selected_error', error : error if error
 
-		(error, searchParams) 	<- database.search.findOne { hash 		: data.search_hash }
-		return socket.emit 'serp_selected_error', { error : error } if error
+		(error, searchParams) 	<- database.search.findOne hash : data.search_hash
+		return socket.emit 'serp_selected_error', error : error if error
 
-		(error, trip)			<- database.trips.findOne  { trip_hash : data.trip_hash }
-		return if trip
+		(error, trip)			<- database.trips.findOne trip_hash : data.trip_hash
+		database.trips.insert data if trip
 
-		console.log data
-
-		database.trips.insert data
-
-		socket.emit 'serp_selected_ok', {}
+		socket.emit 'serp_selected_ok', {} 
 
 	socket.on 'selected_list_fetch', (data) ->
 		
-		(error, trip)			<- database.trips.findOne  { trip_hash : data.trip_hash }
+		(error, trip)			<- database.trips.findOne trip_hash : data.trip_hash
 		return socket.emit 'selected_list_fetch_error', error: error if (error or not trip)
-
-		console.log trip
-
 		delete trip._id
 
 		socket.emit 'selected_list_fetch_ok', trip 
-
-
-
-
-
-

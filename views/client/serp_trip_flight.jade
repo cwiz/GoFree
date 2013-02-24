@@ -12,14 +12,14 @@ li.m-c-l-item.v-s-t-item.flight(data-cid=cid)
     .v-s-t-i-times
       .v-s-t-i-origin
         span.v-s-t-i-t-time= departure
-        span.v-s-t-i-t-place= origin.place.name_ru
+        span.v-s-t-i-t-place= origin.nearest_airport.name_ru
 
       .v-s-t-i-duration
         small= app.utils.humanizeDuration(duration)
 
       .v-s-t-i-destination
         span.v-s-t-i-t-time= arrival
-        span.v-s-t-i-t-place= destination.place.name_ru
+        span.v-s-t-i-t-place= destination.nearest_airport.name_ru
 
     .v-s-t-i-stops
       if stops

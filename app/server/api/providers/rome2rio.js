@@ -1,10 +1,16 @@
 (function(){
-  var _, cache;
+  var _, cache, querystring;
   _ = require("underscore");
   cache = require("./../../cache");
+  querystring = require("querystring");
   exports.getNeareasAirport = function(origin, destniation, cb){
-    var r2rUrl;
-    r2rUrl = "http://evaluate.rome2rio.com/api/1.2/json/Search?key=YK8wH2AY&oName=" + origin.place.name + ", " + origin.place.country_name + "&dName=" + destniation.place.name + ", " + destniation.place.country_name;
+    var params, r2rUrl;
+    params = {
+      key: 'YK8wH2AY',
+      oName: origin.place.name + ", " + origin.place.country_name,
+      dName: destniation.place.name + ", " + destniation.place.country_name
+    };
+    r2rUrl = "http://evaluate.rome2rio.com/api/1.2/json/Search?" + querystring.stringify(params);
     return cache.request(r2rUrl, function(error, body){
       var json, routes, bestRoute, flightStops;
       if (error) {

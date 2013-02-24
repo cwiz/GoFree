@@ -1,8 +1,15 @@
-_		= require "underscore"
-cache  	= require "./../../cache"
+_			= require "underscore"
+cache  		= require "./../../cache"
+querystring = require "querystring"
 
 exports.getNeareasAirport = (origin, destniation, cb) ->
-	r2rUrl = "http://evaluate.rome2rio.com/api/1.2/json/Search?key=YK8wH2AY&oName=#{origin.place.name}, #{origin.place.country_name}&dName=#{destniation.place.name}, #{destniation.place.country_name}"
+
+	params = 
+		key 	: 'YK8wH2AY'
+		oName 	: "#{origin.place.name}, #{origin.place.country_name}"
+		dName 	: "#{destniation.place.name}, #{destniation.place.country_name}"
+
+	r2rUrl = "http://evaluate.rome2rio.com/api/1.2/json/Search?" + querystring.stringify params
 
 	(error, body) <- cache.request r2rUrl
 	return cb error, null if error
