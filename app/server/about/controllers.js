@@ -9,4 +9,12 @@
       title: 'About Page'
     });
   };
+  exports.add_email = function(req, res){
+    return res.render("addemail");
+  };
+  exports.error = function(req, res){
+    return res.render("error", {
+      layout: 'splash.jade'
+    });
+  };
 }).call(this);
