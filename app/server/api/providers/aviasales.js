@@ -76,7 +76,6 @@
         }
       }).toArray(function(err, airlinesInfo){
         var results;
-        console.log(airlinesInfo);
         results = _.map(json.tickets, function(ticket){
           var departureAirport, arrivalAirport, carrier, departure, arrival, duration, result;
           departureAirport = _.filter(airportsInfo, function(el){

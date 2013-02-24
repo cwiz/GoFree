@@ -24,6 +24,7 @@
     if (!pair.destination.place.iata) {
       operations.push(function(callback){
         return rome2rio.getNeareasAirport(pair.origin, pair.destination, function(error, destinationIata){
+          console.log(destinationIata);
           if (error) {
             return callback(error, null);
           }
@@ -34,8 +35,15 @@
             if (error) {
               return callback(error, null);
             }
-            delete destination_airport._id;
-            pair.destination.nearest_airport = destination_airport;
+            if (destination_airport) {
+              delete destination_airport._id;
+              destination_airport.name_ru_lower = destination_airport.name_ru_lower_collection[0];
+              destination_airport.name_ru = destination_airport.name_ru_collection[0];
+              destination_airport.name_ru_inflected = destination_airport.name_ru_inflected_collection[0];
+              pair.destination.nearest_airport = destination_airport;
+            } else {
+              pair.destination.nearest_airport = pair.destination.place;
+            }
             return callback(null, {});
           });
         });
@@ -54,8 +62,15 @@
             if (error) {
               return callback(error, null);
             }
-            delete origin_airport._id;
-            pair.origin.nearest_airport = origin_airport;
+            if (origin_airport) {
+              delete origin_airport._id;
+              origin_airport.name_ru_lower = origin_airport.name_ru_lower_collection[0];
+              origin_airport.name_ru = origin_airport.name_ru_collection[0];
+              origin_airport.name_ru_inflected = origin_airport.name_ru_inflected_collection[0];
+              pair.origin.nearest_airport = origin_airport;
+            } else {
+              pair.origin.nearest_airport = pair.origin.place;
+            }
             return callback(null, {});
           });
         });

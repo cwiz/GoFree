@@ -69,8 +69,6 @@ process = (json, cb) ->
 	(err, airportsInfo) <- database.airports.find( iata: $in: allAirports ).toArray()
 	(err, airlinesInfo) <- database.airlines.find( iata: $in: allCarriers ).toArray()
 
-	console.log airlinesInfo
-
 	results = _.map json.tickets, (ticket) ->
 
 		departureAirport        = _.filter( airportsInfo, (el) -> el.iata is ticket.firstFlight.origin      )[0]

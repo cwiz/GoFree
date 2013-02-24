@@ -17,21 +17,21 @@
     return database.geonames.find({
       $or: [
         {
-          name_ru_lower: regexp_query
-        }, {
           name_lower: regexp_query
+        }, {
+          name_ru_lower_collection: regexp_query
         }
       ],
       population: {
         $gte: 10000
       },
-      name_ru: {
-        $ne: null
+      name_ru_collection: {
+        $ne: []
       }
     }).limit(10).sort({
       population: -1
     }).toArray(function(err, results){
-      var i$, len$, r;
+      var i$, len$, r, j$, ref$, len1$, i, name_ru_lower;
       if (err) {
         res.send({
           status: 'error',
@@ -40,6 +40,15 @@
       }
       for (i$ = 0, len$ = results.length; i$ < len$; ++i$) {
         r = results[i$];
+        for (j$ = 0, len1$ = (ref$ = r.name_ru_lower_collection).length; j$ < len1$; ++j$) {
+          i = j$;
+          name_ru_lower = ref$[j$];
+          if (name_ru_lower.match(regexp_query)) {
+            r.name_ru_lower = name_ru_lower;
+            r.name_ru = r.name_ru_collection[i];
+            r.name_ru_inflected = r.name_ru_inflected_collection[i];
+          }
+        }
         delete r._id;
       }
       return res.send({

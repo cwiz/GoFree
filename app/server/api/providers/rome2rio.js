@@ -12,7 +12,8 @@
     };
     r2rUrl = "http://evaluate.rome2rio.com/api/1.2/json/Search?" + querystring.stringify(params);
     return cache.request(r2rUrl, function(error, body){
-      var json, routes, bestRoute, flightStops;
+      var json, routes, i$, len$, route, flightStops;
+      console.log(body);
       if (error) {
         return cb(error, null);
       }
@@ -30,16 +31,17 @@
           message: 'no routes dound'
         }, null);
       }
-      bestRoute = routes[0];
-      flightStops = _.filter(bestRoute.stops, function(stop){
-        return stop.kind === 'airport';
-      });
-      if (flightStops.length === 0) {
-        return cb({
-          message: 'no airports in the route'
-        }, null);
+      for (i$ = 0, len$ = routes.length; i$ < len$; ++i$) {
+        route = routes[i$];
+        flightStops = _.filter(route.stops, fn$);
+        console.log(flightStops);
+        if (flightStops.length) {
+          return cb(null, flightStops[flightStops.length - 1].code);
+        }
       }
-      return cb(null, flightStops[flightStops.length - 1].code);
+      function fn$(stop){
+        return stop.kind === 'airport';
+      }
     });
   };
 }).call(this);

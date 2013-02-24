@@ -49,20 +49,21 @@ importBaseGeonames = (callback)->
 		(
 			(data, index) ->
 				object = {
-					geoname_id 		: parseInt(data[0])
+					geoname_id 				: parseInt(data[0])
 					
-					name			: data[1]
-					name_ru			: null
+					name					: data[1]
+					name_ru_collection		: []
+					name_lower_collection	: []
 
-					longitude 		: parseFloat(data[4] or 0)
-					latitude 		: parseFloat(data[4] or 0)
+					longitude 				: parseFloat(data[4] or 0)
+					latitude 				: parseFloat(data[4] or 0)
 					
-					population 		: parseInt(data[14] or 0)
-					timezone 		: data[17]
+					population 				: parseInt(data[14] or 0)
+					timezone 				: data[17]
 							
-					country_code 	: data[8]	
-					country_name_ru : null
-					country_name    : null
+					country_code 			: data[8]	
+					country_name_ru 		: null
+					country_name    		: null
 				}
 
 				object.name_lower = object.name.toLowerCase().replaceAll('-', '_').replaceAll(' ', '_')
@@ -93,7 +94,7 @@ importRuGeonames = (callback)->
 			(data, index) ->
 				geoname = {
 					geoname_id		: parseInt(data[1])
-					name_ru 		: data[3]
+					name_ru 		: data[3].toLowerCase!.capitalize!
 				}
 
 				if not valid_geo_ids[geoname.geoname_id]
@@ -103,11 +104,11 @@ importRuGeonames = (callback)->
 
 				operation = (total, cb) ->	
 					database.geonames.update(
-						{ geoname_id: geoname.geoname_id }, 
+						{ geoname_id: geoname.geoname_id, name_ru: null }, 
 						{ 
-							$set: {
-								name_ru 		: geoname.name_ru
-								name_ru_lower 	: geoname.name_ru_lower
+							$push: {
+								name_ru_collection 			: geoname.name_ru
+								name_ru_lower_collection 	: geoname.name_ru_lower
 							}
 						},
 						(error, result) ->
@@ -220,7 +221,6 @@ syncWithAirports = (callback) ->
 			airport.iata 	= airport.iata.trim!
 
 			return cb message : 'no airport found', null if not airport.iata
-
 			complete += 1
 
 			database.geonames.update(
@@ -243,32 +243,36 @@ addInflectedNames = (callback) ->
 	q = async.queue (
 		(task, cb) -> 
 			task cb
-		), 16
+		), 4
 
 	q.drain = ->
-		callback(null, 'done')
+		callback null, 'done'
 
-	(err, results) <- database.geonames.find({
-		name_ru 	: {$ne: null},
-	}).toArray()
+	(err, results) <- database.geonames.find(name_ru_collection: $ne : []).toArray!
 
 	callbacks = _.map results, (result) ->
 			
 		opearation = (cb) ->
-			
-			(error, stdout, stderr) <- exec "python #{__dirname}/python/inflect.py -d #{__dirname}/python/dicts/ -w #{result.name_ru}"
 
-			if stdout and stdout.toLowerCase!.capitalize!.replace('\n', '')
-				name_ru_inflected = stdout.toLowerCase!.capitalize!.replaceAll('\n', '')
+			operations = _.map result.name_ru_collection, (name_ru) -> 
+				(callback) ->
+					command = "python #{__dirname}/python/inflect.py -d #{__dirname}/python/dicts/ -w #{name_ru}"
+					(error, stdout, stderr) <- exec command
 
-			else
-				name_ru_inflected = "городе #{result.name_ru}"
+					if stdout and stdout.toLowerCase!.capitalize!.replace('\n', '')
+						name_ru_inflected = stdout.toLowerCase!.capitalize!.replaceAll('\n', '')
+
+					else
+						name_ru_inflected = "городе #{result.name_ru}"
+
+					callback null, name_ru_inflected
+
+			(error, name_ru_inflected_collection) <- async.parallel operations
 
 			database.geonames.update( 
 				{ geoname_id: result.geoname_id }, 
 				{ $set: { 
-					name_ru_inflected: name_ru_inflected.toLowerCase!.capitalize!
-					name_ru : result.name_ru.toLowerCase!.capitalize!
+					name_ru_inflected_collection: name_ru_inflected_collection
 					}
 				},
 				(error, result) -> 
