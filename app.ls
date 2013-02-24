@@ -1,7 +1,6 @@
 _ 					= require "underscore"
 cluster     		= require "cluster"
 connect-redis		= require "connect-redis"
-domain 				= require "domain"
 express     		= require "express"
 http        		= require "http"
 os          		= require "os"
@@ -46,7 +45,6 @@ else
 
 	# Globals
 	app     		= express()
-	serverDomain 	= domain.create()
 	server  		= http.createServer app
 	io      		= socket.listen server
 
