@@ -184,7 +184,7 @@ exports.search = (socket) ->
 		return socket.emit 'serp_selected_error', error : error if error
 
 		(error, trip)			<- database.trips.findOne trip_hash : data.trip_hash
-		database.trips.insert data if trip
+		database.trips.insert data if not trip
 
 		socket.emit 'serp_selected_ok', {} 
 

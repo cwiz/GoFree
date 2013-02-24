@@ -235,7 +235,7 @@
           return database.trips.findOne({
             trip_hash: data.trip_hash
           }, function(error, trip){
-            if (trip) {
+            if (!trip) {
               database.trips.insert(data);
             }
             return socket.emit('serp_selected_ok', {});
