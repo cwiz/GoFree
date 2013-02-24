@@ -161,6 +161,7 @@
       app.get("/", backEnd.about.index);
       app.get("/search/:hash", backEnd.about.index);
       app.get("/journey/:hash", backEnd.about.index);
+      app.get("/add_email", backEnd.about.add_email);
       app.get("/api/v2/autocomplete/:query", backEnd.api.autocomplete_v2);
       app.get("/api/v2/image/:country/:city", backEnd.api.image_v2);
       app.get("/api/v2/get_location", backEnd.api.get_location);
@@ -190,6 +191,7 @@
         req.logout();
         return res.redirect('/');
       });
+      app.get("*", backEnd.about.error);
       io.sockets.on("connection", backEnd.api.search);
       server.listen(app.get("port"), function(){
         return console.log("Express server listening on port " + app.get("port"));
