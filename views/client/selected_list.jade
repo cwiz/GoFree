@@ -23,7 +23,8 @@ ul.v-selected-list
             .v-s-i-flight
               strong.v-s-i-subheader Перелет &ndash; #{app.utils.formatNum(trip.flight.price)} руб.
               if app.user
-                a.v-s-i-booking(href=trip.flight.url) Купить
+                a.v-s-i-booking.button.small.green(href=trip.flight.url) Забронировать
+                  //- span=trip.flight.provider
               .v-s-i-subcontent
                 p.v-s-i-c-meta
                   span.v-s-i-c-airline
@@ -46,7 +47,8 @@ ul.v-selected-list
             .v-s-i-hotel
               strong.v-s-i-subheader Проживание &ndash; #{app.utils.formatNum(trip.hotel.price)} руб.
               if app.user
-                a.v-s-i-booking(href=trip.hotel.url) Забронировать
+                a.v-s-i-booking.button.small.green(href=trip.hotel.url) Забронировать 
+                  //- span=trip.hotel.provider
               .v-s-i-subcontent
                 .v-s-i-c-hotelphoto(style='background: url(\'#{trip.hotel.photo}\') no-repeat center center')
                 .v-s-i-c-hoteldetails
