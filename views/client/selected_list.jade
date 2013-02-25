@@ -27,8 +27,12 @@ ul.v-selected-list
                   //- span=trip.flight.provider
               .v-s-i-subcontent
                 p.v-s-i-c-meta
-                  span.v-s-i-c-airline
-                    i(data-type=trip.flight.airline)
+                  span.v-s-i-c-carrier
+                    if trip.flight.carrier
+                      each item, i in trip.flight.carrier
+                        img(class='carrier-' + (i + 1), src='/img/airlines/' + item.iata + '.png', alt=item.name)
+                    else
+                      img(class='carrier-1', src='/img/airlines/default.png', alt='Ruskie airways')
                 .v-s-i-c-flightdetails
                   .v-s-i-c-route #{trip.origin.place.name_ru} &ndash; #{trip.destination.place.name_ru}
                   p.v-s-i-c-flighttime Вылет &ndash; 
