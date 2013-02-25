@@ -20,8 +20,8 @@ SERPTripSelected = Backbone.Model.extend
     app.log('[app.models.SERPTripSelected]: initialize')
 
   observe: ->
-    app.on( 'serp_selected',    _.bind(@selectItem,   @))
-    app.on( 'serp_deselected',  _.bind(@deselectItem, @))
+    app.on('serp_selected', @selectItem, @)
+    app.on('serp_deselected', @deselectItem, @)
     app.log('[app.models.SERPTripSelected]: observing')
 
   selectItem: (data) ->
@@ -41,5 +41,18 @@ SERPTripSelected = Backbone.Model.extend
     if @get('hotels_signature') == data.signature
       @set('hotel', null)
       app.log('[app.models.SERPTripSelected]: deselected hotel, signed ' + data.signature)
+
+  destroy: ->
+    if @get('flights_signature')? then @set('flights_signature', null)
+    if @get('hotels_signature')? then @set('hotels_signature', null)
+
+    @set('hotel', null)
+    @set('flight', null)
+
+    app.off('serp_selected', @selectItem, @)
+    app.off('serp_deselected', @deselectItem, @)
+
+    @clear()
+    app.log('[app.models.SERPTripSelected]: destroyed')
 
 app.models.SERPTripSelected = SERPTripSelected

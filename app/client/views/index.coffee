@@ -65,4 +65,22 @@ Index = Backbone.View.extend
         if resp and resp.value
           @preloader.attr('src', resp.value.blured)
 
+  destroy: ->
+    @undelegateEvents()
+
+    if @searchFormView
+      @searchFormView.destroy()
+      delete @searchFormView
+
+    app.off('resize', @updatePageHeight, @)
+    @collection.off('change:place', @placeChanged, @)
+    @preloader.off('load', _.bind(@updateBG, @))
+    @model.off('save', @showSERP, @)
+
+    delete @collection
+    delete @preloader
+    delete @model
+
+    app.log('[app.views.Index]: destroy')
+
 app.views.Index = Index

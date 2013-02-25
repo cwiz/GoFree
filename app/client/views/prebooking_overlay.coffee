@@ -33,7 +33,11 @@ PrebookingOverlay = Backbone.View.extend
     @$el.css(height: app.size.height - 200)
 
   destroy: ->
+    @undelegateEvents()
     app.overlay.remove('.l-o-prebooking')
+
+    delete @collection
+    delete @validation
 
     app.log('[app.views.PrebookingOverlay]: destroyed')
 

@@ -87,9 +87,8 @@ SERP = Backbone.View.extend
       @selectedConfirmed()
       
   selectedConfirmed: ->
-    hash = @selected._hash
-    @cleanup()
-    app.router.navigate('/journey/' + hash, trigger: true)
+    app.router.navigate('/journey/' + @selected._hash, trigger: true)
+    @destroy()
 
   collectionReady: ->
     @serpPart.addClass('loaded')
@@ -132,5 +131,13 @@ SERP = Backbone.View.extend
       @prebookingOverlay.off('confirmed', @selectedConfirmed, @)
       @prebookingOverlay?.destroy()
       delete @prebookingOverlay
+
+    app.log('[app.views.SERP]: cleanup')
+
+  destroy: ->
+    @undelegateEvents()
+    @cleanup()
+
+    app.log('[app.views.SERP]: destroyed')
 
 app.views.SERP = SERP

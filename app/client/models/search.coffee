@@ -53,4 +53,9 @@ Search = Backbone.Model.extend
 
     app.log('[app.models.Search]: save', data)
 
+  destroy: ->
+    app.socket.removeAllListeners('search_started')
+    @clear()
+    app.log('[app.models.Search]: destroyed')
+
 app.models.Search = Search
