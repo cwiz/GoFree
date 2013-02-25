@@ -23,13 +23,26 @@ Journey = Backbone.Collection.extend
     @_searchHash = resp.search_hash
 
     @trigger('fetched', data)
-    app.log('[app.collections.SERPTrips]: fetched', data)
+    app.log('[app.collections.Journey]: fetched', data)
 
   error: ->
     @trigger('error')
-    app.log('[app.collections.SERPTrips]: failed to fetch')
+    app.log('[app.collections.Journey]: failed to fetch')
 
   serialize: ->
     @toJSON()
+
+  destroy: ->
+    @_observing = false
+    @_hash = null
+    @_searchHash = null
+    app.socket.removeAllListeners('selected_list_fetch_ok')
+    app.socket.removeAllListeners('selected_list_fetch_error')
+
+    @each((model, index, list) =>
+      model.destroy()
+      )
+    @reset()
+    app.log('[app.collections.Journey]: destroyed')
 
 app.collections.Journey = Journey

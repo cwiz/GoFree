@@ -35,6 +35,8 @@ SERPTrips = Backbone.View.extend
     app.on('serp_deselected', @updateBudgetRemove, @)
     app.on('resize', @updateMeters, @)
 
+    @updateMeters()
+
     @initTrips()
     @expandFirst()
 
@@ -122,16 +124,24 @@ SERPTrips = Backbone.View.extend
     @$el.html(app.templates.serp_trips())
 
   destroy: ->
+    @undelegateEvents()
+    app.socket.removeAllListeners('progress')
     app.off('serp_selected', @updateBudgetAdd, @)
     app.off('serp_deselected', @updateBudgetRemove, @)
     app.off('resize', @updateMeters, @)
 
+    progress = 0
+    budget = 0
+    spent = 0
+  
     for k, v of @trips
       v.destroy()
       delete @trips[k]
 
     delete @trips
+    delete @hash
     delete @_expandedHash
+    delete @_budgetHash
     delete @_locked
 
     delete @container

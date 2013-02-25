@@ -149,4 +149,17 @@ SearchForm = Backbone.View.extend
     else
       @showError()
 
+  destroy: ->
+    @undelegateEvents()
+
+    @collection.off('add', @initStop, @)
+    @collection.off('delete', @deleteStop, @)
+    @collection.off('change:date', @dateChanged, @)
+    @collection.off('change:place', @hideError, @)
+
+    delete @collection
+    delete @form
+
+    app.log('[app.views.SearchForm]: destroy')
+
 app.views.SearchForm = SearchForm

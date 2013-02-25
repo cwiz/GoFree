@@ -49,4 +49,18 @@ SERPTrips = Backbone.Collection.extend
   serialize: ->
     @_dump(@toJSON())
 
+  destroy: ->
+    @_hash = null
+    @_observing = false
+    @off('add', @instantiateCollections, @)
+    app.socket.removeAllListeners('search_started')
+
+    @each((model, index, list) =>
+      model.destroy()
+      )
+
+    @reset()
+
+    app.log('[app.collections.SERPTrips]: destroyed')
+
 app.collections.SERPTrips = SERPTrips

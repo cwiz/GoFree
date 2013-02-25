@@ -59,4 +59,18 @@ SERPTripsSelected = Backbone.Collection.extend
   saved: ->
     @trigger('saved', @_hash)
 
+  destroy: ->
+    @_searchHash = null
+    @_observing = false
+    @_hash = null
+
+    @off('add', @instantiateCollections, @)
+
+    app.socket.removeAllListeners('serp_selected_ok')
+    app.socket.removeAllListeners('search_started')
+
+    @reset()
+
+    app.log('[app.collections.SERPTripsSelected]: destroy')
+
 app.collections.SERPTripsSelected = SERPTripsSelected

@@ -53,6 +53,7 @@ Journey = Backbone.View.extend
     @destroy()
 
   destroy: ->
+    @undelegateEvents()
     @collection?.off('fetched', @collectionReady, @)
     @collection?.off('error', @collectionFailed, @)
 

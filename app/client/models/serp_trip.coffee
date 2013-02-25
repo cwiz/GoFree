@@ -40,7 +40,7 @@ SERPTrip = Backbone.Model.extend
     'luxury': (src)-> _.filter(src, (model)-> return model.get('price') >= 40000 and model.get('stars') == 5)
 
   initialize: ->
-    app.on('serp_filter', _.bind(@setFilter, @))
+    app.on('serp_filter', @setFilter, @)
     app.log('[app.models.SERPTrip]: initialize')
 
   setFilter: (data) ->
@@ -74,5 +74,19 @@ SERPTrip = Backbone.Model.extend
       source.toArray()
     else
       @filterFactors[type](source.toArray())
+
+  destroy: ->
+    if @get('flights_signature')? then @set('flights_signature', null)
+    if @get('hotels_signature')? then @set('hotels_signature', null)
+
+    app.off('serp_filter', @setFilter, @)
+    app.socket.removeAllListeners('flights_ready')
+    app.socket.removeAllListeners('hotels_ready')
+
+    flightsFilter = 'none'
+    hotelsFilter = 'none'
+
+    @clear()
+    app.log('[app.models.SERPTrip]: destroyed')
 
 app.models.SERPTrip = SERPTrip
