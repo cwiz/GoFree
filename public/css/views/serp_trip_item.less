@@ -40,17 +40,25 @@
         font-size: 10px;
       }
 
-      .v-s-t-i-airline {
+      .v-s-t-i-carrier {
+        padding: 3px 0;
         display: block;
+        overflow: hidden;
 
         border-top: 1px solid #f2f2f2;
 
-        i {
-          width: 28px;
-          height: 11px;
-          display: inline-block;
+        img {
+          position: relative;
+          z-index: 3;
 
-          background: url('/img/sprites/sprite_airlines.png') no-repeat 0 0;
+          display: inline-block;
+          float: right;
+
+          & + img {
+            margin-right: -15px;
+            opacity: .5;
+            z-index: 1;
+          }
         }
       }
     }
