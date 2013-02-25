@@ -69,6 +69,10 @@ SERPTripsSelected = Backbone.Collection.extend
     app.socket.removeAllListeners('serp_selected_ok')
     app.socket.removeAllListeners('search_started')
 
+    @each((model, index, list) =>
+      model.destroy()
+      )
+
     @reset()
 
     app.log('[app.collections.SERPTripsSelected]: destroy')

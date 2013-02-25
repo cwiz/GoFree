@@ -35,10 +35,9 @@ SERPTrips = Backbone.View.extend
     app.on('serp_deselected', @updateBudgetRemove, @)
     app.on('resize', @updateMeters, @)
 
-    @updateMeters()
-
     @initTrips()
     @expandFirst()
+    @updateMeters()
 
     app.log('[app.views.SERPTrips]: initialize')
 

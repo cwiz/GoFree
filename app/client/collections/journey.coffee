@@ -42,6 +42,7 @@ Journey = Backbone.Collection.extend
     @each((model, index, list) =>
       model.destroy()
       )
+
     @reset()
     app.log('[app.collections.Journey]: destroyed')
 
