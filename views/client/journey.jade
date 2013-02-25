@@ -1,13 +1,14 @@
 section.p-journey
   header.p-j-header-wrap
     .p-j-header.l-wrap
-      span.p-j-h-action.p-j-h-newsearch Новый поиск
-      span.p-j-h-action.p-j-h-backtoserp Поиск с теми же параметрами
+      span.p-j-h-action.p-j-h-backtoserp.button.medium.green &larr; Назад к результатам
+      //- span.p-j-h-action.p-j-h-newsearch Новый поиск
+      
 
   if !app.user
     include _partial_login
 
-  .p-j-wrap
+  .p-j-wrap.l-wrap
     .p-j-loading Загрузка...
     .p-j-error Произошла ошибка. Неверная ссылка?
     .p-j-content
