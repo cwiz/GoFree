@@ -10,6 +10,7 @@ Router = Backbone.Router.extend
     '':                          'index'
     'search/:hash':              'search'
     'journey/:hash':             'journey'
+    'add_email':                 'addemail'
 
   initialize: ->
     @on('route', @_manageHistory)
@@ -62,5 +63,9 @@ Router = Backbone.Router.extend
       collection: new app.collections.Journey()
     )
 
+  addemail: ->
+    app.log('[app.Router]: match "addemail"')
+
+    views['addemail'] = new app.views.AddEmail()
 
 app.Router = Router
