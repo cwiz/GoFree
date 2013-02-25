@@ -7,13 +7,12 @@
     var params, r2rUrl;
     params = {
       key: 'YK8wH2AY',
-      oName: origin.place.name + ", " + origin.place.country_name,
-      dName: destniation.place.name + ", " + destniation.place.country_name
+      oName: origin.name + ", " + origin.country_name,
+      dName: destniation.name + ", " + destniation.country_name
     };
     r2rUrl = "http://evaluate.rome2rio.com/api/1.2/json/Search?" + querystring.stringify(params);
     return cache.request(r2rUrl, function(error, body){
       var json, routes, i$, len$, route, flightStops;
-      console.log(body);
       if (error) {
         return cb(error, null);
       }
@@ -34,11 +33,13 @@
       for (i$ = 0, len$ = routes.length; i$ < len$; ++i$) {
         route = routes[i$];
         flightStops = _.filter(route.stops, fn$);
-        console.log(flightStops);
         if (flightStops.length) {
           return cb(null, flightStops[flightStops.length - 1].code);
         }
       }
+      return cb({
+        message: 'no airports in the route'
+      }, null);
       function fn$(stop){
         return stop.kind === 'airport';
       }

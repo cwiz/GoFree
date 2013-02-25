@@ -1,6 +1,7 @@
 _ 			= require "underscore"
 async		= require "async"
 database 	= require "./../database"
+geobase 	= require "./../geobase"
 md5 		= require "MD5"
 providers 	= require "./providers"
 rome2rio 	= require "./providers/rome2rio"
@@ -8,65 +9,13 @@ validation 	= require "./validation"
 
 fixDestination = (pair, cb) ->
 
-	if pair.origin.place.iata and pair.destination.place.iata
-		pair.origin.nearest_airport 		= pair.origin.place
-		pair.destination.nearest_airport 	= pair.destination.place
-		
-		return cb null, pair
+	(error, airports) <- geobase.findRoute pair.origin.place, pair.destination.place
+	return cb error, null if error
 
-	pair.origin.nearest_airport 	 = pair.origin.place 	  if pair.origin.place.iata
-	pair.destination.nearest_airport = pair.destination.place if pair.destination.place.iata
+	pair.origin.nearest_airport 		= airports.originAirport
+	pair.destination.nearest_airport 	= airports.destinationAirport
 
-	operations = []
-	if not pair.destination.place.iata
-		operations.push (callback) ->
-			(error, destinationIata) <- rome2rio.getNeareasAirport pair.origin, pair.destination
-			console.log destinationIata
-			return callback error, null if error
-			
-			pair.destination.place.iata = destinationIata
-
-			(error, destination_airport) <- database.geonames.findOne iata: destinationIata
-			return callback error, null if error
-
-			if destination_airport
-				delete destination_airport._id
-				destination_airport.name_ru_lower 		= destination_airport.name_ru_lower_collection[0]
-				destination_airport.name_ru 			= destination_airport.name_ru_collection[0]
-				destination_airport.name_ru_inflected 	= destination_airport.name_ru_inflected_collection[0]
-				
-				pair.destination.nearest_airport = destination_airport
-			else
-				pair.destination.nearest_airport = pair.destination.place
-
-			callback null, {}
-
-	if not pair.origin.place.iata
-		operations.push (callback) ->
-			(error, originIata) <- rome2rio.getNeareasAirport pair.destination, pair.origin
-			return callback error, null if error
-			
-			pair.origin.place.iata = originIata
-
-			(error, origin_airport) <- database.geonames.findOne iata: originIata
-			return callback error, null if error
-
-			if origin_airport
-				delete origin_airport._id
-				origin_airport.name_ru_lower 		= origin_airport.name_ru_lower_collection[0]
-				origin_airport.name_ru 				= origin_airport.name_ru_collection[0]
-				origin_airport.name_ru_inflected 	= origin_airport.name_ru_inflected_collection[0]
-
-				pair.origin.nearest_airport = origin_airport
-			else
-				pair.origin.nearest_airport = pair.origin.place
-
-
-			callback null, {}
-
-	async.parallel operations, (error, result) ->
-		cb null, pair
-
+	cb null, pair
 
 makePairs = (data, cb) ->
 	

@@ -287,12 +287,12 @@ addInflectedNames = (callback) ->
 setTimeout( (
 	->
 		async.series([
-			# (callback) -> database.geonames.drop(callback), 
-			# importBaseGeonames, 
-			# importRuGeonames, 
-			# importRuCountries, 
-			# importEnCountries, 
-			# syncWithAirports,
+			(callback) -> database.geonames.drop(callback), 
+			importBaseGeonames, 
+			importRuGeonames, 
+			importRuCountries, 
+			importEnCountries, 
+			syncWithAirports,
 			addInflectedNames,
 			(callback) -> process.exit()
 		])

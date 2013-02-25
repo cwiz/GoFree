@@ -6,14 +6,12 @@ exports.getNeareasAirport = (origin, destniation, cb) ->
 
 	params = 
 		key 	: 'YK8wH2AY'
-		oName 	: "#{origin.place.name}, #{origin.place.country_name}"
-		dName 	: "#{destniation.place.name}, #{destniation.place.country_name}"
+		oName 	: "#{origin.name}, #{origin.country_name}"
+		dName 	: "#{destniation.name}, #{destniation.country_name}"
 
 	r2rUrl = "http://evaluate.rome2rio.com/api/1.2/json/Search?" + querystring.stringify params
 
 	(error, body) <- cache.request r2rUrl
-	
-	console.log body
 
 	return cb error, null if error
 
@@ -25,11 +23,10 @@ exports.getNeareasAirport = (origin, destniation, cb) ->
 	routes = json.routes
 	return cb {message : 'no routes dound'}, null if routes.length is 0
 
-	#console
-
 	for route in routes
 		flightStops = _.filter route.stops, (stop) -> stop.kind is 'airport'
-		console.log flightStops
-		return cb null, flightStops[flightStops.length-1].code if flightStops.length
+			
+		if flightStops.length
+			return cb null, flightStops[flightStops.length-1].code 
 
-	#return cb {message : 'no airports in the route'}
+	return cb message : 'no airports in the route', null
