@@ -14,7 +14,7 @@
   };
   exports.error = function(req, res){
     return res.render("error", {
-      layout: 'splash.jade'
+      layout: 'splash'
     });
   };
 }).call(this);
