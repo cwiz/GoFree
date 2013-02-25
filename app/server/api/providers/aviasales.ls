@@ -83,7 +83,7 @@ process = (json, cb) ->
 
 		result = 
 			arrival   : arrival.format "hh:mm"
-			carrier   : carrier
+			carrier   : [carrier, carrier]
 			departure : departure.format "hh:mm"
 			duration  : duration * 60 * 60
 			price     : ticket.total
