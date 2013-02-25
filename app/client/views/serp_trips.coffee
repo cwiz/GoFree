@@ -15,12 +15,20 @@ SERPTrips = Backbone.View.extend
     @hash = @opts.hash
     @render()
 
-    @progressMeterEl = @$el.find('.v-s-t-p-meter')
-    @budgetMeterEl = @$el.find('.v-s-t-b-meter')
+    # tyt hyuta moya
+    #@progressMeterEl = @$el.find('.v-s-t-p-meter')
+    @progressMeterEl = $('.v-s-t-p-meter')
+    
+    #@budgetMeterEl = @$el.find('.v-s-t-b-meter')
+    @budgetMeterEl = $('.v-s-t-b-meter')
+
     @container = @$el.find('.v-serp-trips-container')
 
-    @amountSpentEl = @$el.find('.v-s-t-b-spentamount')
-    @amountLeftEl = @$el.find('.v-s-t-b-leftamount')
+    #@amountSpentEl = @$el.find('.v-s-t-b-spentamount')
+    @amountSpentEl = $('.v-s-t-b-spentamount')
+    
+    #@amountLeftEl = @$el.find('.v-s-t-b-leftamount')
+    @amountLeftEl = $('.v-s-t-b-leftamount')
 
     app.socket.on('progress', _.bind(@updateProgress, @))
     app.on('serp_selected', @updateBudgetAdd, @)

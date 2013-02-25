@@ -1,3 +1,18 @@
 .p-serp-header.l-wrap
-  span.p-s-h-action.p-s-h-newsearch Новый поиск
-  span.p-s-h-action.p-s-h-bookselected Забронировать выбранное
+	span.p-s-h-action.p-s-h-newsearch.button.medium.green &larr; Новый поиск
+	span.p-s-h-action.p-s-h-bookselected.button.medium.orange Забронировать выбранное
+
+.v-serp-trips-progress
+	span.v-s-t-p-meter
+
+.v-serp-trips-budget
+	img.v-s-t-b-bg(src="/img/views/budget.jpg")
+	
+	.v-s-t-b-meter
+		span.v-s-t-b-spent
+			| Потрачено 
+			span.v-s-t-b-spentamount
+			|  руб.
+		span.v-s-t-b-left
+			span.v-s-t-b-leftamount
+			|  руб. осталось
