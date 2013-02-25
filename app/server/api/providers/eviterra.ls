@@ -15,13 +15,15 @@ exports.name = "eviterra"
 
 autocomplete = (query, callback) ->
 	eviterraUrl = "https://eviterra.com/complete.json?val=#{query}"
-	(error, response, body) <- request eviterraUrl
-	console.log "Queried eviterra autocomplete | #{eviterraUrl} | error: #{error} | status: #{response?.statusCode}"
+	(error, body) <- cache.request eviterraUrl
 	return callback(error, null) if error
 
-	json = JSON.parse(response.body)  
+	try
+		json = JSON.parse(body)  
+	catch error
+		return cb error, null
+	
 	finalJson = []
-
 	for item in json.data when item.type is 'city'
 		name        = item.name
 		country     = item.area

@@ -13,13 +13,17 @@
   autocomplete = function(query, callback){
     var eviterraUrl;
     eviterraUrl = "https://eviterra.com/complete.json?val=" + query;
-    return request(eviterraUrl, function(error, response, body){
+    return cache.request(eviterraUrl, function(error, body){
       var json, finalJson, i$, ref$, len$, item, name, country, iata, displayName;
-      console.log("Queried eviterra autocomplete | " + eviterraUrl + " | error: " + error + " | status: " + (response != null ? response.statusCode : void 8));
       if (error) {
         return callback(error, null);
       }
-      json = JSON.parse(response.body);
+      try {
+        json = JSON.parse(body);
+      } catch (e$) {
+        error = e$;
+        return cb(error, null);
+      }
       finalJson = [];
       for (i$ = 0, len$ = (ref$ = json.data).length; i$ < len$; ++i$) {
         item = ref$[i$];
