@@ -13,9 +13,50 @@ moment.lang('ru')
 # Providers
 exports.name = "eviterra"
 
+autocomplete = (query, callback) ->
+	eviterraUrl = "https://eviterra.com/complete.json?val=#{query}"
+	(error, response, body) <- request eviterraUrl
+	console.log "Queried eviterra autocomplete | #{eviterraUrl} | error: #{error} | status: #{response?.statusCode}"
+	return callback(error, null) if error
+
+	json = JSON.parse(response.body)  
+	finalJson = []
+
+	for item in json.data when item.type is 'city'
+		name        = item.name
+		country     = item.area
+		iata        = item.iata
+		displayName = name
+		displayName += ", #{country}" if country isnt "Россия"
+
+		finalJson.push do
+			name 		: name
+			iata 		: iata
+			country 	: country
+			displayName : displayName
+			provider 	: exports.name
+		
+	callback null, finalJson
+
+getEviterraId = (place, callback) ->
+	return callback(null, place.eviterra_id) if place.eviterra_id
+
+	(error, result) <- autocomplete "#{place.name_ru}"
+	return callback(error,              null)  if error
+	return callback({'nothing found'},  null)  if result.length is 0
+
+	eviterra_id = result[0].iata
+	callback null, eviterra_id
+	database.geonames.update {geoname_id : place.geoname_id}, {$set: {eviterra_id : eviterra_id}}
+
 query = (origin, destination, extra, cb) ->
 
-	evUrl = "http://api.eviterra.com/avia/v1/variants.xml?from=#{origin.place.iata}&to=#{destination.place.iata}&date1=#{origin.date}&adults=#{extra.adults}"
+	(error, eviterraId) <- async.parallel do
+		origin      : (callback) -> getEviterraId origin.place,       callback
+		destination : (callback) -> getEviterraId destination.place,  callback
+
+	return cb error, null if error
+	evUrl = "http://api.eviterra.com/avia/v1/variants.xml?from=#{eviterraId.origin}&to=#{eviterraId.destination}&date1=#{origin.date}&adults=#{extra.adults}"
 
 	(error, body) <- cache.request evUrl
 	console.log "EVITERRA: Queried Eviterra serp | #{evUrl} | status: #{!!body}"
