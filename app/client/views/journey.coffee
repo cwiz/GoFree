@@ -49,10 +49,8 @@ Journey = Backbone.View.extend
     app.router.navigate('', trigger: true)
 
   repeatSearch: ->
-    hash = @collection._searchHash
-
+    app.router.navigate('search/' + @collection._searchHash, trigger: true)
     @destroy()
-    app.router.navigate('search/' + hash, trigger: true)
 
   destroy: ->
     @collection?.off('fetched', @collectionReady, @)

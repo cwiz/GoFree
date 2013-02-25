@@ -5,8 +5,12 @@ li.m-c-l-item.v-s-t-item.flight(data-cid=cid)
 
     p.v-s-t-meta
       span.v-s-t-i-provider= provider
-      span.v-s-t-i-airline
-        i(data-type=airline)
+      span.v-s-t-i-carrier
+        if carrier
+          each item, i in carrier
+            img(class='carrier-' + (i + 1), src='/img/airlines/' + item.iata + '.png', alt=item.name)
+        else
+          img(class='carrier-1', src='/img/airlines/default.png', alt='Ruskie airways')
 
   .v-s-t-i-contents
     .v-s-t-i-times

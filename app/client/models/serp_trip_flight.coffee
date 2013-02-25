@@ -16,7 +16,7 @@ SERPTripFlight = Backbone.Model.extend
     arrival: null
     duration: null
 
-    airline: null
+    carrier: null
     stops: 0
 
   initialize: ->
