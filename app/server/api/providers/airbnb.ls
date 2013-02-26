@@ -40,8 +40,8 @@ exports.search = (origin, destination, extra, cb) ->
                   provider  : \airbnb
                   id        : r.id
                   type      : 'apartment'
+                  url       : "https://www.airbnb.com/rooms/#{r.id}"
                 
-
             cb null, results
 
 

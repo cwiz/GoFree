@@ -47,7 +47,8 @@
               photo: listing.medium_url,
               provider: 'airbnb',
               id: r.id,
-              type: 'apartment'
+              type: 'apartment',
+              url: "https://www.airbnb.com/rooms/" + r.id
             };
           });
           return cb(null, results);
