@@ -48,10 +48,10 @@ exports.autocomplete = (query, callback) ->
 getNeareastAirport = (origin, destination, cb) ->
 	
 	(error, iata) 	 <- rome2rio.getNeareasAirport origin, destination
-	return callback error, null if error
+	return cb error, null if error
 
 	(error, airport) <- database.airports.findOne iata: iata
-	return callback error, null if error
+	return cb error, null if error
 
 	(error, geoname) <- database.geonames.findOne do 
 		country_name: airport.country

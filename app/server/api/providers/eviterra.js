@@ -166,7 +166,7 @@
           }
           newFlight = {
             arrival: arrivalDestinationDate.format("hh:mm"),
-            carrier: carrier,
+            carrier: carrier ? [carrier] : null,
             departure: departureOriginDate.format("hh:mm"),
             duration: flightTimeSpan * 60 * 60,
             price: parseInt(variant.price),

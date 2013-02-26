@@ -65,7 +65,7 @@ SERPTrips = Backbone.View.extend
 
   setProgressMeter: ->
     pos = app.size.width * @progress
-    @progressMeterEl.animate({left: pos})
+    @progressMeterEl.animate({left: pos}, 200, 'linear')
 
   setBudgetMeter: ->
     @spent = _.reduce(_.values(@_budgetHash), (memo, num)->

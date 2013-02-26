@@ -55,7 +55,7 @@ makePairs = (data, cb) ->
 		pairs 			: pairs
 		signatures 		: allSignatures
 
-exports.search = (socket) ->
+exports.search = (err, socket, session) ->
 	
 	socket.on 'search', (data) ->
 		(error, data) <- validation.search data
@@ -151,6 +151,11 @@ exports.search = (socket) ->
 
 		(error, trip)			<- database.trips.findOne trip_hash : data.trip_hash
 		database.trips.insert data if not trip
+
+		session.trip_hash 	= data.trip_hash
+		session.search_hash = data.search_hash
+
+		session.save!
 
 		socket.emit 'serp_selected_ok', {} 
 

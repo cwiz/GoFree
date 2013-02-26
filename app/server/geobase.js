@@ -68,13 +68,13 @@
   getNeareastAirport = function(origin, destination, cb){
     return rome2rio.getNeareasAirport(origin, destination, function(error, iata){
       if (error) {
-        return callback(error, null);
+        return cb(error, null);
       }
       return database.airports.findOne({
         iata: iata
       }, function(error, airport){
         if (error) {
-          return callback(error, null);
+          return cb(error, null);
         }
         return database.geonames.findOne({
           country_name: airport.country,

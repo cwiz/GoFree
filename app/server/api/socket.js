@@ -64,7 +64,7 @@
       });
     });
   };
-  exports.search = function(socket){
+  exports.search = function(err, socket, session){
     socket.on('search', function(data){
       return validation.search(data, function(error, data){
         if (error) {
@@ -191,6 +191,9 @@
             if (!trip) {
               database.trips.insert(data);
             }
+            session.trip_hash = data.trip_hash;
+            session.search_hash = data.search_hash;
+            session.save();
             return socket.emit('serp_selected_ok', {});
           });
         });

@@ -125,7 +125,7 @@ process = (flights, cb) ->
 
 		newFlight = 
 			arrival   : arrivalDestinationDate.format "hh:mm"#\LL
-			carrier   : carrier
+			carrier   : if carrier then [carrier] else null
 			departure : departureOriginDate.format "hh:mm"#\LL
 			duration  : flightTimeSpan * 60 * 60
 			price     : parseInt variant.price

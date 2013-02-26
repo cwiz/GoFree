@@ -1,9 +1,14 @@
 @import 'login.less';
 @import 'selected_list.less';
 
+.v-prebooking {
+  background-color: #fff;
+}
+
 .v-prebooking-wrap {
   width: 600px;
   height: 600px;
+  //overflow-y: hidden;
   margin: 0 auto;
 
   background: #fefefe;
@@ -41,6 +46,10 @@
 
   .v-p-selected-container {
     margin-top: 10px;
+
+    .v-selected-item {
+      opacity: 0.5;
+    }
 
     .v-p-s-loading {
       margin-top: 60px;

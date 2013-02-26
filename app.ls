@@ -12,6 +12,7 @@ rack        		= require "asset-rack"
 redis       		= require "socket.io/node_modules/redis"
 socket      		= require "socket.io"
 SocketRedis 		= require "socket.io/lib/stores/redis"
+SocketSession 		= require "session.socket.io"
 
 # SETTINGS
 
@@ -20,6 +21,8 @@ FACEBOOK_SECRET		= "48d73a1974d63be2513810339c7dbb3d"
 
 VK_ID				= "3436490"
 VK_SECRET			= "uMqrPONr6bxMgxgvL3he"
+
+SECRET 				= 'ironmaiden'
 
 # GLOBALS
 
@@ -40,8 +43,8 @@ if cluster.isMaster
 
 else
 
-	backEnd     = require "./app/server"
-	database	= backEnd.database
+	backEnd     	= require "./app/server"
+	database		= backEnd.database
 
 	# Globals
 	app     		= express()
@@ -132,6 +135,8 @@ else
 	])
 
 	<- assets.on "complete" 
+
+	sessionStore = new (connect-redis(express))
 		
 	# Configuration
 	app.configure ->
@@ -144,11 +149,11 @@ else
 		app.use express.bodyParser!
 		app.use express.methodOverride!
 		
-		app.use express.cookieParser!
+		app.use express.cookieParser(SECRET)
 
 		app.use express.session({ 
-			store 	: new (connect-redis(express))
-			secret  :'ironmaiden' 
+			store 	: sessionStore
+			secret  : SECRET
 		})
 
 		app.use passport.initialize!
@@ -185,9 +190,25 @@ else
 	app.get "/api/v2/auth/add_email/:email", 	backEnd.api.add_email
 
 	# --- login	
-
 	login = (provider, req, res) -> 
-		req.session.postLoginRedirect = req.header('Referer')
+
+		referer 	= req.header 'Referer'
+		tripHash 	= req.session.trip_hash
+		searchHash  = req.session.search_hash
+
+		if tripHash
+			redirectUrl = "/journey/#{tripHash}"
+
+		else if searchHash
+			redirectUrl = "/search/#{searchHash}"
+		
+		else if referer
+			redirectUrl = referer
+
+		else
+			redirectUrl = '/'
+
+		req.session.postLoginRedirect = redirectUrl
 		passport.authenticate(provider, { scope: [ 'email' ]} )(req, res)
 
 	callback = (req, res) ->
@@ -197,7 +218,7 @@ else
 			res.redirect '/#'
 
 	app.get "/auth/facebook", 			(req, res) -> login('facebook', req, res)
-	app.get "/auth/facebook/callback", passport.authenticate('facebook'),	callback
+	app.get "/auth/facebook/callback", passport.authenticate('facebook'), callback
 
 	app.get "/auth/vkontakte", 			(req, res) -> login('vkontakte', req, res)
 	app.get "/auth/vkontakte/callback", passport.authenticate('vkontakte'), callback
@@ -207,11 +228,10 @@ else
 		res.redirect '/'
 
 	# --- 404
-	app.get "*",            		  					  	backEnd.about.error
+	app.get "*", backEnd.about.error
 
 	# --- SocketIO
-	io.sockets.on "connection",             backEnd.api.search
-
+	
 	# Stuff
 	server.listen app.get("port"), ->
 		console.log "Express server listening on port " + app.get("port")
@@ -222,10 +242,14 @@ else
 		redisSub    : redis.createClient()
 		redisClient : redis.createClient()
 
+	sessionSockets = new SocketSession io, sessionStore, express.cookieParser(SECRET)
+
 	io.set 'store', redisStore
 
-	#io.enable 'browser client minification'
-	#io.enable 'browser client etag'
-	#io.enable 'browser client gzip'
+	io.enable 'browser client minification'
+	io.enable 'browser client etag'
+	io.enable 'browser client gzip'
 	
 	io.set    'log level', 1
+
+	sessionSockets.on 'connection', backEnd.api.search
