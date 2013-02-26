@@ -70,16 +70,38 @@
       if (error) {
         return cb(error, null);
       }
-      return database.geonames.findOne({
-        iata: iata
-      }, function(error, geoname){
+      return async.parallel({
+        geoname: function(callback){
+          return database.geonames.findOne({
+            iata: iata
+          }, callback);
+        },
+        airport: function(callback){
+          return database.airports.findOne({
+            iata: iata
+          }, callback);
+        }
+      }, function(error, result){
         if (error) {
           return cb(error, null);
         }
-        geoname = geoname
-          ? exports.extend_geoname(geoname)
-          : destination.place;
-        return cb(null, geoname);
+        if (result.geoname) {
+          return cb(null, exports.extend_geoname(result.geoname));
+        } else if (result.airport) {
+          return database.geonames.findOne({
+            country_name: result.airport.country,
+            name: result.airport.city
+          }, function(error, geoname){
+            if (error) {
+              return cb(error, null);
+            }
+            return cb(null, exports.extend_geoname(geoname));
+          });
+        } else {
+          return cb({
+            message: 'nothing found'
+          }, null);
+        }
       });
     });
   };
@@ -97,7 +119,7 @@
     operations.originAirport = function(callback){
       if (!originAirport) {
         return getNeareastAirport(destination, origin, function(error, airport){
-          return callback(error, airport);
+          return callback(error, airport || origin);
         });
       } else {
         return callback(null, originAirport);
@@ -106,14 +128,14 @@
     operations.destinationAirport = function(callback){
       if (!destinationAirport) {
         return getNeareastAirport(origin, destination, function(error, airport){
-          return callback(error, airport);
+          return callback(error, airport || destination);
         });
       } else {
         return callback(null, destinationAirport);
       }
     };
     return async.parallel(operations, function(error, results){
-      return cb(error, results);
+      return cb(null, results);
     });
   };
 }).call(this);

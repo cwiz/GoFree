@@ -52,7 +52,7 @@
     facebookSettings = {
       clientID: FACEBOOK_ID,
       clientSecret: FACEBOOK_SECRET,
-      callbackURL: "http://localhost:3000/auth/facebook/callback"
+      callbackURL: "http://" + SITE_URL + "/auth/facebook/callback"
     };
     postLogin = function(accessToken, refreshToken, profile, done){
       return database.users.findOne({
@@ -87,7 +87,7 @@
     vkSettings = {
       clientID: VK_ID,
       clientSecret: VK_SECRET,
-      callbackURL: "http://localhost:3000/auth/vkontakte/callback"
+      callbackURL: "http://" + SITE_URL + "/auth/vkontakte/callback"
     };
     passport.use(new passportVkontakte.Strategy(vkSettings, postLogin));
     passport.serializeUser(function(user, done){
