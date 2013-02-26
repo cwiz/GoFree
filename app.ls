@@ -55,7 +55,7 @@ else
 	facebookSettings = 
 		clientID    : FACEBOOK_ID
 		clientSecret: FACEBOOK_SECRET
-		callbackURL : "http://localhost:3000/auth/facebook/callback"
+		callbackURL : "http://#{SITE_URL}/auth/facebook/callback"
 
 	postLogin = (accessToken, refreshToken, profile, done) ->
 		
@@ -85,7 +85,7 @@ else
 	vkSettings = 
 		clientID    : VK_ID
 		clientSecret: VK_SECRET
-		callbackURL : "http://localhost:3000/auth/vkontakte/callback"
+		callbackURL : "http://#{SITE_URL}/auth/vkontakte/callback"
 
 	passport.use(new passport-vkontakte.Strategy(vkSettings, postLogin))
 
