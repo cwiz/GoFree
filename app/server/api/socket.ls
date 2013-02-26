@@ -36,6 +36,7 @@ makePairs = (data, cb) ->
 				page	: 1
 
 		(error, pair) <- fixDestination pair
+		return cb error, null if error
 
 		pair.flights_signature 	= md5(JSON.stringify(pair.origin.place) 		+ JSON.stringify(pair.destination.place) 	+ pair.origin.date)
 		
@@ -43,6 +44,8 @@ makePairs = (data, cb) ->
 		pair.hotels_signature 	= null if trip.isLast
 			
 		callback null, pair
+
+	return cb error, null if error
 
 	flightSignatures= _.map( pairs, (pair) -> pair.flights_signature)
 	

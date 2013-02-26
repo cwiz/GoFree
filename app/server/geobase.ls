@@ -50,16 +50,7 @@ getNeareastAirport = (origin, destination, cb) ->
 	(error, iata) 	 <- rome2rio.getNeareasAirport origin, destination
 	return cb error, null if error
 
-	(error, airport) <- database.airports.findOne iata: iata
-	return cb error, null if error
-
-	(error, geoname) <- database.geonames.findOne do 
-		country_name: airport.country
-		name 		: airport.city.replace('St.', 'Saint')
-
-	geoname.iata = iata
-	database.geonames.update( {_id : geoname._id}, {$set: {iata: iata}} )
-
+	(error, geoname) <- database.geonames.findOne iata: iata 
 	return cb error, null if error
 
 	geoname = if geoname then exports.extend_geoname geoname else destination.place

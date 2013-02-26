@@ -41,6 +41,9 @@
         }
       };
       return fixDestination(pair, function(error, pair){
+        if (error) {
+          return cb(error, null);
+        }
         pair.flights_signature = md5(JSON.stringify(pair.origin.place) + JSON.stringify(pair.destination.place) + pair.origin.date);
         pair.hotels_signature = md5(JSON.stringify(pair.destination.place) + pair.origin.date + pair.destination.date);
         if (trip.isLast) {
@@ -50,6 +53,9 @@
       });
     }, function(error, pairs){
       var flightSignatures, hotelSignatures, allSignatures;
+      if (error) {
+        return cb(error, null);
+      }
       flightSignatures = _.map(pairs, function(pair){
         return pair.flights_signature;
       });

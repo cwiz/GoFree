@@ -13,8 +13,8 @@ exports.name = 'aviasales'
 query = (origin, destination, extra, cb) ->
 
 	searchParams = 
-		origin_name		: origin.place.iata
-		destination_name: destination.place.iata
+		origin_name		: origin.nearest_airport.iata
+		destination_name: destination.nearest_airport.iata
 		depart_date		: origin.date
 		adults			: extra.adults
 		range			: 0

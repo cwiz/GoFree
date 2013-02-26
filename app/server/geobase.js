@@ -70,32 +70,16 @@
       if (error) {
         return cb(error, null);
       }
-      return database.airports.findOne({
+      return database.geonames.findOne({
         iata: iata
-      }, function(error, airport){
+      }, function(error, geoname){
         if (error) {
           return cb(error, null);
         }
-        return database.geonames.findOne({
-          country_name: airport.country,
-          name: airport.city.replace('St.', 'Saint')
-        }, function(error, geoname){
-          geoname.iata = iata;
-          database.geonames.update({
-            _id: geoname._id
-          }, {
-            $set: {
-              iata: iata
-            }
-          });
-          if (error) {
-            return cb(error, null);
-          }
-          geoname = geoname
-            ? exports.extend_geoname(geoname)
-            : destination.place;
-          return cb(null, geoname);
-        });
+        geoname = geoname
+          ? exports.extend_geoname(geoname)
+          : destination.place;
+        return cb(null, geoname);
       });
     });
   };
