@@ -4,6 +4,7 @@ PrebookingOverlay = Backbone.View.extend
   initialize: (@opts)->
     @render()
 
+    @containerEl = @$el.find('.v-p-selected-container')
     @validation = @$el.find('.v-l-e-inputwrap').m_formValidate()[0]
     @emailInput = @$el.find('.v-l-e-inputwrap input')
 
@@ -13,8 +14,9 @@ PrebookingOverlay = Backbone.View.extend
     'valid .v-l-e-inputwrap':         'submitEmail'
 
   show: ->
-    @$el.find('.v-p-selected-container').html(app.templates.selected_list(selected: @collection.serialize()))
+    @containerEl.html(app.templates.selected_list(selected: @collection.serialize()))
     app.overlay.show(block: '.l-o-prebooking')
+    @containerEl.css(height: app.size.height - 100 - @containerEl.position().top)
 
   submitEmail: (evt, e)->
     app.e(e)
@@ -29,8 +31,9 @@ PrebookingOverlay = Backbone.View.extend
 
   render: ->
     @$el.html(app.templates.prebooking_overlay())
+
     app.overlay.add(@$el, '.l-o-prebooking')
-    @$el.css(height: app.size.height - 100)
+    @$el.css(height: app.size.height - 100)    
 
   destroy: ->
     @undelegateEvents()
