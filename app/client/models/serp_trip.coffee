@@ -33,11 +33,13 @@ SERPTrip = Backbone.Model.extend
           model.get('price') >= 7000 and model.get('price') <= 15000
         )
 
-    'cheap': (src)-> _.filter(src, (model)-> return model.get('price') <= 10000)
+    'cheap': (src)-> _.filter(src, (model)-> model.get('price') <= 10000)
     # flights
-    'direct': (src)-> _.filter(src, (model)-> return model.get('stops') == 0)
+    'direct': (src)-> _.filter(src, (model)-> model.get('stops') == 0)
     # hotels
-    'luxury': (src)-> _.filter(src, (model)-> return model.get('price') >= 40000 and model.get('stars') == 5)
+    'luxury': (src)-> _.filter(src, (model)-> model.get('price') >= 40000 and model.get('stars') == 5)
+    'hotels': (src)-> _.filter(src, (model)-> model.get('type') == 'hotel')
+    'apartments': (src)-> _.filter(src, (model)-> model.get('type') == 'apartment')
 
   initialize: ->
     app.on('serp_filter', @setFilter, @)
