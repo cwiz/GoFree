@@ -13,8 +13,8 @@ exports.name = 'aviasales'
 query = (origin, destination, extra, cb) ->
 
 	searchParams = 
-		origin_name		: origin.place.iata
-		destination_name: destination.place.iata
+		origin_name		: origin.nearest_airport.iata
+		destination_name: destination.nearest_airport.iata
 		depart_date		: origin.date
 		adults			: extra.adults
 		range			: 0
@@ -83,7 +83,7 @@ process = (json, cb) ->
 
 		result = 
 			arrival   : arrival.format "hh:mm"
-			carrier   : [carrier, carrier]
+			carrier   : [carrier]
 			departure : departure.format "hh:mm"
 			duration  : duration * 60 * 60
 			price     : ticket.total

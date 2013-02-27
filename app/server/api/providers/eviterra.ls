@@ -54,8 +54,8 @@ getEviterraId = (place, callback) ->
 query = (origin, destination, extra, cb) ->
 
 	(error, eviterraId) <- async.parallel do
-		origin      : (callback) -> getEviterraId origin.place,       callback
-		destination : (callback) -> getEviterraId destination.place,  callback
+		origin      : (callback) -> getEviterraId origin.nearest_airport,       callback
+		destination : (callback) -> getEviterraId destination.nearest_airport,  callback
 
 	return cb error, null if error
 	evUrl = "http://api.eviterra.com/avia/v1/variants.xml?from=#{eviterraId.origin}&to=#{eviterraId.destination}&date1=#{origin.date}&adults=#{extra.adults}"
@@ -125,7 +125,7 @@ process = (flights, cb) ->
 
 		newFlight = 
 			arrival   : arrivalDestinationDate.format "hh:mm"#\LL
-			carrier   : carrier
+			carrier   : if carrier then [carrier] else null
 			departure : departureOriginDate.format "hh:mm"#\LL
 			duration  : flightTimeSpan * 60 * 60
 			price     : parseInt variant.price

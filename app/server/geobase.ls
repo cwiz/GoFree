@@ -48,22 +48,27 @@ exports.autocomplete = (query, callback) ->
 getNeareastAirport = (origin, destination, cb) ->
 	
 	(error, iata) 	 <- rome2rio.getNeareasAirport origin, destination
-	return callback error, null if error
-
-	(error, airport) <- database.airports.findOne iata: iata
-	return callback error, null if error
-
-	(error, geoname) <- database.geonames.findOne do 
-		country_name: airport.country
-		name 		: airport.city.replace('St.', 'Saint')
-
-	geoname.iata = iata
-	database.geonames.update( {_id : geoname._id}, {$set: {iata: iata}} )
-
 	return cb error, null if error
 
-	geoname = if geoname then exports.extend_geoname geoname else destination.place
-	cb null, geoname
+	(error, result) <- async.parallel do 
+		geoname: (callback) -> database.geonames.findOne iata: iata, callback
+		airport: (callback) -> database.airports.findOne iata: iata, callback
+	return cb error, null if error
+
+	if result.geoname
+		cb null, exports.extend_geoname result.geoname
+
+	else if result.airport
+		(error, geoname) <- database.geonames.findOne do 
+			country_name: result.airport.country
+			name 		: result.airport.city
+		return cb error, null if error
+
+		cb null, exports.extend_geoname geoname
+
+	else
+		cb message: 'nothing found', null
+
 
 exports.findRoute = (origin, destination, cb) ->
 
@@ -73,24 +78,24 @@ exports.findRoute = (origin, destination, cb) ->
 	return cb null, { 
 		destinationAirport 	: destinationAirport
 		originAirport		: originAirport
-	} if originAirport and destinationAirport
+	} if (originAirport and destinationAirport)
 
 	operations = {}
 
 	operations.originAirport = (callback) ->
 		if not originAirport
 			(error, airport) <- getNeareastAirport destination, origin
-			callback error, airport
+			callback error, (airport or origin)
 		else
 			callback null, originAirport
 
 	operations.destinationAirport = (callback) -> 
 		if not destinationAirport
 			(error, airport) <- getNeareastAirport origin, destination
-			callback error, airport
+			callback error, (airport or destination)
 		else
 			callback null, destinationAirport
 
 	(error, results) <- async.parallel operations
-	cb error, results
+	cb null, results
 	

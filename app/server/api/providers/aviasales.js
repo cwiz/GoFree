@@ -12,8 +12,8 @@
   query = function(origin, destination, extra, cb){
     var searchParams, sortedKeys, paramsString, signature, command;
     searchParams = {
-      origin_name: origin.place.iata,
-      destination_name: destination.place.iata,
+      origin_name: origin.nearest_airport.iata,
+      destination_name: destination.nearest_airport.iata,
       depart_date: origin.date,
       adults: extra.adults,
       range: 0,
@@ -95,7 +95,7 @@
           duration = arrival.diff(departure, 'hours');
           return result = {
             arrival: arrival.format("hh:mm"),
-            carrier: [carrier, carrier],
+            carrier: [carrier],
             departure: departure.format("hh:mm"),
             duration: duration * 60 * 60,
             price: ticket.total,

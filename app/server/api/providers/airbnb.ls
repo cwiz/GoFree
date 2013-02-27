@@ -38,10 +38,10 @@ exports.search = (origin, destination, extra, cb) ->
                   rating    : null
                   photo     : listing.medium_url
                   provider  : \airbnb
-                  id        : r.id
+                  id        : listing.id
                   type      : 'apartment'
+                  url       : "https://www.airbnb.com/rooms/#{listing.id}"
                 
-
             cb null, results
 
 

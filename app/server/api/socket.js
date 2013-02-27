@@ -41,6 +41,9 @@
         }
       };
       return fixDestination(pair, function(error, pair){
+        if (error) {
+          return cb(error, null);
+        }
         pair.flights_signature = md5(JSON.stringify(pair.origin.place) + JSON.stringify(pair.destination.place) + pair.origin.date);
         pair.hotels_signature = md5(JSON.stringify(pair.destination.place) + pair.origin.date + pair.destination.date);
         if (trip.isLast) {
@@ -50,6 +53,9 @@
       });
     }, function(error, pairs){
       var flightSignatures, hotelSignatures, allSignatures;
+      if (error) {
+        return cb(error, null);
+      }
       flightSignatures = _.map(pairs, function(pair){
         return pair.flights_signature;
       });
@@ -64,7 +70,7 @@
       });
     });
   };
-  exports.search = function(socket){
+  exports.search = function(err, socket, session){
     socket.on('search', function(data){
       return validation.search(data, function(error, data){
         if (error) {
@@ -191,6 +197,9 @@
             if (!trip) {
               database.trips.insert(data);
             }
+            session.trip_hash = data.trip_hash;
+            session.search_hash = data.search_hash;
+            session.save();
             return socket.emit('serp_selected_ok', {});
           });
         });

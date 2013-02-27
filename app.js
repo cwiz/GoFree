@@ -1,5 +1,5 @@
 (function(){
-  var _, cluster, connectRedis, express, http, os, passport, passportFacebook, passportVkontakte, path, rack, redis, socket, SocketRedis, FACEBOOK_ID, FACEBOOK_SECRET, VK_ID, VK_SECRET, ROLE, NUM_CPUS, DOMAIN, PORT, SITE_URL, backEnd, database, app, server, io, facebookSettings, postLogin, vkSettings, assets;
+  var _, cluster, connectRedis, express, http, os, passport, passportFacebook, passportVkontakte, path, rack, redis, socket, SocketRedis, SocketSession, FACEBOOK_ID, FACEBOOK_SECRET, VK_ID, VK_SECRET, SECRET, ROLE, NUM_CPUS, DOMAIN, PORT, SITE_URL, backEnd, database, app, server, io, facebookSettings, postLogin, vkSettings, assets;
   _ = require("underscore");
   cluster = require("cluster");
   connectRedis = require("connect-redis");
@@ -14,10 +14,12 @@
   redis = require("socket.io/node_modules/redis");
   socket = require("socket.io");
   SocketRedis = require("socket.io/lib/stores/redis");
+  SocketSession = require("session.socket.io");
   FACEBOOK_ID = "109097585941390";
   FACEBOOK_SECRET = "48d73a1974d63be2513810339c7dbb3d";
   VK_ID = "3436490";
   VK_SECRET = "uMqrPONr6bxMgxgvL3he";
+  SECRET = 'ironmaiden';
   ROLE = process.env.NODE_ENV || 'development';
   NUM_CPUS = ROLE === 'production' ? os.cpus().length : 1;
   DOMAIN = ROLE === 'production' ? 'gofree.ru' : 'localhost';
@@ -50,7 +52,7 @@
     facebookSettings = {
       clientID: FACEBOOK_ID,
       clientSecret: FACEBOOK_SECRET,
-      callbackURL: "http://localhost:3000/auth/facebook/callback"
+      callbackURL: "http://" + SITE_URL + "/auth/facebook/callback"
     };
     postLogin = function(accessToken, refreshToken, profile, done){
       return database.users.findOne({
@@ -85,7 +87,7 @@
     vkSettings = {
       clientID: VK_ID,
       clientSecret: VK_SECRET,
-      callbackURL: "http://localhost:3000/auth/vkontakte/callback"
+      callbackURL: "http://" + SITE_URL + "/auth/vkontakte/callback"
     };
     passport.use(new passportVkontakte.Strategy(vkSettings, postLogin));
     passport.serializeUser(function(user, done){
@@ -128,7 +130,8 @@
       })
     ]);
     assets.on("complete", function(){
-      var login, callback, redisStore;
+      var sessionStore, login, callback, redisStore, sessionSockets;
+      sessionStore = new (connectRedis(express));
       app.configure(function(){
         app.set("port", PORT);
         app.set("views", __dirname + "/views/server");
@@ -137,10 +140,10 @@
         app.use(express['static'](__dirname + "/public"));
         app.use(express.bodyParser());
         app.use(express.methodOverride());
-        app.use(express.cookieParser());
+        app.use(express.cookieParser(SECRET));
         app.use(express.session({
-          store: new (connectRedis(express)),
-          secret: 'ironmaiden'
+          store: sessionStore,
+          secret: SECRET
         }));
         app.use(passport.initialize());
         app.use(passport.session());
@@ -167,7 +170,20 @@
       app.get("/api/v2/get_location", backEnd.api.get_location);
       app.get("/api/v2/auth/add_email/:email", backEnd.api.add_email);
       login = function(provider, req, res){
-        req.session.postLoginRedirect = req.header('Referer');
+        var referer, tripHash, searchHash, redirectUrl;
+        referer = req.header('Referer');
+        tripHash = req.session.trip_hash;
+        searchHash = req.session.search_hash;
+        if (tripHash) {
+          redirectUrl = "/journey/" + tripHash;
+        } else if (searchHash) {
+          redirectUrl = "/search/" + searchHash;
+        } else if (referer) {
+          redirectUrl = referer;
+        } else {
+          redirectUrl = '/';
+        }
+        req.session.postLoginRedirect = redirectUrl;
         return passport.authenticate(provider, {
           scope: ['email']
         })(req, res);
@@ -192,7 +208,6 @@
         return res.redirect('/');
       });
       app.get("*", backEnd.about.error);
-      io.sockets.on("connection", backEnd.api.search);
       server.listen(app.get("port"), function(){
         return console.log("Express server listening on port " + app.get("port"));
       });
@@ -201,8 +216,13 @@
         redisSub: redis.createClient(),
         redisClient: redis.createClient()
       });
+      sessionSockets = new SocketSession(io, sessionStore, express.cookieParser(SECRET));
       io.set('store', redisStore);
-      return io.set('log level', 1);
+      io.enable('browser client minification');
+      io.enable('browser client etag');
+      io.enable('browser client gzip');
+      io.set('log level', 1);
+      return sessionSockets.on('connection', backEnd.api.search);
     });
   }
 }).call(this);

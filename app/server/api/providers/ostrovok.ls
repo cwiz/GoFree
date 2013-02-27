@@ -91,11 +91,11 @@ exports.search = (origin, destination, extra, cb) ->
 
 autocomplete = (query, callback) ->
 	ostUrl = "http://ostrovok.ru/api/site/multicomplete.json?query=#{query}&regions_ver=v5"
-	(error, response, body) <-! request ostUrl
-	console.log "ostrovok.autocomplete | #{ostUrl} | status #{response.statusCode}"
+	(error, body) <-! cache.request ostUrl
+	console.log "ostrovok.autocomplete | #{ostUrl} | status #{!!body}"
 	return callback error, null if error
 	
-	json      = JSON.parse(response.body)
+	json      = JSON.parse(body)
 	finalJson = []
 	for obj in json.regions when (obj.target is "search" and obj.type is 'city')
 		country     = obj.country

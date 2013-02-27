@@ -75,10 +75,10 @@
   query = function(origin, destination, extra, cb){
     return async.parallel({
       origin: function(callback){
-        return getEviterraId(origin.place, callback);
+        return getEviterraId(origin.nearest_airport, callback);
       },
       destination: function(callback){
-        return getEviterraId(destination.place, callback);
+        return getEviterraId(destination.nearest_airport, callback);
       }
     }, function(error, eviterraId){
       var evUrl;
@@ -166,7 +166,7 @@
           }
           newFlight = {
             arrival: arrivalDestinationDate.format("hh:mm"),
-            carrier: carrier,
+            carrier: carrier ? [carrier] : null,
             departure: departureOriginDate.format("hh:mm"),
             duration: flightTimeSpan * 60 * 60,
             price: parseInt(variant.price),

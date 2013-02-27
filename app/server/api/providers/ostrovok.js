@@ -123,13 +123,13 @@
   autocomplete = function(query, callback){
     var ostUrl;
     ostUrl = "http://ostrovok.ru/api/site/multicomplete.json?query=" + query + "&regions_ver=v5";
-    return request(ostUrl, function(error, response, body){
+    return cache.request(ostUrl, function(error, body){
       var json, finalJson, i$, ref$, len$, obj, country, name, id, displayName;
-      console.log("ostrovok.autocomplete | " + ostUrl + " | status " + response.statusCode);
+      console.log("ostrovok.autocomplete | " + ostUrl + " | status " + !!body);
       if (error) {
         return callback(error, null);
       }
-      json = JSON.parse(response.body);
+      json = JSON.parse(body);
       finalJson = [];
       for (i$ = 0, len$ = (ref$ = json.regions).length; i$ < len$; ++i$) {
         obj = ref$[i$];
