@@ -87,7 +87,7 @@
         }
         if (result.geoname) {
           return cb(null, exports.extend_geoname(result.geoname));
-        } else if (result.airport) {
+        } else if (result.airport != null) {
           return database.geonames.findOne({
             country_name: result.airport.country,
             name: result.airport.city

@@ -115,7 +115,7 @@
               complete = ((ref$ = params.result) != null ? ref$.complete : void 8) || false;
               error = ((ref$ = params.error) != null ? ref$.message : void 8) || null;
               console.log("SOCKET: " + params.event + " | Complete: " + complete + " | Provider: " + params.provider.name + " | Error: " + error + " | # results: " + items.length);
-              if (complete || error) {
+              if (complete || error || items.length === 0) {
                 providersReady += 1;
               }
               socket.emit(params.event, {

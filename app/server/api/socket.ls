@@ -98,7 +98,7 @@ exports.search = (err, socket, session) ->
 			| Error: #{error} 
 			| \# results: #{items.length}"
 			
-			providersReady += 1 if (complete or error)
+			providersReady += 1 if (complete or error or (items.length is 0))
 
 			socket.emit params.event, do
 				error     : error
