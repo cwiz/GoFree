@@ -92,7 +92,7 @@
             country_name: result.airport.country,
             name: result.airport.city
           }, function(error, geoname){
-            if (error) {
+            if (error || !geoname) {
               return cb(error, null);
             }
             return cb(null, exports.extend_geoname(geoname));

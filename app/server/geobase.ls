@@ -62,7 +62,7 @@ getNeareastAirport = (origin, destination, cb) ->
 		(error, geoname) <- database.geonames.findOne do 
 			country_name: result.airport.country
 			name 		: result.airport.city
-		return cb error, null if error
+		return cb error, null if (error or not geoname)
 
 		cb null, exports.extend_geoname geoname
 
