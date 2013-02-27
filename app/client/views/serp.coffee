@@ -128,7 +128,7 @@ SERP = Backbone.View.extend
     delete @opts
 
     if not app.user
-      @prebookingOverlay.off('confirmed', @selectedConfirmed, @)
+      @prebookingOverlay?.off('confirmed', @selectedConfirmed, @)
       @prebookingOverlay?.destroy()
       delete @prebookingOverlay
 

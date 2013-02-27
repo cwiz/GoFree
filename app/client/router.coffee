@@ -46,10 +46,6 @@ Router = Backbone.Router.extend
   search: (hash) ->
     app.log('[app.Router]: match "search", hash: "' + hash + '"')
 
-    if models['search']
-      models['search'].destroy()
-      delete models['search']
-
     if collections['serp_trips']
       collections['serp_trips'].destroy()
       delete collections['serp_trips']
@@ -86,10 +82,6 @@ Router = Backbone.Router.extend
 
     delete views['index'] if views['index']
     delete views['serp'] if views['serp']
-
-    if models['search']
-      models['search'].destroy()
-      delete models['search']
 
     if collections['serp_trips']
       collections['serp_trips'].destroy()
