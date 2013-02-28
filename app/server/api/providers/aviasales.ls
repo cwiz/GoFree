@@ -73,13 +73,16 @@ process = (json, cb) ->
 
 		departureAirport        = _.filter( airportsInfo, (el) -> el.iata is ticket.firstFlight.origin      )[0]
 		arrivalAirport          = _.filter( airportsInfo, (el) -> el.iata is ticket.firstFlight.destination )[0]
-
-		carrier                 = _.filter( airlinesInfo, (el) -> el.iata is ticket.firstFlight.airline)[0]
+		carrier                 = _.filter( airlinesInfo, (el) -> el.iata is ticket.firstFlight.airline     )[0]
 		delete carrier._id if carrier
 
-		departure 	= moment.unix(ticket.direct_flights[0						].departure).clone().subtract 'hours', departureAirport.timezone
-		arrival 	= moment.unix(ticket.direct_flights[ticket.transferNumber-1 ].arrival  ).clone().subtract 'hours', arrivalAirport.timezone
-		duration 	= arrival.diff departure, 'hours'
+		departure 	 = moment.unix ticket.direct_flights[0].departure
+		arrival 	 = moment.unix ticket.direct_flights[ticket.transferNumber-1].arrival
+
+		utcDeparture = departure.clone!.subtract 'hours', departureAirport.timezone
+		utcArrival   = arrival.clone!.subtract 'hours', arrivalAirport.timezone
+		
+		duration 	= utcArrival.diff utcDeparture, 'hours'
 
 		result = 
 			arrival   : arrival.format "hh:mm"
@@ -89,7 +92,7 @@ process = (json, cb) ->
 			price     : ticket.total
 			provider  : \aviasales
 			stops     : ticket.transferNumber - 1
-			url       : 'yoyoy!'
+			url       : "http://nano.aviasales.ru/searches/#{_.keys(ticket.order_urls)[0]}/order_urls/#{_.values(ticket.order_urls)[0]}"
 
 	cb null, results
 

@@ -22,35 +22,57 @@ SERPTrip = Backbone.Model.extend
     hotels: null
 
   filterFactors:
+    
     # flights + hotels
     'convenient': (src)-> 
-      _.filter(src, (model)-> 
-        if model.get('stops')?
-          model.get('stops') == 0 and model.get('price') <= 15000
-        else if model.get('stars')
-          model.get('stars') >= 4 and model.get('price') <= 15000
-        else
-          model.get('price') >= 7000 and model.get('price') <= 15000
+
+      # ugly way to check hotel or flight
+
+      firstElement = src[0]
+      return unless firstElement
+
+      if firstElement.get('stops')
+        minDuration = _.min(src, (elem) -> elem.get('duration')).get('duration')
+        console.log minDuration
+        return _.sortBy(
+          
+          _.filter(src, (model) -> 
+            model.get('stops') <= 1 and model.get('duration') <= 24*60*60
+          ), 
+          
+          (elem) -> 
+            minDuration / elem.get('duration')
         )
 
-    'cheap': (src)-> _.filter(src, (model)-> model.get('price') <= 10000)
+      else if firstElement.get('stars')
+        return _.filter(src, (model) -> model.get('stars') >= 4)
+
+      else
+        return
+
+
+    'cheap':      (src) -> 
+      minPrice = _.min(src, (elem) -> elem.get('price')).get('price')
+      return _.filter(src, (model)-> model.get('price') <= minPrice * 1.2)
+    
     # flights
-    'direct': (src)-> _.filter(src, (model)-> model.get('stops') == 0)
+    'direct':     (src) -> _.sortBy(_.filter(src, (model)-> model.get('stops') == 0), (elem) -> elem.duration)
+    
     # hotels
-    'luxury': (src)-> _.filter(src, (model)-> model.get('price') >= 40000 and model.get('stars') == 5)
-    'hotels': (src)-> _.filter(src, (model)-> model.get('type') == 'hotel')
-    'apartments': (src)-> _.filter(src, (model)-> model.get('type') == 'apartment')
+    'luxury':     (src) -> _.filter(src, (model)-> model.get('stars') == 5)
+    'hotels':     (src) -> _.filter(src, (model)-> model.get('type') == 'hotel')
+    'apartments': (src) -> _.filter(src, (model)-> model.get('type') == 'apartment')
 
   initialize: ->
     app.on('serp_filter', @setFilter, @)
     app.log('[app.models.SERPTrip]: initialize')
 
   setFilter: (data) ->
-    if @get('flights_signature') == data.signature
+    if @get('flights_signature') is data.signature
       @flightsFilter = data.filter
       @get('flights_filtered').update(@filter(@get('flights'), @flightsFilter)).trigger('filtered')
 
-    if @get('hotels_signature') == data.signature
+    if @get('hotels_signature') is data.signature
       @hotelsFilter = data.filter
       @get('hotels_filtered').update(@filter(@get('hotels'), @hotelsFilter)).trigger('filtered')
 

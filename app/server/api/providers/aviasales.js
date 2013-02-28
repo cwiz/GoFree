@@ -77,7 +77,7 @@
       }).toArray(function(err, airlinesInfo){
         var results;
         results = _.map(json.tickets, function(ticket){
-          var departureAirport, arrivalAirport, carrier, departure, arrival, duration, result;
+          var departureAirport, arrivalAirport, carrier, departure, arrival, utcDeparture, utcArrival, duration, result;
           departureAirport = _.filter(airportsInfo, function(el){
             return el.iata === ticket.firstFlight.origin;
           })[0];
@@ -90,9 +90,11 @@
           if (carrier) {
             delete carrier._id;
           }
-          departure = moment.unix(ticket.direct_flights[0].departure).clone().subtract('hours', departureAirport.timezone);
-          arrival = moment.unix(ticket.direct_flights[ticket.transferNumber - 1].arrival).clone().subtract('hours', arrivalAirport.timezone);
-          duration = arrival.diff(departure, 'hours');
+          departure = moment.unix(ticket.direct_flights[0].departure);
+          arrival = moment.unix(ticket.direct_flights[ticket.transferNumber - 1].arrival);
+          utcDeparture = departure.clone().subtract('hours', departureAirport.timezone);
+          utcArrival = arrival.clone().subtract('hours', arrivalAirport.timezone);
+          duration = utcArrival.diff(utcDeparture, 'hours');
           return result = {
             arrival: arrival.format("hh:mm"),
             carrier: [carrier],
@@ -101,7 +103,7 @@
             price: ticket.total,
             provider: 'aviasales',
             stops: ticket.transferNumber - 1,
-            url: 'yoyoy!'
+            url: "http://nano.aviasales.ru/searches/" + _.keys(ticket.order_urls)[0] + "/order_urls/" + _.values(ticket.order_urls)[0]
           };
         });
         return cb(null, results);
