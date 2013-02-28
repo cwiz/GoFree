@@ -79,6 +79,8 @@ SearchForm = Backbone.View.extend
     prevDate  = @collection.at(index - 1)?.get('date')
     minDate   = if prevDate then prevDate else app.utils.dateToYMD(@maxDate)
 
+    console.log item
+
     @stops[item.cid] = new app.views.SearchTripsStop
       list: @stopsEl
       model: item

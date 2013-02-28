@@ -2,6 +2,8 @@ SearchTripsStop = Backbone.Model.extend
   defaults:
     place:
       name: null
+      name_ru: null
+      country_name_ru: null
     nearest_airport:
       name: null
     date: null

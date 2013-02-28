@@ -56,14 +56,13 @@ Index = Backbone.View.extend
     @bg.fadeOut(200, =>
       @bg.attr('src', e.target.src)
       @bg.fadeIn(200)
-      )
+    )
 
   placeChanged: (model, place) ->
     $.ajax
       url:  "#{app.api.images}#{place.country_code}/#{place.name}"
       success: (resp) =>
-        if resp and resp.value
-          @preloader.attr('src', resp.value.blured)
+        @preloader.attr('src', resp.value.blured) if (resp and resp.value)
 
   destroy: ->
     @undelegateEvents()

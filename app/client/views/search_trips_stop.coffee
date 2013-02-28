@@ -101,9 +101,7 @@ SearchTripsStop = Backbone.View.extend
 
   placeSelected: (e) ->
     place = @suggestions[+e.target.getAttribute('data-index')]
-
     @model.set('place', place)
-
     @clearSuggest()
 
   renderSuggest: (resp) ->
@@ -155,6 +153,13 @@ SearchTripsStop = Backbone.View.extend
   , 100)
 
   render: ->
+
+    # is there better way to do it?
+    name_ru         = @model.get('place').name_ru
+    country_name_ru = @model.get('place').country_name_ru
+    displayName     = if name_ru then "#{name_ru}, #{country_name_ru}" else ''
+    @model.set 'displayName', displayName
+    
     @$el.html(app.templates.search_trips_stop(@model.toJSON()))
     @list.append(@$el)
 

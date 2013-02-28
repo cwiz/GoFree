@@ -72,7 +72,7 @@ SERP = Backbone.View.extend
       @serpPart.hide()
       app.router.navigate('', trigger: true)
       @cleanup()
-      )
+    )
 
   updatePageHeight: ->
     @serpPart.css('min-height': app.size.height)
