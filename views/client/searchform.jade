@@ -4,6 +4,11 @@ section.v-searchform.l-wrap
     strong.v-s-subtitle Умный поиск и планирование путешествий.
 
     form.v-s-form
+      ul.v-s-destinations
+
+      p.v-s-destinations-add
+        span.v-s-d-add.pointy.disabled &plus; добавить перелет
+
       .v-s-conditions
         .v-s-guests
           select.m-input-select(name="adults")
@@ -15,11 +20,6 @@ section.v-searchform.l-wrap
           label Бюджет
           input.v-s-amount.small(type="text", name="budget", min=10000, value=budget, data-validate="true", data-error="Выберите бюджет", data-filter="number", required)
           small руб
-
-      ul.v-s-destinations
-
-      p.v-s-destinations-add
-        span.v-s-d-add.pointy.disabled &plus; добавить перелет
 
       .v-s-error Пожалуйста, выберите города из выпадающих списков.
 
