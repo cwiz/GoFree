@@ -31,6 +31,7 @@ ROLE 		= process.env.NODE_ENV or 'development'
 NUM_CPUS 	= if ROLE is \production 	then os.cpus().length 		else 1
 DOMAIN		= if ROLE is \production 	then \gofree.ru 			else \localhost
 PORT        = if ROLE is \production 	then 80						else 3000
+PORT        = process.env.PORT or PORT
 SITE_URL    = if PORT is \production	then DOMAIN					else "#{DOMAIN}:#{PORT}"
 
 if cluster.isMaster

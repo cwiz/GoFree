@@ -24,6 +24,7 @@
   NUM_CPUS = ROLE === 'production' ? os.cpus().length : 1;
   DOMAIN = ROLE === 'production' ? 'gofree.ru' : 'localhost';
   PORT = ROLE === 'production' ? 80 : 3000;
+  PORT = process.env.PORT || PORT;
   SITE_URL = PORT === 'production'
     ? DOMAIN
     : DOMAIN + ":" + PORT;
