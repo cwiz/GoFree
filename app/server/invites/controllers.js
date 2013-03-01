@@ -14,10 +14,15 @@
       guid: guid,
       used: false
     }, function(error, result){
-      console.log(error);
       if (error || !result) {
         return res.redirect("/invites/error");
       }
+      database.invites.update({
+        guid: guid,
+        $set: {
+          used: true
+        }
+      });
       req.session.invite = result;
       return res.redirect('/');
     });

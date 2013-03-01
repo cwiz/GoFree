@@ -12,10 +12,9 @@ exports.activate = (req, res) ->
 	(error, result) <- database.invites.findOne do 
 		guid: guid
 		used: false
-
-	console.log error
-
 	return res.redirect "/invites/error" if (error or not result)
+
+	database.invites.update guid : guid, $set : used : true
 
 	req.session.invite = result
 	res.redirect '/'
