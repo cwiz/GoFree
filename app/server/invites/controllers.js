@@ -18,7 +18,8 @@
         return res.redirect("/invites/error");
       }
       database.invites.update({
-        guid: guid,
+        guid: guid
+      }, {
         $set: {
           used: true
         }

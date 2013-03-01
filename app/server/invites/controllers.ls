@@ -14,7 +14,13 @@ exports.activate = (req, res) ->
 		used: false
 	return res.redirect "/invites/error" if (error or not result)
 
-	database.invites.update guid : guid, $set : used : true
+	database.invites.update(
+		{guid : guid}, 
+		{
+			$set : {
+				used : true
+			}
+		})
 
 	req.session.invite = result
 	res.redirect '/'
