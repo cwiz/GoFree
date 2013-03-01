@@ -44,6 +44,15 @@ Search = Backbone.Model.extend
   serialize: ->
     _.extend(@toJSON(), trips: @get('trips').toJSON())
 
+  preSave: ->
+    data = @serialize()
+    @set('hash', data['hash'] = md5(JSON.stringify(data)))
+
+    app.socket.emit('pre_search', data)
+    @trigger('pre_save', data)
+
+    app.log('[app.models.Search]: pre_save', data)
+
   save: ->
     data = @serialize()
     @set('hash', data['hash'] = md5(JSON.stringify(data)))

@@ -35,8 +35,8 @@ Index = Backbone.View.extend
     @serpPart.css('min-height': app.size.height, display: 'block')
 
     app.utils.scroll(app.size.height, 300, =>
-      @searchPart.hide()
       app.router.navigate('search/' + data.hash, trigger: true)
+      @searchPart.hide()
       )
 
   render: ->

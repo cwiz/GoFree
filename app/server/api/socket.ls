@@ -67,6 +67,28 @@ exports.search = (err, socket, session) ->
 		database.search.insert(data)
 		socket.emit 'search_ok', {} 
 
+	socket.on 'pre_search', (searchParams) ->
+
+		(error, result)		<- makePairs searchParams
+		pairs 				= result.pairs
+
+		callbacks = []
+		_.map pairs, (pair) -> do ->
+
+			# flights
+			_.map providers.flightProviders, (provider) -> do ->
+				callbacks.push (callback) ->
+					(error, result) <- provider.search pair.origin, pair.destination, pair.extra
+
+			# hotels
+			return if not pair.hotels_signature
+			_.map providers.hotelProviders, (provider) -> do ->
+				callbacks.push (callback) ->
+					(error, result) <- provider.search pair.origin, pair.destination, pair.extra
+					
+		async.parallel callbacks
+
+
 	socket.on 'search_start', (data) ->
 
 		(error, data) 			<- validation.start_search data

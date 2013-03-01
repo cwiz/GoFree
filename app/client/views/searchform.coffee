@@ -9,14 +9,15 @@ SearchForm = Backbone.View.extend
     @errorEl = @$el.find('.v-s-error')
     @errorVisible = false
 
-    @maxDate.setDate(@maxDate.getDate() + 1) # shift it to tomorrow
+    @maxDate.setDate(@maxDate.getDate() + 2) # shift it to day after tomorrow
 
     @stopsEl = @$el.find('.v-s-destinations')
 
-    @collection.on('add', @initStop, @)
-    @collection.on('delete', @deleteStop, @)
-    @collection.on('change:date', @dateChanged, @)
-    @collection.on('change:place', @hideError, @)
+    @collection.on('add',           @initStop,          @)
+    @collection.on('delete',        @deleteStop,        @)
+    @collection.on('change:date',   @dateChanged,       @)
+    @collection.on('change:place',  @hideError,         @)
+    @collection.on('change',        @collectionChanged, @)
 
     @$el.find('select.m-input-select').m_inputSelect()
     @form = @$el.find('.v-s-form').m_formValidate()[0]
@@ -125,6 +126,9 @@ SearchForm = Backbone.View.extend
     if not model.previous('date')
       @addStopEl.removeClass('disabled')
       @canAddStop = true
+
+  collectionChanged: (e) ->
+    @model.preSave() if @model.isValid()
 
   adultsChanged: (e) ->
     @model.set('adults', parseInt(e.target.value))

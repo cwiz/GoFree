@@ -82,6 +82,35 @@
         return socket.emit('search_ok', {});
       });
     });
+    socket.on('pre_search', function(searchParams){
+      return makePairs(searchParams, function(error, result){
+        var pairs, callbacks;
+        pairs = result.pairs;
+        callbacks = [];
+        _.map(pairs, function(pair){
+          return function(){
+            _.map(providers.flightProviders, function(provider){
+              return function(){
+                return callbacks.push(function(callback){
+                  return provider.search(pair.origin, pair.destination, pair.extra, function(error, result){});
+                });
+              }();
+            });
+            if (!pair.hotels_signature) {
+              return;
+            }
+            return _.map(providers.hotelProviders, function(provider){
+              return function(){
+                return callbacks.push(function(callback){
+                  return provider.search(pair.origin, pair.destination, pair.extra, function(error, result){});
+                });
+              }();
+            });
+          }();
+        });
+        return async.parallel(callbacks);
+      });
+    });
     socket.on('search_start', function(data){
       return validation.start_search(data, function(error, data){
         if (error) {
