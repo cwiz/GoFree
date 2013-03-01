@@ -18,6 +18,7 @@
       "MD5"               : "1.0.3",
       "moment"            : "1.7.2",
       "mongolian"         : "0.1.18",
+      "node-guid"         : "*",
       "passport"          : "0.1.15",
       "passport-facebook" : "0.1.5",
       "passport-vkontakte": "0.1.4",

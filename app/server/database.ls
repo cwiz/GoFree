@@ -39,3 +39,7 @@ exports.countries.ensureIndex 	{ id 			: 1 }, 	{ unique: true }
 exports.trips 			= db.collection 'trips'
 exports.trips.ensureIndex 		{ trip_hash 	: 1 }, 	{ unique: true }
 exports.trips.ensureIndex 		{ search_hash 	: 1 }
+
+# Invites
+exports.invites 		= db.collection 'invites'
+exports.invites.ensureIndex guid : 1

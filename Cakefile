@@ -32,6 +32,18 @@ task "db:populate_airlines", 'populate airports', ->
 	airports.stdout.on 'data', console.log
 	airports.stderr.on 'data', console.log
 
+task "invites:generate", 'generate invites', ->
+	airports = exec "livescript scripts/invites/generate.ls"
+
+	airports.stdout.on 'data', console.log
+	airports.stderr.on 'data', console.log
+
+task "invites:list", 'list invites', ->
+	airports = exec "livescript scripts/invites/list.ls"
+
+	airports.stdout.on 'data', console.log
+	airports.stderr.on 'data', console.log
+
 task "db:restore_geonames", 'populate geonames', ->
 	airports = exec "mongorestore --db ostroterra --verbose --collection geonames #{__dirname}/scripts/autocomplete/geonames/ostroterra/geonames.bson"
 

@@ -98,7 +98,7 @@ exports.search = (err, socket, session) ->
 			| Error: #{error} 
 			| \# results: #{items.length}"
 			
-			providersReady += 1 if (complete or error or (items.length is 0))
+			providersReady += 1 if (complete or error or not items.length)
 
 			socket.emit params.event, do
 				error     : error
@@ -106,7 +106,7 @@ exports.search = (err, socket, session) ->
 				signature : params.signature
 				progress  : 1
 
-			progress = providersReady.toFixed(2) / totalProviders
+			progress = _.min([1, providersReady.toFixed(2) / totalProviders])
 
 			console.log "SOCKET: progress | value: #{progress}"
 			

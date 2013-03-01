@@ -115,7 +115,7 @@
               complete = ((ref$ = params.result) != null ? ref$.complete : void 8) || false;
               error = ((ref$ = params.error) != null ? ref$.message : void 8) || null;
               console.log("SOCKET: " + params.event + " | Complete: " + complete + " | Provider: " + params.provider.name + " | Error: " + error + " | # results: " + items.length);
-              if (complete || error || items.length === 0) {
+              if (complete || error || !items.length) {
                 providersReady += 1;
               }
               socket.emit(params.event, {
@@ -124,7 +124,7 @@
                 signature: params.signature,
                 progress: 1
               });
-              progress = providersReady.toFixed(2) / totalProviders;
+              progress = _.min([1, providersReady.toFixed(2) / totalProviders]);
               console.log("SOCKET: progress | value: " + progress);
               return socket.emit('progress', {
                 hash: searchParams.hash,

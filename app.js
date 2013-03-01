@@ -161,10 +161,24 @@
         app.use(express.logger("dev"));
         return app.locals.__debug = true;
       });
+      app.all("*", function(req, res, next){
+        if (/^\/invites/g.test(req.url)) {
+          return next();
+        } else if (req.isAuthenticated()) {
+          return next();
+        } else if (req.session.invite) {
+          return next();
+        } else {
+          return res.redirect("/invites");
+        }
+      });
       app.get("/", backEnd.about.index);
       app.get("/search/:hash", backEnd.about.index);
       app.get("/journey/:hash", backEnd.about.index);
       app.get("/add_email", backEnd.about.add_email);
+      app.get("/invites", backEnd.invites.index);
+      app.get("/invites/error", backEnd.invites.error);
+      app.get("/invites/:guid", backEnd.invites.activate);
       app.get("/api/v2/autocomplete/:query", backEnd.api.autocomplete_v2);
       app.get("/api/v2/image/:country/:city", backEnd.api.image_v2);
       app.get("/api/v2/get_location", backEnd.api.get_location);

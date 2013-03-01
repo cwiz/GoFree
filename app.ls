@@ -151,15 +151,15 @@ else
 		
 		app.use express.cookieParser(SECRET)
 
-		app.use express.session({ 
+		app.use express.session do
 			store 	: sessionStore
 			secret  : SECRET
-		})
 
 		app.use passport.initialize!
 		app.use passport.session!
 		app.use express.compress!
 
+		# sets user to locals
 		app.use (req, res, next) ->
 			app.locals.user = if req.user then req.user else null
 			next!
@@ -176,12 +176,32 @@ else
 		app.locals.__debug = true
 
 	# Routes
+
+	# --- Authentication & Invites
+	app.all "*", (req, res, next) ->
+			
+		if /^\/invites/g.test req.url
+			return next!
+			
+		else if req.isAuthenticated!
+			return next!
+
+		else if req.session.invite
+			return next!
+			
+		else
+			return res.redirect "/invites"
 	
 	# --- static
 	app.get "/",                            	backEnd.about.index
 	app.get "/search/:hash",                	backEnd.about.index
 	app.get "/journey/:hash",                	backEnd.about.index
 	app.get "/add_email",            		    backEnd.about.add_email
+
+	# --- invites
+	app.get "/invites",							backEnd.invites.index
+	app.get "/invites/error",					backEnd.invites.error
+	app.get "/invites/:guid",					backEnd.invites.activate
 	
 	# --- API --- 
 	app.get "/api/v2/autocomplete/:query",  	backEnd.api.autocomplete_v2
