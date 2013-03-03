@@ -36,7 +36,7 @@ task "db:populate_airlines", 'populate airports', ->
 	airports.stderr.on 'data', console.log
 
 task "db:restore_geonames", 'populate geonames', ->
-	airports = exec "mongorestore --db ostroterra --verbose --collection geonames #{__dirname}/scripts/geonames/geonames/ostroterra/geonames.bson"
+	airports = exec "mongorestore --db ostroterra --verbose --collection geonames #{__dirname}/scripts/geobase/geonames/ostroterra/geonames.bson"
 
 	airports.stdout.on 'data', console.log
 	airports.stderr.on 'data', console.log
