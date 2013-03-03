@@ -52,8 +52,8 @@ SearchForm = Backbone.View.extend
 
   populateCollection: ->
     @collection.add([
-      { date: app.utils.dateToYMD(@maxDate), removable: false }
-      { date: null, removable: false }
+      { date: app.utils.dateToYMD(@maxDate), removable: false, label: 'Откуда' }
+      { date: null, removable: false, label: 'Куда' }
     ])
 
   initStops: () ->
@@ -114,8 +114,8 @@ SearchForm = Backbone.View.extend
 
   dateChanged: (model, date) ->
     index = @collection.indexOf(model)
-    prev = @collection.at(index - 1)
-    next = @collection.at(index + 1)
+    prev  = @collection.at(index - 1)
+    next  = @collection.at(index + 1)
 
     if (prev) then @stops[prev.cid].setMaxDate(date)
     if (next) then @stops[next.cid].setMinDate(date)
