@@ -97,13 +97,13 @@ SERPTrip = Backbone.Model.extend
   receivedFlights: (data) ->
     if @get('flights_signature') == data.signature
       @get('flights').add(data.items)
-      @get('flights_filtered').update(@filter(@get('flights'), @flightsFilter)).trigger('progress', data.progress)
+      @get('flights_filtered').update(@filter('flights')).trigger('progress', data.progress)
       app.log('[app.models.SERPTrip]: received ' + data.items.length + ' flights, signed ' + data.signature)
 
   receivedHotels: (data) ->
     if @get('hotels_signature') == data.signature
       @get('hotels').add(data.items)
-      @get('hotels_filtered').update(@filter(@get('hotels'), @hotelsFilter)).trigger('progress', data.progress)
+      @get('hotels_filtered').update(@filter('hotels')).trigger('progress', data.progress)
       app.log('[app.models.SERPTrip]: received ' + data.items.length + ' hotels, signed ' + data.signature)
 
   filter: (type)->
