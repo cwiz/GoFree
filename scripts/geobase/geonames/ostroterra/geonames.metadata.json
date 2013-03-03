@@ -1,0 +1,1 @@
+{ "indexes" : [ { "v" : 1, "key" : { "_id" : 1 }, "ns" : "ostroterra.geonames", "name" : "_id_" }, { "v" : 1, "key" : { "name_ru_lower" : 1 }, "ns" : "ostroterra.geonames", "name" : "name_ru_lower_1" }, { "v" : 1, "key" : { "name_ru" : 1 }, "ns" : "ostroterra.geonames", "name" : "name_ru_1" } ] }
