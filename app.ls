@@ -179,19 +179,19 @@ else
 	# Routes
 
 	# --- Authentication & Invites
-	app.all "*", (req, res, next) ->
+	# app.all "*", (req, res, next) ->
 			
-		if /^\/invites/g.test req.url
-			return next!
+	# 	if /^\/invites/g.test req.url
+	# 		return next!
 			
-		else if req.isAuthenticated!
-			return next!
+	# 	else if req.isAuthenticated!
+	# 		return next!
 
-		else if req.session.invite
-			return next!
+	# 	else if req.session.invite
+	# 		return next!
 			
-		else
-			return res.redirect "/invites"
+	# 	else
+	# 		return res.redirect "/invites"
 	
 	# --- static
 	app.get "/",                            	backEnd.about.index

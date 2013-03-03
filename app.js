@@ -162,17 +162,6 @@
         app.use(express.logger("dev"));
         return app.locals.__debug = true;
       });
-      app.all("*", function(req, res, next){
-        if (/^\/invites/g.test(req.url)) {
-          return next();
-        } else if (req.isAuthenticated()) {
-          return next();
-        } else if (req.session.invite) {
-          return next();
-        } else {
-          return res.redirect("/invites");
-        }
-      });
       app.get("/", backEnd.about.index);
       app.get("/search/:hash", backEnd.about.index);
       app.get("/journey/:hash", backEnd.about.index);

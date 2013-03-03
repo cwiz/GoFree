@@ -146,6 +146,39 @@
     text-transform: uppercase;
   }
 
+  .v-s-t-c-prefilters {
+
+    .sep {
+      display: inline-block;
+      vertical-align: middle;
+      opacity: .5;
+
+      font-size: 12px;
+    }
+
+    .v-s-t-c-prefilter {
+      margin: 0 5px;
+
+      font-size: 14px;
+      opacity: .5;
+
+      cursor: pointer;
+
+      &.first {
+        margin-left: 0;
+      }
+
+      &.selected {
+        font-size: inherit;
+        opacity: 1;
+      }
+    }
+
+    .v-s-t-titlecontent {
+      margin-left: 5px;
+    }
+  }
+
   .v-s-t-rowcontrols {
     margin-top: 10px;
     padding: 0 30px;

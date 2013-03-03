@@ -57,13 +57,17 @@
         
   if hotels_signature
     .v-s-t-hotels
-      h3.v-s-t-title Отели в #{destination.place.name_ru_inflected}
+      h3.v-s-t-title.v-s-t-c-prefilters
+        span.v-s-t-c-prefilter.first.selected(data-filter="none") Все варианты проживания
+        i.sep |
+        span.v-s-t-c-prefilter(data-filter="hotels") отели
+        i.sep |
+        span.v-s-t-c-prefilter(data-filter="apartments") апартаменты
+        span.v-s-t-titlecontent в #{destination.place.name_ru_inflected}
 
       .v-s-t-rowcontrols
         ul.v-s-t-c-filters
           li.v-s-t-c-filter.selected(data-filter="none") Все
-          li.v-s-t-c-filter(data-filter="hotels") Отели
-          li.v-s-t-c-filter(data-filter="apartments") Квартиры
           li.v-s-t-c-filter(data-filter="convenient") Оптимальные
           //- li.v-s-t-c-filter(data-filter="cheap") Дешевые
           li.v-s-t-c-filter(data-filter="luxury") Лакшери
