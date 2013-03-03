@@ -4,10 +4,6 @@ section.v-searchform.l-wrap
     strong.v-s-subtitle Умный поиск и планирование путешествий.
 
     form.v-s-form
-      ul.v-s-destinations
-
-      p.v-s-destinations-add
-        span.v-s-d-add.pointy.disabled &plus; добавить перелет
 
       .v-s-conditions
         .v-s-guests
@@ -21,17 +17,14 @@ section.v-searchform.l-wrap
           input.v-s-amount.small(type="text", name="budget", min=10000, value=budget, data-validate="true", data-error="Выберите бюджет", data-filter="number", required)
           small руб
 
+      ul.v-s-destinations
+
+      p.v-s-destinations-add
+        span.v-s-d-add.pointy.disabled &plus; добавить город
+
       .v-s-error Пожалуйста, выберите города из выпадающих списков.
 
       .v-s-submit
         button.button.orange.v-s-submitform 
           span Найти жилье и перелеты
 
-    //- .v-s-description
-    //-   header.
-    //-    Shazooo помогает вам искать и бронировать перелёты, поезда, такси, отели, 
-    //-    комнаты и многое другое действительно легко и быстро!
-
-    //-   p.
-    //-    Составляйте маршрут своего путешествия, учитывая все детали, делитесь с друзьями,
-    //-     отдыхайте, мы позаботимся об остальном.

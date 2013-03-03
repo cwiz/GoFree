@@ -2,6 +2,9 @@ SERPTrip = Backbone.Model.extend
   flightsFilter: 'none'
   hotelsFilter: 'none'
 
+  flightsPreFilter: 'none'
+  hotelsPreFilter: 'none'
+
   defaults:
     origin:
       date: null
@@ -33,7 +36,7 @@ SERPTrip = Backbone.Model.extend
 
       if firstElement.get('stops')
         minDuration = _.min(src, (elem) -> elem.get('duration')).get('duration')
-        console.log minDuration
+        # console.log minDuration
         return _.sortBy(
           
           _.filter(src, (model) -> 
@@ -64,17 +67,27 @@ SERPTrip = Backbone.Model.extend
     'apartments': (src) -> _.filter(src, (model)-> model.get('type') == 'apartment')
 
   initialize: ->
+    app.on('serp_prefilter', @setPreFilter, @)
     app.on('serp_filter', @setFilter, @)
     app.log('[app.models.SERPTrip]: initialize')
+
+  setPreFilter: (data) ->
+    if @get('flights_signature') is data.signature
+      @flightsPreFilter = data.filter
+      @get('flights_filtered').update(@filter('flights')).trigger('filtered')
+
+    if @get('hotels_signature') is data.signature
+      @hotelsPreFilter = data.filter
+      @get('hotels_filtered').update(@filter('hotels')).trigger('filtered')
 
   setFilter: (data) ->
     if @get('flights_signature') is data.signature
       @flightsFilter = data.filter
-      @get('flights_filtered').update(@filter(@get('flights'), @flightsFilter)).trigger('filtered')
+      @get('flights_filtered').update(@filter('flights')).trigger('filtered')
 
     if @get('hotels_signature') is data.signature
       @hotelsFilter = data.filter
-      @get('hotels_filtered').update(@filter(@get('hotels'), @hotelsFilter)).trigger('filtered')
+      @get('hotels_filtered').update(@filter('hotels')).trigger('filtered')
 
   observe: ->
     if @get('flights_signature')? then app.socket.on('flights_ready', _.bind(@receivedFlights, @))
@@ -84,20 +97,34 @@ SERPTrip = Backbone.Model.extend
   receivedFlights: (data) ->
     if @get('flights_signature') == data.signature
       @get('flights').add(data.items)
-      @get('flights_filtered').update(@filter(@get('flights'), @flightsFilter)).trigger('progress', data.progress)
+      @get('flights_filtered').update(@filter('flights')).trigger('progress', data.progress)
       app.log('[app.models.SERPTrip]: received ' + data.items.length + ' flights, signed ' + data.signature)
 
   receivedHotels: (data) ->
     if @get('hotels_signature') == data.signature
       @get('hotels').add(data.items)
-      @get('hotels_filtered').update(@filter(@get('hotels'), @hotelsFilter)).trigger('progress', data.progress)
+      @get('hotels_filtered').update(@filter('hotels')).trigger('progress', data.progress)
       app.log('[app.models.SERPTrip]: received ' + data.items.length + ' hotels, signed ' + data.signature)
 
-  filter: (source, type)->
-    if type == 'none' or not type
-      source.toArray()
+  filter: (type)->
+    if type == 'flights'
+      source = @get('flights')
+      preFilter = @flightsPreFilter
+      filter = @flightsFilter
     else
-      @filterFactors[type](source.toArray())
+      source = @get('hotels')
+      preFilter = @hotelsPreFilter
+      filter = @hotelsFilter
+
+    result = source.toArray()
+
+    if preFilter != 'none'
+      result = @filterFactors[preFilter](result)
+
+    if filter != 'none'
+      result = @filterFactors[filter](result)
+    
+    result
 
   destroy: ->
     if @get('flights_signature')? then @set('flights_signature', null)

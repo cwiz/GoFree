@@ -17,8 +17,11 @@ task "test", "run tests", ->
 		--timeout 60000
 		"
 
-	test.stdout.on 'data', console.log
-	test.stderr.on 'data', console.log
+	test.stdout.on 'data', 	console.log
+	test.stdout.on 'error', console.log
+	
+	test.stderr.on 'data', 	console.log
+	test.stderr.on 'error', console.log
 
 task "db:populate_airports", 'populate airports', ->
 	airports = exec "coffee scripts/airports/populateAirports.coffee"
@@ -32,6 +35,15 @@ task "db:populate_airlines", 'populate airports', ->
 	airports.stdout.on 'data', console.log
 	airports.stderr.on 'data', console.log
 
+task "db:restore_geonames", 'populate geonames', ->
+	airports = exec "mongorestore --db ostroterra --verbose --collection geonames #{__dirname}/scripts/geonames/geonames/ostroterra/geonames.bson"
+
+	airports.stdout.on 'data', console.log
+	airports.stderr.on 'data', console.log
+
+task "db:copy_geoip", 'copy geonames DB to node modules', ->
+	exec 'cp -r data/* node_modules/geoip-lite/data'
+
 task "invites:generate", 'generate invites', ->
 	airports = exec "livescript scripts/invites/generate.ls"
 
@@ -44,14 +56,10 @@ task "invites:list", 'list invites', ->
 	airports.stdout.on 'data', console.log
 	airports.stderr.on 'data', console.log
 
-task "db:restore_geonames", 'populate geonames', ->
-	airports = exec "mongorestore --db ostroterra --verbose --collection geonames #{__dirname}/scripts/autocomplete/geonames/ostroterra/geonames.bson"
-
-	airports.stdout.on 'data', console.log
-	airports.stderr.on 'data', console.log
-
-task "db:copy_geonames", 'copy geonames DB to node modules', ->
-	exec 'cp -r data/* node_modules/geoip-lite/data'
+task 'init', "perform init operations", ->
+	exec "npm install ."
+	exec "cake db:restore_geonames"
+	exec "cake db:copy_geoip"
 
 task "dev", 'development server w/ autoreload', ->
 	exec "npm install ."

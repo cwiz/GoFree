@@ -26,7 +26,7 @@
       "redis"             : "0.8.2",
       "request"           : "2.12.0",
       "session.socket.io" : "*",
-      "socket.io"         : "0.9.11",
+      "socket.io"         : "0.9.13",
       "socket.io-client"  : "0.9.11",
       "string"            : "*",
       "underscore"        : "1.4.4",

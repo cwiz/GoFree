@@ -7,6 +7,7 @@ SearchTripsStop = Backbone.Model.extend
     nearest_airport:
       name: null
     date: null
+    label: null
     # signature: null
 
   initialize: ->
