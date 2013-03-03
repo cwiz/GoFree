@@ -7,7 +7,10 @@
   header.v-s-t-header
     .v-s-t-meta
       h2.v-s-t-places #{origin.place.name_ru} &ndash; #{destination.place.name_ru}
-      small.v-s-t-dates #{app.utils.humanizeDatesSpan(origin.date, destination.date)}
+      if origin.date < destination.date
+        small.v-s-t-dates #{app.utils.humanizeDatesSpan(origin.date, destination.date)}
+      else
+        small.v-s-t-dates #{app.utils.humanizeDate(origin.date)}
 
     .v-s-t-totals
       span.v-s-t-t-value
