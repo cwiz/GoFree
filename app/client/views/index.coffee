@@ -17,8 +17,8 @@ Index = Backbone.View.extend
     @updatePageHeight()
 
     @searchFormView = new app.views.SearchForm(
-      el: @searchForm
-      model: @model
+      el        : @searchForm
+      model     : @model
       collection: @collection
     )
 

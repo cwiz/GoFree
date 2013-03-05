@@ -8,7 +8,7 @@ div.m-input-calendar {
 
   .m-i-c-selected {
     min-width: 100px;
-    padding: 3px 8px;
+    padding: 6px 8px;
 
     display: inline-block;
 
@@ -16,7 +16,7 @@ div.m-input-calendar {
 
     font-weight: 300;
     font-size: 14px;
-    line-height: 18px;
+    line-height: 22px;
     color: #565d61;
 
     border-radius: 3px;
@@ -35,11 +35,13 @@ div.m-input-calendar {
     display: none;
 
     position: absolute;
-    left: 0;
+    right: 0;
     top: 100%;
     z-index: 100;
 
-    border-radius: 0 3px 3px 3px;
+     border-radius: 3px 0 3px 3px;
+
+    zoom: 1.2;
   }
   &.active {
     .m-i-c-selected {
@@ -56,7 +58,7 @@ div.m-input-calendar {
 
     text-align: center;
 
-    border-radius: 0 3px 0 0;
+    border-radius: 3px 0 0 0;
 
     .m-i-c-status {
       padding-top: 5px;

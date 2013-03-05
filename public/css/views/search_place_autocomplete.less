@@ -1,0 +1,55 @@
+.v-s-t-s-place {
+  float: left;
+  position: relative;
+
+  .v-s-t-s-p-suggestions {
+    width: 290px;
+    margin-top: -2px;
+
+    position: absolute;
+    left: 0;
+    top: 100%;
+    z-index: 10;
+
+    display: none;
+
+    background: #fff;
+
+    border-radius: 0 0 3px 3px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .5);
+
+    font-weight: 300;
+    
+    font-size: 14px;
+    line-height: 18px;
+
+    color: #565d61;
+
+    &.active {
+      display: block;
+    }
+
+    li {
+      padding: 3px 8px;
+      border-top: 1px solid #ccc;
+
+      cursor: pointer;
+
+      &.first {
+        border-top: 0;
+      }
+
+      &:hover {
+        background: #eee;
+      }
+
+      &.selected {
+        background: #ddd;
+      }
+
+      &:last-child {
+        border-radius: 0 0 3px 3px;
+      }
+    }
+  }
+}

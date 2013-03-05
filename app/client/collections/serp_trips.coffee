@@ -55,9 +55,8 @@ SERPTrips = Backbone.Collection.extend
     @off('add', @instantiateCollections, @)
     app.socket.removeAllListeners('search_started')
 
-    @each((model, index, list) =>
+    @each (model, index, list) =>
       model.destroy()
-      )
 
     @reset()
 

@@ -18,12 +18,9 @@ Router = Backbone.Router.extend
     app.log('[app.Router]: initialize')
 
   _manageHistory: (rule, params...) ->
-    # if (rule.indexOf('route') > - 1)
-
     @history.unshift(window.location.href)
-
-    if @history.length > @_historyLimit
-      @history.length = @_historyLimit
+    @history.length = _.min [@history.length, @_historyLimit]
+      
 
   index: ->
     app.log('[app.Router]: match "index"')
@@ -37,7 +34,11 @@ Router = Backbone.Router.extend
       delete collections['selected']
 
     unless views['index']
-      models['search'] = new app.models.Search(trips: new app.collections.SearchTrips()) unless models['search']
+      models['search'] = new app.models.Search(
+        trips   : new app.collections.SearchTrips()
+        initial : new app.models.SearchTripsStop()
+        final   : new app.models.SearchTripsStop()
+      ) unless models['search']
 
       views['index'] = new app.views.Index(
         model: models['search']
@@ -58,9 +59,9 @@ Router = Backbone.Router.extend
       collections['journey'].destroy()
       delete collections['journey']
 
-    models['search'] = new app.models.Search(trips: new app.collections.SearchTrips())
+    models['search']          = new app.models.Search(trips: new app.collections.SearchTrips())
     collections['serp_trips'] = new app.collections.SERPTrips()
-    collections['selected'] = new app.collections.SERPTripsSelected()
+    collections['selected']   = new app.collections.SERPTripsSelected()
 
     if views['serp']
       views['serp'].setup(

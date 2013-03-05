@@ -1,23 +1,40 @@
 SearchForm = Backbone.View.extend
   stops: {}
   maxDate: app.utils.pureDate(app.now)
+  minDate: null
   canAddStop: false
 
   initialize: ->
+
     @render()
-    @addStopEl = @$el.find('.v-s-d-add')
-    @errorEl = @$el.find('.v-s-error')
+
+    @addStopEl    = @$el.find '.v-s-d-add'
+    @errorEl      = @$el.find '.v-s-error'
     @errorVisible = false
 
     @maxDate.setDate(@maxDate.getDate() + 2) # shift it to day after tomorrow
 
+    @initialPlaceAutocomplete = new app.views.SearchPlaceAutocomplete 
+      el        : @$el.find('.vs-initial-place')
+      model     : @model.get('initial')
+      dependant : @$el.find('.vs-final-place label')
+
+    @finalPlaceCalendar = new app.views.SearchPlaceCalendar 
+      el        : @$el.find '.vs-final-date'
+      model     : @model.get('final')
+      minDate   : app.utils.dateToYMD @maxDate
+
     @stopsEl = @$el.find('.v-s-destinations')
 
-    @collection.on('add',           @initStop,          @)
-    @collection.on('delete',        @deleteStop,        @)
-    @collection.on('change:date',   @dateChanged,       @)
-    @collection.on('change:place',  @hideError,         @)
-    @collection.on('change',        @collectionChanged, @)
+    @collection.on('add',             @initStop,          @)
+    @collection.on('delete',          @deleteStop,        @)
+    @collection.on('change:date',     @dateChanged,       @)
+    @collection.on('change:place',    @hideError,         @)
+    @collection.on('change',          @collectionChanged, @)
+    
+    @model.get('final').on   'change:date',  @dateChanged,  @
+    @model.get('final').on   'change',  @collectionChanged, @
+    @model.get('initial').on 'change',  @collectionChanged, @
 
     @$el.find('select.m-input-select').m_inputSelect()
     @form = @$el.find('.v-s-form').m_formValidate()[0]
@@ -31,7 +48,7 @@ SearchForm = Backbone.View.extend
       @getInitialLocation()
 
     app.log('[app.views.SearchForm]: initialize')
-    @
+    return @
 
   events:
     'click .v-s-d-add'        : 'addStop'
@@ -53,7 +70,6 @@ SearchForm = Backbone.View.extend
   populateCollection: ->
     @collection.add([
       { date: app.utils.dateToYMD(@maxDate), removable: false, label: 'Откуда' }
-      { date: null, removable: false, label: 'Куда' }
     ])
 
   initStops: () ->
@@ -61,31 +77,27 @@ SearchForm = Backbone.View.extend
     @collection.each(iterator)
 
   getInitialLocation: () ->
-    $.ajax(
+    $.ajax 
       url: app.api.get_location
       success: (resp) =>
         if resp and resp.value
-          @collection.at(0).set('place', resp.value)
-    )
-
+          @model.get('initial').set('place', resp.value)
 
   resetDatesLimits: () ->
-    iterator = (model) =>
-      @dateChanged(model, model.get('date'))
 
-    @collection.each(iterator)
+    @collection.each (model) -> 
+      @dateChanged model, model.get('date')
 
   initStop: (item) ->
     index     = @collection.indexOf(item)
     prevDate  = @collection.at(index - 1)?.get('date')
     minDate   = if prevDate then prevDate else app.utils.dateToYMD(@maxDate)
 
-    console.log item
-
     @stops[item.cid] = new app.views.SearchTripsStop
       list: @stopsEl
       model: item
       minDate: if index == 0 then null else minDate
+      maxDate: @minDate
 
   deleteStop: (item) ->
     index = @collection.indexOf(item)
@@ -113,22 +125,42 @@ SearchForm = Backbone.View.extend
     @canAddStop = false
 
   dateChanged: (model, date) ->
+
     index = @collection.indexOf(model)
+
+    if index is -1
+      @minDate = @model.get('final').get('date')
+
+      @collection.each (elem) =>
+        @stops[elem.cid].calendar.setMaxDate @minDate
+
+      return
+
     prev  = @collection.at(index - 1)
     next  = @collection.at(index + 1)
 
-    if (prev) then @stops[prev.cid].setMaxDate(date)
-    if (next) then @stops[next.cid].setMinDate(date)
+    if index is (@collection.length - 1)
+      @finalPlaceCalendar.setMinDate date
+
+    if prev
+      @stops[prev.cid].calendar.setMaxDate(date)
+    
+    if next
+      @stops[next.cid].calendar.setMinDate(date)
 
     dateObj = app.utils.YMDToDate(date)
     if (+dateObj > +@maxDate) then @maxDate = dateObj
 
-    if not model.previous('date')
-      @addStopEl.removeClass('disabled')
-      @canAddStop = true
+    # if not model.previous('date')
+    #   @addStopEl.removeClass('disabled')
+    #   @canAddStop = true
 
   collectionChanged: (e) ->
-    @model.preSave() if @model.isValid()
+
+    if @model.isValid()
+      @addStopEl.removeClass('disabled')
+      @canAddStop = true
+      @model.preSave() 
 
   adultsChanged: (e) ->
     @model.set('adults', parseInt(e.target.value))

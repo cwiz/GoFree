@@ -1,9 +1,12 @@
 @import 'search_trips_stop.less';
+@import 'search_place_autocomplete.less';
 
 .v-searchform {
   position: relative;
   padding: 20px 0;
-  // .cf;
+  
+  .cf;
+  
   .helper_noselect;
 
   color: #fff;
@@ -29,7 +32,7 @@
   }
 
   .v-s-form {
-    width: 438px;
+    width: 441px;
     padding: 15px;
 
     margin: 30px auto 0;
@@ -53,6 +56,33 @@
       }
     }
 
+    .v-s-t-s-place {
+      width: 300px;
+      float: left;
+      position: relative;
+    
+      input {
+        width: 290px;
+      }
+    }
+
+    .v-s-initial {
+
+      .cf;
+      margin-bottom: 20px;
+      margin-top: 10px;
+
+      .vs-initial-place {
+        margin-top: 5px;
+      }
+
+      .v-s-guests {
+        width: 100px;
+        float: left;
+      }
+      
+    }
+
     .v-s-conditions {
       margin-top: 10px;
       padding-bottom: 20px;
@@ -60,9 +90,6 @@
 
       .cf;
 
-      .v-s-guests {
-        float: left;
-      }
       .v-s-budget {
         float: right;
       }

@@ -1,10 +1,13 @@
 Search = Backbone.Model.extend
   defaults:
-    adults: 1
-    budget: 100000
+    adults        : 2
+    budget        : 100000
 
-    trips: null
-    hash: null
+    initial       : null
+    final         : null
+   
+    trips         : null
+    hash          : null
 
   initialize: ->
     app.log('[app.models.Search]: initialize')
@@ -15,17 +18,19 @@ Search = Backbone.Model.extend
 
   setHash: (hash) ->
     @set('hash', hash)
-    @
+    return @
 
   fetched: (resp) ->
-    return unless resp.form.hash == @get('hash')
+    return unless resp.form.hash is @get('hash')
 
     data = resp.form
 
     @set(
-      adults: data.adults
-      budget: data.budget
-      trips: @get('trips').reset(data.trips)
+      adults  : data.adults
+      budget  : data.budget
+      trips   : @get('trips').reset(data.originalForm.trips)
+      initial : new app.models.SearchTripsStop data.originalForm.initial
+      final   : new app.models.SearchTripsStop data.originalForm.final
     )
 
     app.log('[app.models.Search]: fetched', data)
@@ -34,15 +39,39 @@ Search = Backbone.Model.extend
   isValid: ->
     valid = true
 
-    iterator = (item) =>
-      valid = item.get('place').name
+    @get('trips').each (item) ->
+      valid = valid and item.get('place').name
+      valid = valid and item.get('date')
 
-    @get('trips').each(iterator)
+    valid = valid and @get('initial').get('place').name
+    valid = valid and @get('final'  ).get('date')
 
     !!valid
 
   serialize: ->
-    _.extend(@toJSON(), trips: @get('trips').toJSON())
+    json = @toJSON()
+    trips = @get('trips').toJSON()
+
+    originalForm = 
+      trips   : _.clone @get('trips').toJSON()
+      initial : _.clone @get('initial').toJSON()
+      final   : _.clone @get('final').toJSON()
+
+    trips.unshift 
+      place : @get('initial').get('place')
+      date  : trips[0].date
+
+    for tripNumber in [1..trips.length-1]
+      if (tripNumber + 1) is trips.length
+        date = @get('final').get('date')
+      else
+        date = trips[tripNumber+1].date
+
+      trips[tripNumber].date = date
+
+    _.extend @toJSON(), 
+      trips         : trips
+      originalForm  : originalForm
 
   preSave: ->
     data = @serialize()

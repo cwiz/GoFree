@@ -8,14 +8,11 @@ SearchTripsStop = Backbone.Model.extend
       name: null
     date: null
     label: null
+    removable: false
     # signature: null
 
   initialize: ->
-    # @on('change', @sign, @)
     app.log('[app.models.SearchTripsStop]: initialize')
-    @
-
-  # sign: ->
-  #   @set('signature', md5(JSON.stringify(@toJSON())))
+    return @
 
 app.models.SearchTripsStop = SearchTripsStop
