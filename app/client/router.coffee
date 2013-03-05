@@ -59,7 +59,12 @@ Router = Backbone.Router.extend
       collections['journey'].destroy()
       delete collections['journey']
 
-    models['search']          = new app.models.Search(trips: new app.collections.SearchTrips())
+    models['search'] = new app.models.Search(
+      trips   : new app.collections.SearchTrips()
+      final   : new app.models.SearchTripsStop()
+      initial : new app.models.SearchTripsStop()
+    )
+    
     collections['serp_trips'] = new app.collections.SERPTrips()
     collections['selected']   = new app.collections.SERPTripsSelected()
 

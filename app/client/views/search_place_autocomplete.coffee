@@ -18,6 +18,7 @@ SearchPlaceAutocomplete = Backbone.View.extend
     @lastQuery        = null
 
     @model.on('change:place', @updatePlaceValue, @)
+    @updateDependant()
 
     app.log('[app.views.SearchPlaceAutocomplete]: initialize')
     @
@@ -35,7 +36,14 @@ SearchPlaceAutocomplete = Backbone.View.extend
     name = "#{place.name_ru}, #{place.country_name_ru}"
     
     @placeInput.val name
-    @dependantElement.html name if @dependantElement
+    @updateDependant(name)
+  
+  updateDependant: (name) ->  
+    if not name
+      place = @model.get('place')
+      name = "#{place.name_ru}, #{place.country_name_ru}"
+      
+    @dependantElement.html name
 
   manageKeypress: (e) ->
     switch e.keyCode

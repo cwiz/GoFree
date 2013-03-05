@@ -28,9 +28,9 @@ Search = Backbone.Model.extend
     @set(
       adults  : data.adults
       budget  : data.budget
-      trips   : @get('trips').reset(data.originalForm.trips)
-      initial : new app.models.SearchTripsStop data.originalForm.initial
       final   : new app.models.SearchTripsStop data.originalForm.final
+      initial : new app.models.SearchTripsStop data.originalForm.initial
+      trips   : @get('trips').reset(data.originalForm.trips)
     )
 
     app.log('[app.models.Search]: fetched', data)

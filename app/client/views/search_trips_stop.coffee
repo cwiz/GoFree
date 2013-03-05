@@ -10,8 +10,9 @@ SearchTripsStop = Backbone.View.extend
     @autocomplete = new app.views.SearchPlaceAutocomplete 
       el        : @$el.find '.place'
       model     : @model
+      dependant : @$el.find '.vs-final-place'
 
-    @calendar = new app.views.SearchPlaceCalendar 
+    @calendar     = new app.views.SearchPlaceCalendar 
       el        : @$el.find '.date'
       model     : @model
       minDate   : if options.minDate then options.minDate else null
