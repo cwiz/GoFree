@@ -1,7 +1,3 @@
-/* Author:
-    Max Degterev @suprMax
-*/
-
 ;(function($) {
     var FValidate = function(settings) {
         this.options = $.extend({
