@@ -21,7 +21,7 @@ autocomplete = (query, callback) ->
 	try
 		json = JSON.parse(body)  
 	catch error
-		return cb error, null
+		return callback error, null
 	
 	finalJson = []
 	for item in json.data when item.type is 'city'
