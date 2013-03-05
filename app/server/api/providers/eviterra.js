@@ -22,7 +22,7 @@
         json = JSON.parse(body);
       } catch (e$) {
         error = e$;
-        return cb(error, null);
+        return callback(error, null);
       }
       finalJson = [];
       for (i$ = 0, len$ = (ref$ = json.data).length; i$ < len$; ++i$) {
