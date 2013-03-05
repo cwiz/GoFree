@@ -29,10 +29,17 @@
     signature = md5(paramsString);
     command = "curl -v \\\n\t-d \"signature=" + signature + "\" \\\n\t-d \"enable_api_auth=true\" \\\n\t-d \"search[marker]=" + MARKER + "\" \\\n\t-d \"search[params_attributes][origin_name]=" + searchParams.origin_name + "\" \\\n\t-d \"search[params_attributes][destination_name]=" + searchParams.destination_name + "\"\\\n\t-d \"search[params_attributes][depart_date]=" + searchParams.depart_date + "\" \\\n\t-d \"search[params_attributes][adults]=" + searchParams.adults + "\" \\\n\t-d \"search[params_attributes][range]=" + searchParams.range + "\" \\\n\t-d \"search[params_attributes][children]=" + searchParams.children + "\" \\\n\t-d \"search[params_attributes][infants]=" + searchParams.infants + "\" \\\n\t-d \"search[params_attributes][trip_class]=" + searchParams.trip_class + "\" \\\n\t-d \"search[params_attributes][direct]=" + searchParams.direct + "\" \\\n\thttp://nano.aviasales.ru/searches.json";
     return cache.exec(command, function(err, result){
+      var res, error;
       if (err) {
         return cb(err, null);
       }
-      return cb(null, JSON.parse(result));
+      try {
+        res = JSON.parse(result);
+      } catch (e$) {
+        error = e$;
+        return cb(error, null);
+      }
+      return cb(null, res);
     });
   };
   process = function(json, cb){
