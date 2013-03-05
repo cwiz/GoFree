@@ -45,7 +45,12 @@ query = (origin, destination, extra, cb) ->
 	(err, result) <- cache.exec command
 	return cb err, null if err
 	
-	cb null, JSON.parse result
+	try
+		res = JSON.parse result
+	catch error 
+		return cb error, null
+
+	cb null, res
 
 process = (json, cb) -> 
 	return cb {message: 'no flights found'}, null if not json or not json.tickets
