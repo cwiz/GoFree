@@ -110,7 +110,7 @@
             price: ticket.total,
             provider: 'aviasales',
             stops: ticket.transferNumber - 1,
-            url: "http://nano.aviasales.ru/searches/" + _.keys(ticket.order_urls)[0] + "/order_urls/" + _.values(ticket.order_urls)[0]
+            url: "http://nano.aviasales.ru/searches/" + json.search_id + "/order_urls/" + _.keys(ticket.order_urls)[0] + "/"
           };
         });
         return cb(null, results);
