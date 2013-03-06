@@ -25,7 +25,7 @@
   DOMAIN = ROLE === 'production' ? 'gofree.ru' : 'localhost';
   PORT = ROLE === 'production' ? 80 : 3000;
   PORT = process.env.PORT || PORT;
-  SITE_URL = PORT === 'production'
+  SITE_URL = ROLE === 'production'
     ? DOMAIN
     : DOMAIN + ":" + PORT;
   if (cluster.isMaster) {
@@ -42,6 +42,8 @@
       console.log("worker " + worker.process.pid + " died");
       if (ROLE === 'production') {
         return cluster.fork();
+      } else {
+        return process.exit();
       }
     });
   } else {

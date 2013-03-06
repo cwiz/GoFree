@@ -41,7 +41,7 @@ if cluster.isMaster
 	cluster.on 'exit', (worker, code, signal) ->
 		console.log "worker #{worker.process.pid} died"
 		
-		is ROLE is 'production'
+		if ROLE is 'production'
 			cluster.fork()  
 		else
 			process.exit()
