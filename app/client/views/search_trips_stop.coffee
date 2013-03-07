@@ -18,6 +18,8 @@ SearchTripsStop = Backbone.View.extend
       minDate   : if options.minDate then options.minDate else null
       maxDate   : if options.maxDate then options.maxDate else null
 
+    @$el.find('.v-s-t-s-removestop').click => @removeStop()
+
     app.log('[app.views.SearchTripsStop]: initialize')
     return @
 
@@ -26,11 +28,10 @@ SearchTripsStop = Backbone.View.extend
     @list.append(@$el)
 
   removeStop: ->
+    
     @undelegateEvents()
-    @calendar.destroy()
+    
     delete @calendar
-
-    @autocomplete.destroy()
     delete @autocomplete
 
     @model.trigger('delete', @model)

@@ -41,7 +41,7 @@ autocomplete = (query, callback) ->
 	callback null, finalJson
 
 getEviterraId = (place, callback) ->
-	return callback(null, place.eviterra_id) if place.eviterra_id
+	return callback(null, place.eviterra_id) if place?.eviterra_id
 
 	(error, result) <- autocomplete "#{place.name_ru}"
 	return callback(error,              null)  if error

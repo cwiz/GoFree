@@ -48,7 +48,7 @@
     });
   };
   getEviterraId = function(place, callback){
-    if (place.eviterra_id) {
+    if (place != null && place.eviterra_id) {
       return callback(null, place.eviterra_id);
     }
     return autocomplete(place.name_ru + "", function(error, result){

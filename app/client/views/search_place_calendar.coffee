@@ -13,7 +13,7 @@ SearchPlaceCalendar= Backbone.View.extend
     @updateCalendar()
 
     app.log('[app.views.SearchPlaceCalendar]: initialize')
-    @
+    return @
 
   events:
     'change .m-i-c-input' : 'dateChanged'
@@ -38,14 +38,5 @@ SearchPlaceCalendar= Backbone.View.extend
 
   render: ->
     @$el.html(app.templates.search_place_calendar(@model.toJSON()))
-
-  removeStop: ->
-    @undelegateEvents()
-
-    @calendar.destroy()
-    delete @calendar
-
-    @model.trigger('delete', @model)
-    @remove()
 
 app.views.SearchPlaceCalendar = SearchPlaceCalendar
