@@ -109,6 +109,7 @@
             duration: duration * 60 * 60,
             price: ticket.total,
             provider: 'aviasales',
+            type: 'flight',
             stops: ticket.transferNumber - 1,
             url: "http://nano.aviasales.ru/searches/" + json.search_id + "/order_urls/" + _.keys(ticket.order_urls)[0] + "/"
           };

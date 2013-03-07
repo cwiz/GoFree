@@ -48,7 +48,8 @@
               provider: 'airbnb',
               id: listing.id,
               type: 'apartment',
-              url: "https://www.airbnb.com/rooms/" + listing.id
+              url: "https://www.airbnb.com/rooms/" + listing.id,
+              reviews_count: listing.reviews_count
             };
           });
           return cb(null, results);

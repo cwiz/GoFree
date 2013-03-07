@@ -172,7 +172,8 @@
             price: parseInt(variant.price),
             provider: 'eviterra',
             stops: variant.transferNumber - 1,
-            url: variant.url + 'ostroterra'
+            url: variant.url + 'ostroterra',
+            type: 'flight'
           };
           newFlights.push(newFlight);
         }

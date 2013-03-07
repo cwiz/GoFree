@@ -132,6 +132,7 @@ process = (flights, cb) ->
 			provider  : \eviterra
 			stops     : variant.transferNumber - 1
 			url       : variant.url + \ostroterra
+			type	  : \flight
 
 		newFlights.push newFlight
 
