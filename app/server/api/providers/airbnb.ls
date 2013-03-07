@@ -32,15 +32,16 @@ exports.search = (origin, destination, extra, cb) ->
                 days = moment.duration(moment(destination.date) - moment(origin.date)).days()
 
                 return do
-                  name      : listing.name
-                  stars     : null
-                  price     : listing.price * 30 * days
-                  rating    : null
-                  photo     : listing.medium_url
-                  provider  : \airbnb
-                  id        : listing.id
-                  type      : 'apartment'
-                  url       : "https://www.airbnb.com/rooms/#{listing.id}"
+                  name          : listing.name
+                  stars         : null
+                  price         : listing.price * 30 * days
+                  rating        : null
+                  photo         : listing.medium_url
+                  provider      : \airbnb
+                  id            : listing.id
+                  type          : 'apartment'
+                  url           : "https://www.airbnb.com/rooms/#{listing.id}"
+                  reviews_count : listing.reviews_count
                 
             cb null, results
 

@@ -30,29 +30,21 @@ SERPTrip = Backbone.Model.extend
     'convenient': (src)-> 
 
       # ugly way to check hotel or flight
-
       firstElement = src[0]
       return unless firstElement
 
-      if firstElement.get('stops')
+      if firstElement.get('type') is 'flight'
         minDuration = _.min(src, (elem) -> elem.get('duration')).get('duration')
-        # console.log minDuration
+        
         return _.sortBy(
-          
           _.filter(src, (model) -> 
             model.get('stops') <= 1 and model.get('duration') <= 24*60*60
           ), 
-          
-          (elem) -> 
-            minDuration / elem.get('duration')
+          (elem) -> minDuration / elem.get('duration')
         )
 
-      else if firstElement.get('stars')
-        return _.filter(src, (model) -> model.get('stars') >= 4)
-
-      else
-        return
-
+      return _.filter src, (model) -> 
+        model.get('stars') >= 4 or model.get('reviews_count') > 10
 
     'cheap':      (src) -> 
       minPrice = _.min(src, (elem) -> elem.get('price')).get('price')
@@ -62,9 +54,23 @@ SERPTrip = Backbone.Model.extend
     'direct':     (src) -> _.sortBy(_.filter(src, (model)-> model.get('stops') == 0), (elem) -> elem.duration)
     
     # hotels
-    'luxury':     (src) -> _.filter(src, (model)-> model.get('stars') == 5)
-    'hotels':     (src) -> _.filter(src, (model)-> model.get('type') == 'hotel')
-    'apartments': (src) -> _.filter(src, (model)-> model.get('type') == 'apartment')
+    'luxury':     (src) -> 
+      apartments  = _.filter(src,        (model) -> model.get('type') is 'apartment')
+      meanPrice   = 0.0
+
+      for a in apartments
+        meanPrice += a.get 'price'
+
+      meanPrice /= apartments.length
+
+      return _.filter src, (model)-> 
+        if model.get('type') is 'hotel'
+          return model.get('stars') is 5 
+        else
+          return model.get('price') >=  1.5 * meanPrice
+    
+    'hotels':     (src) -> _.filter(src, (model)-> model.get('type') is 'hotel')
+    'apartments': (src) -> _.filter(src, (model)-> model.get('type') is 'apartment')
 
   initialize: ->
     app.on('serp_prefilter', @setPreFilter, @)
