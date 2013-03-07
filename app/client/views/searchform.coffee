@@ -51,6 +51,11 @@ SearchForm = Backbone.View.extend
       @getInitialLocation()
 
     app.log('[app.views.SearchForm]: initialize')
+
+    # focusing in input 
+    cid = @collection.at(0).cid
+    @stops[cid].autocomplete.focus()
+
     return @
 
   events:
@@ -108,10 +113,10 @@ SearchForm = Backbone.View.extend
     next = @collection.at(index + 1)
 
     if (prev and next)
-      @stops[prev.cid].setMaxDate(next.get('date'))
-      @stops[next.cid].setMinDate(prev.get('date'))
+      @stops[prev.cid].calendar.setMaxDate(next.get('date'))
+      @stops[next.cid].calendar.setMinDate(prev.get('date'))
     else
-      @stops[prev.cid].setMaxDate(null)
+      @stops[prev.cid].calendar.setMaxDate(null)
 
     @collection.remove(item)
     delete @stops[item.cid]

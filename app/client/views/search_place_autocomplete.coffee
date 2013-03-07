@@ -17,6 +17,9 @@ SearchPlaceAutocomplete = Backbone.View.extend
     @suggestSelected  = null
     @lastQuery        = null
 
+    @placeInput.click =>
+      @placeInput.select()
+
     @model.on('change:place', @updatePlaceValue, @)
     @updateDependant()
 
@@ -107,6 +110,9 @@ SearchPlaceAutocomplete = Backbone.View.extend
 
     @suggestSelected = null
 
+  focus: ->
+    if not @placeInput.val()
+      @placeInput.focus()
 
   clearSuggest: ->
     @suggestEl.removeClass('active')
@@ -134,7 +140,6 @@ SearchPlaceAutocomplete = Backbone.View.extend
   , 100)
 
   render: ->
-
     # is there better way to do it?
     name_ru         = @model.get('place').name_ru
     country_name_ru = @model.get('place').country_name_ru
@@ -144,9 +149,6 @@ SearchPlaceAutocomplete = Backbone.View.extend
     
     @$el.html(app.templates.search_place_autocomplete(@model.toJSON()))
 
-  removePlace: ->
-    @undelegateEvents()
-    @model.trigger('delete', @model)
-    @remove()
+
 
 app.views.SearchPlaceAutocomplete = SearchPlaceAutocomplete
