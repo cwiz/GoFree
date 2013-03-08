@@ -65,6 +65,7 @@
   exports.trips.ensureIndex({
     search_hash: 1
   });
+  exports.conversions = db.collection('conversions');
   exports.invites = db.collection('invites');
   exports.invites.ensureIndex({
     guid: 1
