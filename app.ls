@@ -214,6 +214,9 @@ else
 	app.get "/api/v2/get_location", 			backEnd.api.get_location
 	app.get "/api/v2/auth/add_email/:email", 	backEnd.api.add_email
 
+	# --- Redirect ---
+	app.get "/redirect",						backEnd.redirect.redirect
+
 	# --- login	
 	login = (provider, req, res) -> 
 

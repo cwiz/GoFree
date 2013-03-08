@@ -40,6 +40,9 @@ exports.trips 			= db.collection 'trips'
 exports.trips.ensureIndex 		{ trip_hash 	: 1 }, 	{ unique: true }
 exports.trips.ensureIndex 		{ search_hash 	: 1 }
 
+# Conversions
+exports.conversions		= db.collection 'conversions'
+
 # Invites
 exports.invites 		= db.collection 'invites'
 exports.invites.ensureIndex guid : 1

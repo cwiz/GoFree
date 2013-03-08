@@ -175,6 +175,7 @@
       app.get("/api/v2/image/:country/:city", backEnd.api.image_v2);
       app.get("/api/v2/get_location", backEnd.api.get_location);
       app.get("/api/v2/auth/add_email/:email", backEnd.api.add_email);
+      app.get("/redirect", backEnd.redirect.redirect);
       login = function(provider, req, res){
         var referer, tripHash, searchHash, redirectUrl;
         referer = req.header('Referer');
