@@ -217,6 +217,9 @@ else
 	# --- Redirect ---
 	app.get "/redirect",						backEnd.redirect.redirect
 
+	# --- Dashboard --- 
+	app.get "/dashboard",						backEnd.dashboard.dashboard
+
 	# --- login	
 	login = (provider, req, res) -> 
 
