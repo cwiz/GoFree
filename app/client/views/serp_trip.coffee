@@ -36,6 +36,8 @@ SERPTrip = Backbone.View.extend
         signature: @model.get('hotels_signature')
         )
 
+      @hotelOverlay = new app.views.HotelOverlay()
+
     @preloader.on('load', _.bind(@updateBG, @))
     app.on('serp_selected', @updateSelected, @)
     app.on('serp_deselected', @removeSelected, @)
@@ -48,6 +50,20 @@ SERPTrip = Backbone.View.extend
 
   events:
     'click .v-s-t-places'        : 'toggleCollapse'
+    'click .v-s-t-i-moreinfo-show'        : 'loadHotelOverlay'
+
+  loadHotelOverlay: (e)->
+    id = $(e.target).parents('.v-s-t-item').attr('data-cid')
+
+    hotel = @model.get('hotels').get(id)
+
+    console.warn(hotel.toJSON())
+
+    # request hotel data, call success handler
+    @showHotelOverlay()
+
+  showHotelOverlay: (data)->
+    @hotelOverlay.show(data)
 
   updateSelected: (data)->
     if @model.get('flights_signature') == data.signature
@@ -155,6 +171,10 @@ SERPTrip = Backbone.View.extend
     if @model.get('hotels_signature')
       @hotelsRow.destroy()
       delete @hotelsRow
+
+    if @hotelOverlay
+      @hotelOverlay.destroy()
+      delete @hotelOverlay
 
     delete @model
     delete @collection
