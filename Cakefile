@@ -66,10 +66,10 @@ task "dev", 'development server w/ autoreload', ->
 
 	ls = exec "livescript -wc app/server/ app.ls"
 	ls.stdout.on 'data',  console.log
-	ls.stderr.on 'error', console.warn
+	ls.stderr.on 'error', console.log
 
 	setTimeout ( ->
-		nodemon = exec "nodemon -w public/css/ -w app/ -w views/ -w app.js app.js"
+		nodemon = exec "nodemon -L --watch public/css/ --watch app/ --watch views/ app.js"
 		nodemon.stdout.on 'data', console.log
-		nodemon.stderr.on 'data', console.warn
-	), 1500
+		nodemon.stderr.on 'data', console.log
+	), 1000
