@@ -13,6 +13,7 @@ redis       		= require "socket.io/node_modules/redis"
 socket      		= require "socket.io"
 SocketRedis 		= require "socket.io/lib/stores/redis"
 SocketSession 		= require "session.socket.io"
+express-phantom		= require "express-phantom"
 
 # SETTINGS
 
@@ -169,6 +170,8 @@ else
 			app.locals.user = if req.user then req.user else null
 			next!
 
+		app.use express-phantom.SEORender
+	
 		app.use app.router
 
 		# Locals
@@ -181,21 +184,6 @@ else
 		app.locals.__debug = true
 
 	# Routes
-
-	# --- Authentication & Invites
-	# app.all "*", (req, res, next) ->
-			
-	# 	if /^\/invites/g.test req.url
-	# 		return next!
-			
-	# 	else if req.isAuthenticated!
-	# 		return next!
-
-	# 	else if req.session.invite
-	# 		return next!
-			
-	# 	else
-	# 		return res.redirect "/invites"
 	
 	# --- static
 	app.get "/",                            	backEnd.about.index
@@ -219,6 +207,10 @@ else
 
 	# --- Dashboard --- 
 	app.get "/dashboard",						backEnd.dashboard.dashboard
+
+
+
+
 
 	# --- login	
 	login = (provider, req, res) -> 
