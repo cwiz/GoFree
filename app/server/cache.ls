@@ -8,7 +8,6 @@ client 	= redis.createClient()
 
 TTL = 3600
 
-
 setInProgress 		= (key) -> exports.set "inprogress-#{md5(key)}", true
 setNotInProgress 	= (key) -> exports.set "inprogress-#{md5(key)}", false
 
