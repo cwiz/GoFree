@@ -1,5 +1,5 @@
 (function(){
-  var _, cluster, connectRedis, express, http, os, passport, passportFacebook, passportVkontakte, path, rack, redis, socket, SocketRedis, SocketSession, FACEBOOK_ID, FACEBOOK_SECRET, VK_ID, VK_SECRET, SECRET, ROLE, NUM_CPUS, DOMAIN, PORT, SITE_URL, backEnd, database, app, server, io, facebookSettings, postLogin, vkSettings, assets;
+  var _, cluster, connectRedis, express, http, os, passport, passportFacebook, passportVkontakte, path, rack, redis, socket, SocketRedis, SocketSession, expressPhantom, FACEBOOK_ID, FACEBOOK_SECRET, VK_ID, VK_SECRET, SECRET, ROLE, NUM_CPUS, DOMAIN, PORT, SITE_URL, backEnd, database, app, server, io, facebookSettings, postLogin, vkSettings, assets;
   _ = require("underscore");
   cluster = require("cluster");
   connectRedis = require("connect-redis");
@@ -15,6 +15,7 @@
   socket = require("socket.io");
   SocketRedis = require("socket.io/lib/stores/redis");
   SocketSession = require("session.socket.io");
+  expressPhantom = require("express-phantom");
   FACEBOOK_ID = "109097585941390";
   FACEBOOK_SECRET = "48d73a1974d63be2513810339c7dbb3d";
   VK_ID = "3436490";
@@ -155,6 +156,7 @@
           app.locals.user = req.user ? req.user : null;
           return next();
         });
+        app.use(expressPhantom.SEORender);
         app.use(app.router);
         app.locals.pretty = true;
         return app.locals.__debug = false;
