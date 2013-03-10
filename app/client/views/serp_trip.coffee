@@ -55,7 +55,9 @@ SERPTrip = Backbone.View.extend
   loadHotelOverlay: (e)->
     id = $(e.target).parents('.v-s-t-item').attr('data-cid')
 
-    console.warn(id)
+    hotel = @model.get('hotels').get(id)
+
+    console.warn(hotel.toJSON())
 
     # request hotel data, call success handler
     @showHotelOverlay()
