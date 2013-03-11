@@ -12,7 +12,6 @@ HotelOverlay = Backbone.View.extend
 
   showSlidePrev: ->
     @carouselEl.jcarousel('scroll', '-=1')
-    @hide()
 
   showSlideNext: ->
     @carouselEl.jcarousel('scroll', '+=1')
@@ -22,6 +21,7 @@ HotelOverlay = Backbone.View.extend
       signature: @signature
       cid: @data.hotel.cid
       )
+    @hide()
 
   show: (@data)->
     @render()
