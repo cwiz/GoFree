@@ -1,3 +1,4 @@
+
 Search = Backbone.Model.extend
   defaults:
     adults        : 2
