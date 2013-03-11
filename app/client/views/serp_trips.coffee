@@ -86,6 +86,7 @@ SERPTrips = Backbone.View.extend
       @trips[model.cid] = new app.views.SERPTrip(
         container: @container
         model: model
+        search: @opts.search
         )
       @trips[model.cid].on('expand', _.bind(@beforeExpand, @))
       @trips[model.cid].on('collapse', _.bind(@beforeCollapse, @))
