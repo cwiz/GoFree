@@ -2,25 +2,47 @@ HotelOverlay = Backbone.View.extend
   className: 'v-hoteloverlay-wrap'
 
   initialize: (@opts)->
-    @render()
-
+    @signature = @opts.signature
     app.log('[app.views.HotelOverlay]: initialize')
 
-  # events:
+  events:
+    'click .v-h-p-prev':    'showSlidePrev'
+    'click .v-h-p-next':    'showSlideNext'
+    'click .v-h-select':    'selectHotel'
 
-  show: (data)->
-    # update overlay with new data
+  showSlidePrev: ->
+    @carouselEl.jcarousel('scroll', '-=1')
 
+  showSlideNext: ->
+    @carouselEl.jcarousel('scroll', '+=1')
+
+  selectHotel: ->
+    app.trigger('hotel_overlay_select', 
+      signature: @signature
+      cid: @data.hotel.cid
+      )
+    @hide()
+
+  show: (@data)->
+    @render()
+
+    @carouselEl = @$el.find('.v-h-photos')
+
+    @carouselEl.jcarousel()
     app.overlay.show(block: '.l-o-hotel')
 
   hide: ->
     app.overlay.hide()
 
   render: ->
-    @$el.html(app.templates.hotel_overlay())
+    data = _.extend(@data.hotel.toJSON(), nights: @data.nights)
+
+    console.log data
+
+    @$el.html(app.templates.hotel_overlay(data))
 
     app.overlay.add(@$el, '.l-o-hotel')
-    @$el.css(height: app.size.height - 100)
+    # @$el.css(height: app.size.height - 100)
 
   destroy: ->
     @undelegateEvents()

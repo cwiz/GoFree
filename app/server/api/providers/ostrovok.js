@@ -1,9 +1,9 @@
 (function(){
-  var async, database, request, cache, getOstrovokId, query, process, autocomplete;
+  var async, cache, database, request, getOstrovokId, query, process, autocomplete;
   async = require("async");
+  cache = require("./../../cache");
   database = require("./../../database");
   request = require("request");
-  cache = require("./../../cache");
   exports.name = 'ostrovok';
   getOstrovokId = function(place, callback){
     if (place.ostrovok_id) {
@@ -97,7 +97,12 @@
           rating: rating,
           stars: stars,
           type: 'hotel',
-          url: "http://ostrovok.ru" + hotel.url + "&partner_slug=ostroterra"
+          url: "http://ostrovok.ru" + hotel.url + "&partner_slug=ostroterra",
+          latitude: hotel.latitude,
+          longitude: hotel.longitude,
+          description: hotel.description_short,
+          address: hotel.address,
+          images: [hotel.thumbnail_url_220]
         };
         newHotels.push(newHotel);
       }

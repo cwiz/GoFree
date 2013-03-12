@@ -1,8 +1,9 @@
 _               = require "underscore"
 async           = require "async"
+cache           = require "./../../cache"
+database        = require "./../../database"
 moment          = require "moment"
 request         = require "request"
-cache           = require "./../../cache"
 
 exports.name = "airbnb"
 
@@ -31,7 +32,7 @@ exports.search = (origin, destination, extra, cb) ->
 
                 days = moment.duration(moment(destination.date) - moment(origin.date)).days()
 
-                return do
+                hotel =
                   name          : listing.name
                   stars         : null
                   price         : listing.price * 30 * days
@@ -42,9 +43,15 @@ exports.search = (origin, destination, extra, cb) ->
                   type          : 'apartment'
                   url           : "https://www.airbnb.com/rooms/#{listing.id}"
                   reviews_count : listing.reviews_count
+                  
+                  latitude      : listing.lat
+                  longitude     : listing.lng
+                  images        : listing.picture_urls
+                  address       : listing.address
                 
-            cb null, results
+                return hotel
 
+            cb null, results
 
     async.parallel operations, (error, results) ->
 

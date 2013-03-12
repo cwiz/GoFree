@@ -359,6 +359,8 @@ app.utils.humanizeDatesSpan = function(date1, date2) {
     return date1.getDate() + ' ' + app.utils.monthLabelsAlt[date1.getMonth()] + ' &ndash; ' + date2.getDate() + ' ' + app.utils.monthLabelsAlt[date2.getMonth()];
 };
 app.utils.getDaysDiff = function(date1, date2) {
+    date1 = app.utils.extractDate(date1);
+    date2 = app.utils.extractDate(date2);
     return Math.abs((+date1 - +date2) / (1000 * 60 * 60 * 24));
 };
 app.utils.getHoursDiff = function(date1, date2) {

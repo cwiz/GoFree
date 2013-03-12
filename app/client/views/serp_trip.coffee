@@ -36,7 +36,10 @@ SERPTrip = Backbone.View.extend
         signature: @model.get('hotels_signature')
         )
 
-      @hotelOverlay = new app.views.HotelOverlay()
+      @hotelOverlay = new app.views.HotelOverlay(
+        signature: @model.get('hotels_signature')
+        # search: @opts.search
+        )
 
     @preloader.on('load', _.bind(@updateBG, @))
     app.on('serp_selected', @updateSelected, @)
@@ -54,16 +57,17 @@ SERPTrip = Backbone.View.extend
 
   loadHotelOverlay: (e)->
     id = $(e.target).parents('.v-s-t-item').attr('data-cid')
-
     hotel = @model.get('hotels').get(id)
 
-    console.warn(hotel.toJSON())
-
     # request hotel data, call success handler
-    @showHotelOverlay()
+
+    @showHotelOverlay(hotel)
 
   showHotelOverlay: (data)->
-    @hotelOverlay.show(data)
+    @hotelOverlay.show(
+      hotel: data
+      nights: app.utils.getDaysDiff(@model.get('origin').date, @model.get('destination').date)
+    )
 
   updateSelected: (data)->
     if @model.get('flights_signature') == data.signature

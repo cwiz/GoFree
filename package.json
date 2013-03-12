@@ -1,6 +1,6 @@
 {
     "name": "gofree"
-  , "version": "0.0.8"
+  , "version": "0.0.9"
   , "private": true
   , "dependencies": {
       "asset-rack"        : "1.1.6",
@@ -31,6 +31,7 @@
       "socket.io-client"  : "0.9.11",
       "string"            : "*",
       "underscore"        : "1.4.4",
-      "xml2js"            : "0.2.2"
+      "xml2js"            : "0.2.2",
+      "lru-cache"         : "~2.2.2"
   }
 }

@@ -99,6 +99,7 @@ SERP = Backbone.View.extend
       el: @tripsContent
       collection: @collection
       hash: @hash
+      # search: @search
       )
 
     @serpTrips.setBudget(@search.get('budget'))

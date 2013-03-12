@@ -1,2 +1,45 @@
-.v-hoteloverlay
-  | ASSFUCK SHIT PISS CUNTCOCK
+section.v-hoteloverlay
+  header.v-h-header
+    .v-h-details
+      span.button.medium.green.v-h-select Добавить
+
+      h1.v-h-name=name
+      span.v-h-stars!= app.utils.formatStars(stars)
+
+      small.v-h-address=address
+
+    .v-h-pricing
+      strong.v-h-price= app.utils.formatNum(price)
+      small.v-h-nights руб. за #{app.utils.choosePlural(nights, ['ночь', 'ночи', 'ночей'])}
+
+      
+
+    //- .l-overlay-close закрыть
+
+  .v-h-photos
+    ul.v-h-p-list
+      each image in images
+        li
+          img(src=image)
+
+    span.v-h-p-prev
+      i
+    span.v-h-p-next
+      i
+
+  .v-h-description
+    h2.v-h-d-title ОПИСАНИЕ
+    .v-h-d-text
+      p=description
+      //- p. I'm not Thomas Jefferson. He was a pussy. 
+      //-   I have a 10,000-year-old brain and the boogers of a seven-year-old. 
+      //-   The last time I used? What do you mean?  I used my toaster this morning. 
+      //- p. I'm rolling out magic, bro. We win so radically in our underwear before our 
+      //-   first cup of coffee, it's scary. People say it's lonely at the top, but I sure like the view. 
+      //-   Wow. What does that mean. Everything. Next question. I am battle-tested bayonets bro. 
+      //-   It's perfect. It's awesome. Every day is just filled with just wins. 
+      //-   All we do is put wins in the record books. We win so radically in our underwear before our 
+      //-   first cup of coffee, it's scary. People say it's lonely at the top, but I sure like the view.
+
+    .v-h-d-map
+      img(src="http://maps.googleapis.com/maps/api/staticmap?center=#{latitude},#{longitude}&zoom=15&size=250x250&markers=color:blue%7Clabel:H%7C62.107733,-145.541936&sensor=false")
