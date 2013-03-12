@@ -41,10 +41,10 @@
   });
   exports.hotels = db.collection('hotels');
   exports.hotels.ensureIndex({
-    id: 1
-  });
-  exports.hotels.ensureIndex({
+    id: 1,
     provider: 1
+  }, {
+    unique: true
   });
   exports.countries = db.collection('countries');
   exports.countries.ensureIndex({

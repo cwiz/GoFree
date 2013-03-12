@@ -62,7 +62,7 @@ process = (json, cb) ->
 		stars = hotel.star_rating/10.0 if hotel.star_rating
 		
 		newHotel =
-			id      	: hotel.id
+			id      	: hotel.ostrovok_id
 			name    	: hotel.name
 			photo   	: hotel.thumbnail_url_220
 			price   	: price
@@ -75,7 +75,11 @@ process = (json, cb) ->
 			longitude	: hotel.longitude
 			description	: hotel.description_short
 			address		: hotel.address
-			images		: [hotel.thumbnail_url_220]
+			images		: [hotel.thumbnail_url_220, hotel.thumbnail_url_220, hotel.thumbnail_url_220, hotel.thumbnail_url_220]
+
+		dbHotel = ^^newHotel
+		delete dbHotel.price
+		database.hotels.insert dbHotel
 		
 		newHotels.push newHotel
 
@@ -92,6 +96,17 @@ exports.search = (origin, destination, extra, cb) ->
 	return cb(error, null) if error
 
 	cb null, hotels
+
+exports.details = (id, callback) ->
+
+	(error, hotel) <- database.hotels.findOne do 
+		provider: exports.name
+		id      : id
+
+	console.log hotel
+
+	return callback error, null if (error or not hotel)
+	callback null, hotel
 
 autocomplete = (query, callback) ->
 	ostUrl = "http://ostrovok.ru/api/site/multicomplete.json?query=#{query}&regions_ver=v5"

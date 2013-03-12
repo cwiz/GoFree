@@ -33,9 +33,8 @@ exports.request = (url, cb) ->
 
 	(error, body) <- exports.get url
 	console.log "CACHE: REDIS | url: #{url} | status: #{!!body}"
-
 	return cb null, body if body
-
+	
 	setInProgress url
 	(error, response, body) <- request url
 	console.log "CACHE: HTTP | url: #{url} | status: #{!!body}"

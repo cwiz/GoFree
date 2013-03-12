@@ -52,17 +52,22 @@ SERPTrip = Backbone.View.extend
     app.log('[app.views.SERPTrip]: initialize')
 
   events:
-    'click .v-s-t-places'        : 'toggleCollapse'
-    'click .v-s-t-i-moreinfo-show'        : 'loadHotelOverlay'
+    'click .v-s-t-places'           : 'toggleCollapse'
+    'click .v-s-t-i-photo'          : 'loadHotelOverlay'
 
   loadHotelOverlay: (e)->
-    id = $(e.target).parents('.v-s-t-item').attr('data-cid')
+    id    = $(e.target).parents('.v-s-t-item').attr('data-cid')
     hotel = @model.get('hotels').get(id)
 
     # request hotel data, call success handler
-
-    @showHotelOverlay(hotel)
-
+    console.log hotel
+    $.ajax
+      url     : "#{app.api.hotel_info}#{hotel.get('provider')}/#{hotel.get('id')}"
+      cache   : true
+      success : (resp) =>
+        newHotel = new app.models.SERPTripHotel resp.hotel
+        @showHotelOverlay newHotel
+          
   showHotelOverlay: (data)->
     @hotelOverlay.show(
       hotel: data

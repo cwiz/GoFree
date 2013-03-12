@@ -198,10 +198,11 @@ else
 	app.get "/invites/:guid",					backEnd.invites.activate
 	
 	# --- API --- 
-	app.get "/api/v2/autocomplete/:query",  	backEnd.api.autocomplete_v2
-	app.get "/api/v2/image/:country/:city", 	backEnd.api.image_v2
-	app.get "/api/v2/get_location", 			backEnd.api.get_location
-	app.get "/api/v2/auth/add_email/:email", 	backEnd.api.add_email
+	app.get "/api/v2/autocomplete/:query",  		backEnd.api.autocomplete_v2
+	app.get "/api/v2/image/:country/:city", 		backEnd.api.image_v2
+	app.get "/api/v2/get_location", 				backEnd.api.get_location
+	app.get "/api/v2/auth/add_email/:email", 		backEnd.api.add_email
+	app.get "/api/v2/hotels/details/:provider/:id", backEnd.api.hotels.details
 
 	# --- Redirect ---
 	app.get "/redirect",						backEnd.redirect.redirect

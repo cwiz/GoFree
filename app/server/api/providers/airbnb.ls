@@ -4,8 +4,9 @@ cache           = require "./../../cache"
 database        = require "./../../database"
 moment          = require "moment"
 request         = require "request"
+jsdom           = require("jsdom").jsdom
 
-exports.name = "airbnb"
+exports.name    = "airbnb"
 
 exports.search = (origin, destination, extra, cb) ->
 
@@ -48,6 +49,11 @@ exports.search = (origin, destination, extra, cb) ->
                   longitude     : listing.lng
                   images        : listing.picture_urls
                   address       : listing.address
+
+                dbHotel = ^^hotel
+                delete dbHotel.price
+                
+                database.hotels.insert dbHotel
                 
                 return hotel
 
@@ -55,10 +61,42 @@ exports.search = (origin, destination, extra, cb) ->
 
     async.parallel operations, (error, results) ->
 
-        if error
-          return cb error, {}
+        return cb error, {} if error
 
         cb null, {
             results : _.flatten(results),
             complete: true
         }
+
+exports.details = (id, callback) ->
+
+  (error, hotel) <- database.hotels.findOne do 
+    provider: exports.name
+    id      : id
+
+  return callback error, null if (error or not hotel)
+
+  if not hotel.description
+
+    url = "https://www.airbnb.com/rooms/#{id}"
+    (error, airBnbPage) <- cache.request url
+    return callback error, null if error
+
+    (error, jQuery) <- cache.request "http://code.jquery.com/jquery.js"
+    return callback error, null if error
+
+    jsdom.env do
+      html    : airBnbPage
+      src     : [jQuery],
+      done    : (errors, window) ->      
+        return callback errors, null if errors
+
+        hotel.description = window.$('#description_text_wrapper').html!
+        database.hotels.update {_id: hotel._id}, { $set: description : hotel.description }, true
+
+        delete hotel._id
+        callback null, hotel
+  
+  else
+    delete hotel._id
+    callback null, hotel
