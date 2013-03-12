@@ -5,19 +5,19 @@
     var query;
     query = req.params.query;
     if (!query) {
-      res.send({
+      res.json({
         status: 'error',
         message: "Please supply 'q' GET param."
       });
     }
     return geobase.autocomplete(query, function(error, results){
       if (error) {
-        return res.send({
+        return res.json({
           status: 'error',
           error: error
         });
       }
-      return res.send({
+      return res.json({
         status: 'ok',
         value: results
       });

@@ -61,7 +61,7 @@
     });
   };
   process = function(json, cb){
-    var hotels, rates, ref$, newHotels, i$, len$, hotel, rating, count, price, stars, newHotel;
+    var hotels, rates, ref$, newHotels, i$, len$, hotel, rating, count, price, stars, newHotel, dbHotel;
     if (!json || json.hotels == null) {
       return cb('empty json', null);
     }
@@ -89,7 +89,7 @@
           stars = hotel.star_rating / 10.0;
         }
         newHotel = {
-          id: hotel.id,
+          id: hotel.ostrovok_id,
           name: hotel.name,
           photo: hotel.thumbnail_url_220,
           price: price,
@@ -102,8 +102,11 @@
           longitude: hotel.longitude,
           description: hotel.description_short,
           address: hotel.address,
-          images: [hotel.thumbnail_url_220]
+          images: [hotel.thumbnail_url_220, hotel.thumbnail_url_220, hotel.thumbnail_url_220, hotel.thumbnail_url_220]
         };
+        dbHotel = clone$(newHotel);
+        delete dbHotel.price;
+        database.hotels.insert(dbHotel);
         newHotels.push(newHotel);
       }
     }
@@ -123,6 +126,18 @@
         }
         return cb(null, hotels);
       });
+    });
+  };
+  exports.details = function(id, callback){
+    return database.hotels.findOne({
+      provider: exports.name,
+      id: id
+    }, function(error, hotel){
+      console.log(hotel);
+      if (error || !hotel) {
+        return callback(error, null);
+      }
+      return callback(null, hotel);
     });
   };
   autocomplete = function(query, callback){
@@ -164,4 +179,8 @@
       callback(null, finalJson);
     });
   };
+  function clone$(it){
+    function fun(){} fun.prototype = it;
+    return new fun;
+  }
 }).call(this);

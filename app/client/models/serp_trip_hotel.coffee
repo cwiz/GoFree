@@ -5,9 +5,10 @@ SERPTripHotel = Backbone.Model.extend
     stars		: 0
     photo		: null
     description	: null
-    images		: null
+    images		: []
     latitude	: null
     longitude	: null
+    address     : null
 
   initialize: ->
     app.log('[app.models.SERPTripHotel]: initialize')

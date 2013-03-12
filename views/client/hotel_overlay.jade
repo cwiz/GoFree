@@ -2,7 +2,6 @@ section.v-hoteloverlay
   header.v-h-header
     .v-h-details
       span.button.medium.green.v-h-select Добавить
-
       h1.v-h-name=name
       span.v-h-stars!= app.utils.formatStars(stars)
 
@@ -11,8 +10,6 @@ section.v-hoteloverlay
     .v-h-pricing
       strong.v-h-price= app.utils.formatNum(price)
       small.v-h-nights руб. за #{app.utils.choosePlural(nights, ['ночь', 'ночи', 'ночей'])}
-
-      
 
     //- .l-overlay-close закрыть
 
@@ -30,7 +27,7 @@ section.v-hoteloverlay
   .v-h-description
     h2.v-h-d-title ОПИСАНИЕ
     .v-h-d-text
-      p=description
+      p!=description
       //- p. I'm not Thomas Jefferson. He was a pussy. 
       //-   I have a 10,000-year-old brain and the boogers of a seven-year-old. 
       //-   The last time I used? What do you mean?  I used my toaster this morning. 

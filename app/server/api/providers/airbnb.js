@@ -1,11 +1,12 @@
 (function(){
-  var _, async, cache, database, moment, request;
+  var _, async, cache, database, moment, request, jsdom;
   _ = require("underscore");
   async = require("async");
   cache = require("./../../cache");
   database = require("./../../database");
   moment = require("moment");
   request = require("request");
+  jsdom = require("jsdom").jsdom;
   exports.name = "airbnb";
   exports.search = function(origin, destination, extra, cb){
     var numPages, operations;
@@ -37,7 +38,7 @@
             }, null);
           }
           results = _.map(json.listings, function(r){
-            var listing, days, hotel;
+            var listing, days, hotel, dbHotel;
             listing = r.listing;
             days = moment.duration(moment(destination.date) - moment(origin.date)).days();
             hotel = {
@@ -56,6 +57,9 @@
               images: listing.picture_urls,
               address: listing.address
             };
+            dbHotel = clone$(hotel);
+            delete dbHotel.price;
+            database.hotels.insert(dbHotel);
             return hotel;
           });
           return cb(null, results);
@@ -72,4 +76,54 @@
       });
     });
   };
+  exports.details = function(id, callback){
+    return database.hotels.findOne({
+      provider: exports.name,
+      id: id
+    }, function(error, hotel){
+      var url;
+      if (error || !hotel) {
+        return callback(error, null);
+      }
+      if (!hotel.description) {
+        url = "https://www.airbnb.com/rooms/" + id;
+        return cache.request(url, function(error, airBnbPage){
+          if (error) {
+            return callback(error, null);
+          }
+          return cache.request("http://code.jquery.com/jquery.js", function(error, jQuery){
+            if (error) {
+              return callback(error, null);
+            }
+            return jsdom.env({
+              html: airBnbPage,
+              src: [jQuery],
+              done: function(errors, window){
+                if (errors) {
+                  return callback(errors, null);
+                }
+                hotel.description = window.$('#description_text_wrapper').html();
+                database.hotels.update({
+                  _id: hotel._id
+                }, {
+                  $set: {
+                    description: hotel.description
+                  }
+                }, true);
+                delete hotel._id;
+                return callback(null, hotel);
+              }
+            });
+          });
+        });
+      } else {
+        delete hotel._id;
+        return callback(null, hotel);
+      }
+    });
+  };
+  function clone$(it){
+    function fun(){} fun.prototype = it;
+    return new fun;
+  }
 }).call(this);
