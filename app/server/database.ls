@@ -26,6 +26,11 @@ exports.geonames.ensureIndex 	{ name_ru 		: 1 }
 exports.airlines		= db.collection 'airlines'
 exports.airlines.ensureIndex 	{ iata			: 1 }, 	{ unique: true }
 
+# Hotels
+exports.hotels			= db.collection 'hotels'
+exports.hotels.ensureIndex id 		: 1
+exports.hotels.ensureIndex provider : 1
+
 # Countries
 exports.countries		= db.collection 'countries'
 exports.countries.ensureIndex 	{ geoname_id 	: 1 }, 	{ unique: true }

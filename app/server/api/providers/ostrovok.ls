@@ -1,7 +1,7 @@
 async     = require "async"
+cache     = require "./../../cache"
 database  = require "./../../database"
 request   = require "request"
-cache     = require "./../../cache"
 
 exports.name = \ostrovok
 
@@ -62,15 +62,20 @@ process = (json, cb) ->
 		stars = hotel.star_rating/10.0 if hotel.star_rating
 		
 		newHotel =
-			id      : hotel.id
-			name    : hotel.name
-			photo   : hotel.thumbnail_url_220
-			price   : price
-			provider: exports.name
-			rating  : rating
-			stars   : stars
-			type    : 'hotel'
-			url     : "http://ostrovok.ru#{hotel.url}&partner_slug=ostroterra"
+			id      	: hotel.id
+			name    	: hotel.name
+			photo   	: hotel.thumbnail_url_220
+			price   	: price
+			provider	: exports.name
+			rating  	: rating
+			stars   	: stars
+			type    	: 'hotel'
+			url     	: "http://ostrovok.ru#{hotel.url}&partner_slug=ostroterra"
+			latitude	: hotel.latitude
+			longitude	: hotel.longitude
+			description	: hotel.description_short
+			address		: hotel.address
+			images		: [hotel.thumbnail_url_220]
 		
 		newHotels.push newHotel
 
@@ -87,7 +92,6 @@ exports.search = (origin, destination, extra, cb) ->
 	return cb(error, null) if error
 
 	cb null, hotels
-
 
 autocomplete = (query, callback) ->
 	ostUrl = "http://ostrovok.ru/api/site/multicomplete.json?query=#{query}&regions_ver=v5"

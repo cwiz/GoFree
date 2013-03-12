@@ -36,6 +36,9 @@ HotelOverlay = Backbone.View.extend
 
   render: ->
     data = _.extend(@data.hotel.toJSON(), nights: @data.nights)
+
+    console.log data
+
     @$el.html(app.templates.hotel_overlay(data))
 
     app.overlay.add(@$el, '.l-o-hotel')

@@ -1,30 +1,26 @@
 section.v-hoteloverlay
   header.v-h-header
     .v-h-details
-      if provider == 'airbnb'
-        h1.v-h-name= app.utils.shortenString(name, 30, 'right')
-      else
-        h1.v-h-name= app.utils.shortenString(name, 25, 'right')
+      span.button.medium.green.v-h-select Добавить
+
+      h1.v-h-name=name
       span.v-h-stars!= app.utils.formatStars(stars)
 
-      small.v-h-address Wu-Tang avenue, 42, Zambia
+      small.v-h-address=address
 
     .v-h-pricing
       strong.v-h-price= app.utils.formatNum(price)
-      small.v-h-nights руб. #{app.utils.choosePlural(nights, ['ночь', 'ночи', 'ночей'])}
+      small.v-h-nights руб. за #{app.utils.choosePlural(nights, ['ночь', 'ночи', 'ночей'])}
 
-      span.button.medium.green.v-h-select Добавить
+      
 
-    .l-overlay-close закрыть
+    //- .l-overlay-close закрыть
 
   .v-h-photos
     ul.v-h-p-list
-      li
-        img(src="http://placesheen.com/400/240")
-      li
-        img(src="http://placesheen.com/400/240")
-      li
-        img(src="http://placesheen.com/400/240")
+      each image in images
+        li
+          img(src=image)
 
     span.v-h-p-prev
       i
@@ -32,17 +28,18 @@ section.v-hoteloverlay
       i
 
   .v-h-description
-    h2.v-h-d-title ASSHAT
+    h2.v-h-d-title ОПИСАНИЕ
     .v-h-d-text
-      p. I'm not Thomas Jefferson. He was a pussy. 
-        I have a 10,000-year-old brain and the boogers of a seven-year-old. 
-        The last time I used? What do you mean?  I used my toaster this morning. 
-      p. I'm rolling out magic, bro. We win so radically in our underwear before our 
-        first cup of coffee, it's scary. People say it's lonely at the top, but I sure like the view. 
-        Wow. What does that mean. Everything. Next question. I am battle-tested bayonets bro. 
-        It's perfect. It's awesome. Every day is just filled with just wins. 
-        All we do is put wins in the record books. We win so radically in our underwear before our 
-        first cup of coffee, it's scary. People say it's lonely at the top, but I sure like the view.
+      p=description
+      //- p. I'm not Thomas Jefferson. He was a pussy. 
+      //-   I have a 10,000-year-old brain and the boogers of a seven-year-old. 
+      //-   The last time I used? What do you mean?  I used my toaster this morning. 
+      //- p. I'm rolling out magic, bro. We win so radically in our underwear before our 
+      //-   first cup of coffee, it's scary. People say it's lonely at the top, but I sure like the view. 
+      //-   Wow. What does that mean. Everything. Next question. I am battle-tested bayonets bro. 
+      //-   It's perfect. It's awesome. Every day is just filled with just wins. 
+      //-   All we do is put wins in the record books. We win so radically in our underwear before our 
+      //-   first cup of coffee, it's scary. People say it's lonely at the top, but I sure like the view.
 
     .v-h-d-map
-      img(src="http://maps.googleapis.com/maps/api/staticmap?center=63.259591,-144.667969&zoom=6&size=250x250&markers=color:blue%7Clabel:H%7C62.107733,-145.541936&sensor=false")
+      img(src="http://maps.googleapis.com/maps/api/staticmap?center=#{latitude},#{longitude}&zoom=15&size=250x250&markers=color:blue%7Clabel:H%7C62.107733,-145.541936&sensor=false")

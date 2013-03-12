@@ -1,10 +1,11 @@
 (function(){
-  var _, async, moment, request, cache;
+  var _, async, cache, database, moment, request;
   _ = require("underscore");
   async = require("async");
+  cache = require("./../../cache");
+  database = require("./../../database");
   moment = require("moment");
   request = require("request");
-  cache = require("./../../cache");
   exports.name = "airbnb";
   exports.search = function(origin, destination, extra, cb){
     var numPages, operations;
@@ -36,10 +37,10 @@
             }, null);
           }
           results = _.map(json.listings, function(r){
-            var listing, days;
+            var listing, days, hotel;
             listing = r.listing;
             days = moment.duration(moment(destination.date) - moment(origin.date)).days();
-            return {
+            hotel = {
               name: listing.name,
               stars: null,
               price: listing.price * 30 * days,
@@ -49,8 +50,13 @@
               id: listing.id,
               type: 'apartment',
               url: "https://www.airbnb.com/rooms/" + listing.id,
-              reviews_count: listing.reviews_count
+              reviews_count: listing.reviews_count,
+              latitude: listing.lat,
+              longitude: listing.lng,
+              images: listing.picture_urls,
+              address: listing.address
             };
+            return hotel;
           });
           return cb(null, results);
         });

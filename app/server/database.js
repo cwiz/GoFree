@@ -39,6 +39,13 @@
   }, {
     unique: true
   });
+  exports.hotels = db.collection('hotels');
+  exports.hotels.ensureIndex({
+    id: 1
+  });
+  exports.hotels.ensureIndex({
+    provider: 1
+  });
   exports.countries = db.collection('countries');
   exports.countries.ensureIndex({
     geoname_id: 1
