@@ -170,8 +170,8 @@ else
 			app.locals.user = if req.user then req.user else null
 			next!
 
-		app.use (req, res, next) -> 
-			express-phantom.SEORender req, res, next, redisClient : redis.createClient()
+		# app.use (req, res, next) -> 
+		# 	express-phantom.SEORender req, res, next, redisClient : redis.createClient()
 	
 		app.use app.router
 
