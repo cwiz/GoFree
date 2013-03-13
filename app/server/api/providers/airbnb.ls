@@ -10,7 +10,7 @@ exports.name    = "airbnb"
 
 exports.search = (origin, destination, extra, cb) ->
 
-    numPages  = 20
+    numPages  = 15
     operations = _.map [0 til numPages], (i) ->
 
         return (cb) ->
