@@ -156,11 +156,6 @@
           app.locals.user = req.user ? req.user : null;
           return next();
         });
-        app.use(function(req, res, next){
-          return expressPhantom.SEORender(req, res, next, {
-            redisClient: redis.createClient()
-          });
-        });
         app.use(app.router);
         app.locals.pretty = true;
         return app.locals.__debug = false;

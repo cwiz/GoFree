@@ -32,10 +32,10 @@ SERPTripRow = Backbone.View.extend
     app.log('[app.views.SERPTripRow]: initialize')
 
   events:
-    'click .v-s-t-i-pick':      'selectItem'
-    'click .v-s-t-i-unpick':    'deselectItem'
-    'click .v-s-t-c-filter':   'setFilter'
-    'click .v-s-t-c-prefilter':   'setPreFilter'
+    'click .v-s-t-i-pick'     : 'selectItem'
+    'click .v-s-t-i-unpick'   : 'deselectItem'
+    'click .v-s-t-c-filter'   : 'setFilter'
+    'click .v-s-t-c-prefilter': 'setPreFilter'
 
   setPreFilter: (e)->
     el = $(e.target)
@@ -141,7 +141,11 @@ SERPTripRow = Backbone.View.extend
     @counterEl.html(@counter + '/' + @length)
 
   render: (model)->
-    @template(_.extend(model.toJSON(), { origin: @model.get('origin'), destination: @model.get('destination'), cid: model.cid }))
+    @template _.extend model.toJSON(),
+      origin      : @model.get 'origin'
+      destination : @model.get 'destination'
+      extra       : @model.get 'extra'
+      cid         : model.cid 
 
   destroy: ->
     @undelegateEvents()

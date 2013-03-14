@@ -383,6 +383,26 @@ app.utils.humanizeDuration = function(ts) {
 
     return hours + ' ч.';
 };
+app.utils.humanizeNumberOfAdults = function(num) {
+    if(num === 1) {
+        return 'одного'
+    }
+    if(num === 2) {
+        return 'двух'
+    }
+    if(num === 3) {
+        return 'трех'
+    }
+    if(num === 4) {
+        return 'четырех'
+    }
+    if(num === 5) {
+        return 'пятерых'
+    }
+    if(num === 6) {
+        return 'шестерых'
+    }
+};
 app.utils.humanizeTimeSince = function(timestamp) {
     var diff = Math.ceil(app.utils.getSecondsDiff(+new Date(), timestamp));
 

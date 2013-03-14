@@ -1,7 +1,7 @@
 li.m-c-l-item.v-s-t-item.hotel(data-cid=cid)
   .v-s-t-i-header
     strong.v-s-t-i-price= app.utils.formatNum(price)
-      small руб.
+      small  руб. за #{app.utils.humanizeNumberOfAdults(extra.adults)}
 
     p.v-s-t-meta
       span.v-s-t-i-provider= provider
