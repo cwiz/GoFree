@@ -11,8 +11,8 @@ Journey = Backbone.View.extend
     @wrapEl = @$el.find('.p-journey')
     
     @collection.setHash(@hash).observe()
-    @collection.on('fetched', @collectionReady, @)
-    @collection.on('error', @collectionFailed, @)
+    @collection.on 'fetched', @collectionReady,  @
+    @collection.on 'error',   @collectionFailed, @
 
     app.socket.emit('selected_list_fetch', trip_hash: @hash)
 
@@ -38,8 +38,18 @@ Journey = Backbone.View.extend
       )
 
   collectionReady: ->
+
+    selected = @collection.serialize()
+
+    total = 0
+    for trip in selected
+      total += ((trip.flight?.price or 0) + (trip.hotel?.price or 0))
+
     @wrapEl.addClass('loaded')
-    @wrapEl.find('.p-j-content').html(app.templates.selected_list(selected: @collection.serialize()))
+    @wrapEl.find('.p-j-content').html(app.templates.selected_list(
+      selected: selected
+      total   : total
+    ))
 
   collectionFailed: ->
     @wrapEl.addClass('failed')
