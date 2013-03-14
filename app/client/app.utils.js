@@ -388,13 +388,13 @@ app.utils.humanizeNumberOfAdults = function(num) {
         return 'одного'
     }
     if(num === 2) {
-        return 'двух'
+        return 'двоих'
     }
     if(num === 3) {
-        return 'трех'
+        return 'троих'
     }
     if(num === 4) {
-        return 'четырех'
+        return 'четверых'
     }
     if(num === 5) {
         return 'пятерых'
