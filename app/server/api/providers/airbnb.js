@@ -10,7 +10,7 @@
   exports.name = "airbnb";
   exports.search = function(origin, destination, extra, cb){
     var numPages, operations;
-    numPages = 20;
+    numPages = 15;
     operations = _.map((function(){
       var i$, to$, results$ = [];
       for (i$ = 0, to$ = numPages; i$ < to$; ++i$) {

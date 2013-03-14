@@ -1,9 +1,9 @@
 SERPTrip = Backbone.Model.extend
-  flightsFilter: 'none'
-  hotelsFilter: 'none'
+  flightsFilter   : 'none'
+  hotelsFilter    : 'none'
 
   flightsPreFilter: 'none'
-  hotelsPreFilter: 'none'
+  hotelsPreFilter : 'none'
 
   defaults:
     origin:
