@@ -13,7 +13,7 @@ section.v-searchform.l-wrap
 
         .v-s-guests
           select.m-input-select(name="adults")
-            - for (var i = 1; i <= 10; i++)
+            - for (var i = 1; i <= 6; i++)
               - var selected = (adults === i);
               option(value=i, selected=selected)= app.utils.choosePlural(i, ['гость', 'гостя', 'гостей'])
 
