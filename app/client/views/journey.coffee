@@ -41,14 +41,14 @@ Journey = Backbone.View.extend
 
     selected = @collection.serialize()
 
-    total = 0
-    for trip in selected
-      total += ((trip.flight?.price or 0) + (trip.hotel?.price or 0))
+    # total = 0
+    # for trip in selected
+    #   total += ((trip.flight?.price or 0) + (trip.hotel?.price or 0))
 
     @wrapEl.addClass('loaded')
     @wrapEl.find('.p-j-content').html(app.templates.selected_list(
       selected: selected
-      total   : total
+      # total   : (total or 0)
     ))
 
   collectionFailed: ->
