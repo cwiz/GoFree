@@ -1,8 +1,20 @@
 (function(){
-  var controllers;
-  controllers = require("./controllers");
-  exports.index = controllers.index;
-  exports.about = controllers.about;
-  exports.add_email = controllers.add_email;
-  exports.error = controllers.error;
+  exports.index = function(req, res){
+    return res.render("index", {
+      title: "Index Page"
+    });
+  };
+  exports.about = function(req, res){
+    return res.render("about", {
+      title: 'About Page'
+    });
+  };
+  exports.add_email = function(req, res){
+    return res.render("addemail");
+  };
+  exports.error = function(req, res){
+    return res.render("error", {
+      layout: 'splash'
+    });
+  };
 }).call(this);

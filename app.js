@@ -169,6 +169,7 @@
       app.get("/search/:hash", backEnd.about.index);
       app.get("/journey/:hash", backEnd.about.index);
       app.get("/add_email", backEnd.about.add_email);
+      app.get("/about", backEnd.about.about);
       app.get("/invites", backEnd.invites.index);
       app.get("/invites/error", backEnd.invites.error);
       app.get("/invites/:guid", backEnd.invites.activate);
