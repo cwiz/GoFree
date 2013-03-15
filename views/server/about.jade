@@ -1,24 +1,22 @@
-extends layout
+extends splash
 
-block content
-  #page-sandbox
+block body
+  section.p-content
 
-    .m-carousel
-      span.m-c-prev.m-c-control.disabled &lt;
-      span.m-c-next.m-c-control &gt;
+    .p-c-bg-wrap
+      .p-c-bg-container
+        img.p-c-bg-img(src="/img/views/about.jpg")
+    
+    .p-c-content
+      h2 GoFree
 
-      span.m-c-count 0/0
+      .l-wrap
+      
+        p GoFree — это новый помощник в подготовке ваших незабываемых поездок. Мы объединили на одном сайте все, что понадобится вам для путешествия: авиабилеты, отели, апартаменты, страховки и многое другое. 
 
-      .m-c-coutainer
-        ul.m-c-list
-          li.m-c-l-item 1
-          li.m-c-l-item 2
-          li.m-c-l-item 3
-          li.m-c-l-item 4
-          li.m-c-l-item 5
-          li.m-c-l-item 6
-          li.m-c-l-item 7
-          li.m-c-l-item 8
-          li.m-c-l-item 9
+        p Мы ищем на множестве тревел-ресурсов и автоматически показываем оптимальные варианты, экономя ваше время.
 
-
+        p В скором времени мы готовим кое-что революционное, благодаря чему вы даже и не подумаете искать свои путешествия где-то еще. Обещаем.
+        
+        p Хотите сотрудничать? – Пишите на 
+          a(href="mailto:hello@gofree.ru") hello@gofree.ru 

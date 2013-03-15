@@ -186,16 +186,17 @@ else
 
 	# Routes
 	
-	# --- static
-	app.get "/",                            	backEnd.about.index
-	app.get "/search/:hash",                	backEnd.about.index
-	app.get "/journey/:hash",                	backEnd.about.index
-	app.get "/add_email",            		    backEnd.about.add_email
+	# --- Static
+	app.get "/",                            		backEnd.about.index
+	app.get "/search/:hash",                		backEnd.about.index
+	app.get "/journey/:hash",                		backEnd.about.index
+	app.get "/add_email",            		    	backEnd.about.add_email
+	app.get "/about",            		    		backEnd.about.about
 
-	# --- invites
-	app.get "/invites",							backEnd.invites.index
-	app.get "/invites/error",					backEnd.invites.error
-	app.get "/invites/:guid",					backEnd.invites.activate
+	# --- Invites
+	app.get "/invites",								backEnd.invites.index
+	app.get "/invites/error",						backEnd.invites.error
+	app.get "/invites/:guid",						backEnd.invites.activate
 	
 	# --- API --- 
 	app.get "/api/v2/autocomplete/:query",  		backEnd.api.autocomplete_v2
