@@ -13,8 +13,12 @@ Router = Backbone.Router.extend
     'add_email':                 'addemail'
 
   initialize: ->
-    @on('route', @_manageHistory)
 
+    #  KISSMetrics identify users
+    if app.user
+      _kmq.push ['identify', app.user.email or app.user.displayName]
+
+    @on('route', @_manageHistory)
     app.log('[app.Router]: initialize')
 
   _manageHistory: (rule, params...) ->

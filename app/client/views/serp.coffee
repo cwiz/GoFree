@@ -14,6 +14,9 @@ SERP = Backbone.View.extend
 
     @setup(opts)
 
+    # KISSMetrics
+    _kmq.push ['record', 'serp view']
+
     app.log('[app.views.SERP]: initialize')
 
   events:

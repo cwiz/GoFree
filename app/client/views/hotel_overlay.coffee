@@ -3,6 +3,10 @@ HotelOverlay = Backbone.View.extend
 
   initialize: (@opts)->
     @signature = @opts.signature
+
+    # KISSMetrics
+    _kmq.push ['record', 'hotel overlay view']
+
     app.log('[app.views.HotelOverlay]: initialize')
 
   events:
