@@ -23,7 +23,7 @@ ul.v-selected-list
             .v-s-i-flight
               strong.v-s-i-subheader Перелет &ndash; #{app.utils.formatNum(trip.flight.price)} руб.
               if app.user
-                a.v-s-i-booking.button.small.green(href=trip.flight.url, target='_blank') Забронировать
+                a.v-s-i-booking.button.small.green(href="/redirect?url=" + encodeURI(trip.flight.url), target='_blank') Забронировать
                   //- span=trip.flight.provider
               .v-s-i-subcontent
                 p.v-s-i-c-meta
@@ -51,7 +51,7 @@ ul.v-selected-list
             .v-s-i-hotel
               strong.v-s-i-subheader Проживание &ndash; #{app.utils.formatNum(trip.hotel.price)} руб.
               if app.user
-                a.v-s-i-booking.button.small.green(href=trip.hotel.url, target='_blank') Забронировать 
+                a.v-s-i-booking.button.small.green(href="/redirect?url=" + encodeURI(trip.hotel.url), target='_blank') Забронировать 
                   //- span=trip.hotel.provider
               .v-s-i-subcontent
                 .v-s-i-c-hotelphoto(style='background: url(\'#{trip.hotel.photo}\') no-repeat center center')
@@ -68,10 +68,10 @@ ul.v-selected-list
 
   if failed == slen
     li.v-s-emptyset Ничего не выбрано
-  //- else
-  //-   li.v-selected-item
-  //-     .v-s-i-header.total
-  //-       .v-s-i-h-location
-  //-         strong.v-s-i-destination Итого
-  //-       .v-s-i-h-price
-  //-           strong.v-s-i-h-amount #{app.utils.formatNum(total)} руб. 
+  if total
+    li.v-selected-item
+      .v-s-i-header.total
+        .v-s-i-h-location
+          strong.v-s-i-destination Итого
+        .v-s-i-h-price
+            strong.v-s-i-h-amount #{app.utils.formatNum(total)} руб. 

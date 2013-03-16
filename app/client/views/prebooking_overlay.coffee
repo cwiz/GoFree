@@ -4,9 +4,9 @@ PrebookingOverlay = Backbone.View.extend
   initialize: (@opts)->
     @render()
 
-    @containerEl = @$el.find('.v-p-selected-container')
-    @validation = @$el.find('.v-l-e-inputwrap').m_formValidate()[0]
-    @emailInput = @$el.find('.v-l-e-inputwrap input')
+    @containerEl  = @$el.find('.v-p-selected-container')
+    @validation   = @$el.find('.v-l-e-inputwrap').m_formValidate()[0]
+    @emailInput   = @$el.find('.v-l-e-inputwrap input')
 
     app.log('[app.views.PrebookingOverlay]: initialize')
 
@@ -14,7 +14,10 @@ PrebookingOverlay = Backbone.View.extend
     'valid .v-l-e-inputwrap':         'submitEmail'
 
   show: ->
-    @containerEl.html(app.templates.selected_list(selected: @collection.serialize()))
+    @containerEl.html(app.templates.selected_list(
+      selected: @collection.serialize()
+      total:  0
+      ))
     app.overlay.show(block: '.l-o-prebooking')
     @containerEl.css(height: app.size.height - 100 - @containerEl.position().top)
 

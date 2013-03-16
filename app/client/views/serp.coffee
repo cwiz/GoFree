@@ -4,11 +4,10 @@ SERP = Backbone.View.extend
   initialize: (opts) ->
     @render()
 
-    @searchPart = @$el.find('#part-search')
-    @serpPart = @$el.find('#part-serp')
-
-    @serpHeader = @serpPart.find('.p-s-header-wrap')
-    @tripsContent = @serpPart.find('.p-s-t-content')
+    @searchPart   = @$el.find '#part-search'
+    @serpPart     = @$el.find '#part-serp'
+    @serpHeader   = @serpPart.find '.p-s-header-wrap'
+    @tripsContent = @serpPart.find '.p-s-t-content'
 
     app.on('resize', @updatePageHeight, @)
     app.socket.on('start_search_error', _.bind(@searchError, @))
@@ -40,6 +39,7 @@ SERP = Backbone.View.extend
     if not app.user
       @prebookingOverlay = new app.views.PrebookingOverlay(
         collection: @selected
+        total     : 0
         )
       @prebookingOverlay.on('confirmed', @selectedConfirmed, @)
 
