@@ -4,22 +4,22 @@ SERPTripRow = Backbone.View.extend
   selected: null
 
   initialize: (@opts) ->
-    @template = @opts.template
-    @signature = @opts.signature
+    @template   = @opts.template
+    @signature  = @opts.signature
 
     @carouselEl = @$el.find('.m-carousel')
 
-    @listEl = @$el.find('.m-c-list')
-    @counterEl = @$el.find('.v-s-t-c-count')
+    @listEl       = @$el.find('.m-c-list')
+    @counterEl    = @$el.find('.v-s-t-c-count')
     @preFiltersEl = @$el.find('.v-s-t-c-prefilters')
-    @filtersEl = @$el.find('.v-s-t-c-filters')
+    @filtersEl    = @$el.find('.v-s-t-c-filters')
 
-    @carousel = @carouselEl.m_carousel()[0]
+    @carousel   = @carouselEl.m_carousel()[0]
 
-    @counter = 0
-    @length = 0
-    @rendered = 0
-    @progress = 0
+    @counter    = 0
+    @length     = 0
+    @rendered   = 0
+    @progress   = 0
 
     @collection.on('progress', @newData, @)
     @collection.on('filtered', @update, @)
@@ -38,8 +38,8 @@ SERPTripRow = Backbone.View.extend
     'click .v-s-t-c-prefilter': 'setPreFilter'
 
   setPreFilter: (e)->
-    el = $(e.target)
-    data = 
+    el    = $(e.target)
+    data  = 
       signature: @signature
       filter: el.data('filter')
 
