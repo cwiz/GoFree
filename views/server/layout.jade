@@ -2,6 +2,7 @@
 doctype 5
 html.no-js(lang="ru-RU")
   head
+    include includes/analytics
     meta(charset="UTF-8")
     meta(http-equiv="X-UA-Compatible", content="IE=edge,chrome=1")
 
@@ -59,5 +60,3 @@ html.no-js(lang="ru-RU")
       !=assets.tag('/libs.js')
 
       !=assets.tag('/app.js')
-
-      include includes/analytics
