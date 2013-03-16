@@ -18,9 +18,9 @@ HotelOverlay = Backbone.View.extend
 
   selectHotel: ->
     app.trigger('hotel_overlay_select', 
-      signature: @signature
-      cid: @data.hotel.cid
-      )
+      signature : @signature
+      cid       : @data.hotel.cid
+    )
     @hide()
 
   show: (@data)->

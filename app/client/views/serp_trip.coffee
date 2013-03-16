@@ -60,11 +60,11 @@ SERPTrip = Backbone.View.extend
     hotel = @model.get('hotels').get(id)
 
     # request hotel data, call success handler
-    console.log hotel
     $.ajax
       url     : "#{app.api.hotel_info}#{hotel.get('provider')}/#{hotel.get('id')}"
       cache   : true
       success : (resp) =>
+        resp.hotel.price = hotel.get 'price'
         newHotel = new app.models.SERPTripHotel resp.hotel
         @showHotelOverlay newHotel
           
