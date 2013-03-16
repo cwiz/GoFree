@@ -22,9 +22,7 @@ ul.v-selected-list
           if trip.flight
             .v-s-i-flight
               strong.v-s-i-subheader Перелет &ndash; #{app.utils.formatNum(trip.flight.price)} руб.
-              if app.user
-                a.v-s-i-booking.button.small.green(href="/redirect?url=" + encodeURI(trip.flight.url), target='_blank') Забронировать
-                  //- span=trip.flight.provider
+              a.v-s-i-booking.button.small.green(href="/redirect?url=" + encodeURI(trip.flight.url), target='_blank') Забронировать
               .v-s-i-subcontent
                 p.v-s-i-c-meta
                   span.v-s-i-c-carrier
@@ -46,13 +44,10 @@ ul.v-selected-list
                     else
                       | Без пересадок
 
-
           if trip.hotel
             .v-s-i-hotel
               strong.v-s-i-subheader Проживание &ndash; #{app.utils.formatNum(trip.hotel.price)} руб.
-              if app.user
-                a.v-s-i-booking.button.small.green(href="/redirect?url=" + encodeURI(trip.hotel.url), target='_blank') Забронировать 
-                  //- span=trip.hotel.provider
+              a.v-s-i-booking.button.small.green(href="/redirect?url=" + encodeURI(trip.hotel.url), target='_blank') Забронировать 
               .v-s-i-subcontent
                 .v-s-i-c-hotelphoto(style='background: url(\'#{trip.hotel.photo}\') no-repeat center center')
                 .v-s-i-c-hoteldetails
@@ -68,6 +63,7 @@ ul.v-selected-list
 
   if failed == slen
     li.v-s-emptyset Ничего не выбрано
+  
   if total
     li.v-selected-item
       .v-s-i-header.total
