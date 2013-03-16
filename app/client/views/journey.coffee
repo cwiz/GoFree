@@ -16,6 +16,9 @@ Journey = Backbone.View.extend
 
     app.socket.emit('selected_list_fetch', trip_hash: @hash)
 
+    # KISSMetrics
+    _kmq.push ['record', 'results view']
+
     app.log('[app.views.Journey]: initialize with hash: ' + @hash)
 
   events:
