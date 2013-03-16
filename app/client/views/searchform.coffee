@@ -56,6 +56,9 @@ SearchForm = Backbone.View.extend
     cid = @collection.at(0).cid
     @stops[cid].autocomplete.focus()
 
+    # KISSMetrics
+    _kmq.push ['record', 'searchform view']
+
     return @
 
   events:
