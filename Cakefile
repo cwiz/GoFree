@@ -17,11 +17,8 @@ task "test", "run tests", ->
 		--timeout 60000
 		"
 
-	test.stdout.on 'data', 	console.log
-	test.stdout.on 'error', console.log
-	
-	test.stderr.on 'data', 	console.log
-	test.stderr.on 'error', console.log
+	test.stdout.on 'data', 	console.log	
+	test.stderr.on 'data', 	console.warn
 
 task "db:populate_airports", 'populate airports', ->
 	airports = exec "coffee scripts/airports/populateAirports.coffee"
@@ -29,43 +26,33 @@ task "db:populate_airports", 'populate airports', ->
 	airports.stdout.on 'data', console.log
 	airports.stderr.on 'data', console.warn
 
-task "prod", 'run mongodb cluster and mosql daemon', ->
-	mongo = spawn "sh scripts/mongo/run.sh"
-
-	mongo.stdout.on 'data', console.log
-	mongo.stderr.on 'data', console.warn
-
-	server = exec "NODE_ENV=production PORT=8080 forever app.js"
-
-	server.stdout.on 'data', console.log
-	server.stderr.on 'data', console.warn
-
 task "db:populate_airlines", 'populate airports', ->
 	airports = exec "livescript scripts/airlines/populateAirlines.ls"
 
 	airports.stdout.on 'data', console.log
-	airports.stderr.on 'data', console.log
+	airports.stderr.on 'data', console.warn
 
 task "db:restore_geonames", 'populate geonames', ->
 	airports = exec "mongorestore --db ostroterra --verbose --collection geonames #{__dirname}/scripts/geobase/geonames/ostroterra/geonames.bson"
 
 	airports.stdout.on 'data', console.log
-	airports.stderr.on 'data', console.log
+	airports.stderr.on 'data', console.warn
 
 task "db:copy_geoip", 'copy geonames DB to node modules', ->
 	exec 'cp -r data/* node_modules/geoip-lite/data'
 
-task "invites:generate", 'generate invites', ->
-	airports = exec "livescript scripts/invites/generate.ls"
+task "an:sync_to_pg", 'copy mongodb data to postgres database for easy analytics', ->
 
-	airports.stdout.on 'data', console.log
-	airports.stderr.on 'data', console.log
+	flattenSearchTrips = exec 'livescript scripts/analytics/flattenSearchTrips.ls', (error, result) ->
 
-task "invites:list", 'list invites', ->
-	airports = exec "livescript scripts/invites/list.ls"
+		sync = exec 'sh scripts/analytics/sync.sh'
+		sync.stdout.on 'data', console.log
+		sync.stderr.on 'data', console.warn
 
-	airports.stdout.on 'data', console.log
-	airports.stderr.on 'data', console.log
+	flattenSearchTrips.stdout.on 'data', console.log
+	flattenSearchTrips.stderr.on 'data', console.warn
+
+	
 
 task 'init', "perform init operations", ->
 	exec "npm install ."
@@ -77,10 +64,10 @@ task "dev", 'development server w/ autoreload', ->
 
 	ls = exec "livescript -wc app/server/ app.ls"
 	ls.stdout.on 'data',  console.log
-	ls.stderr.on 'error', console.log
+	ls.stderr.on 'error', console.warn
 
 	setTimeout ( ->
 		nodemon = exec "nodemon -w public/css/ -w app/ -w views/ -w app.js app.js"
 		nodemon.stdout.on 'data', console.log
-		nodemon.stderr.on 'data', console.log
+		nodemon.stderr.on 'data', console.warn
 	), 1000

@@ -1,1 +1,0 @@
-mosql --reimport --skip-tail --sql postgres://postgres@gofree.ru/gofree?password=biboran1569

@@ -77,4 +77,6 @@
   exports.invites.ensureIndex({
     guid: 1
   });
+  exports.normalized_searches = db.collection('normalized_searches');
+  exports.normalized_trips = db.collection('normalized_trips');
 }).call(this);
