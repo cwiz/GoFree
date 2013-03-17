@@ -29,17 +29,6 @@ task "db:populate_airports", 'populate airports', ->
 	airports.stdout.on 'data', console.log
 	airports.stderr.on 'data', console.warn
 
-task "prod", 'run mongodb cluster and mosql daemon', ->
-	mongo = spawn "sh scripts/mongo/run.sh"
-
-	mongo.stdout.on 'data', console.log
-	mongo.stderr.on 'data', console.warn
-
-	server = exec "NODE_ENV=production PORT=8080 forever app.js"
-
-	server.stdout.on 'data', console.log
-	server.stderr.on 'data', console.warn
-
 task "db:populate_airlines", 'populate airports', ->
 	airports = exec "livescript scripts/airlines/populateAirlines.ls"
 
@@ -54,18 +43,6 @@ task "db:restore_geonames", 'populate geonames', ->
 
 task "db:copy_geoip", 'copy geonames DB to node modules', ->
 	exec 'cp -r data/* node_modules/geoip-lite/data'
-
-task "invites:generate", 'generate invites', ->
-	airports = exec "livescript scripts/invites/generate.ls"
-
-	airports.stdout.on 'data', console.log
-	airports.stderr.on 'data', console.log
-
-task "invites:list", 'list invites', ->
-	airports = exec "livescript scripts/invites/list.ls"
-
-	airports.stdout.on 'data', console.log
-	airports.stderr.on 'data', console.log
 
 task 'init', "perform init operations", ->
 	exec "npm install ."
