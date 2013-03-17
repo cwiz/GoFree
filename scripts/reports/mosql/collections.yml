@@ -1,5 +1,4 @@
 ostroterra:
-  
   geonames:
     :columns:
     - _id: TEXT
