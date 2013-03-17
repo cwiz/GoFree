@@ -1,0 +1,39 @@
+ostroterra:
+  
+  geonames:
+    :columns:
+    - _id: TEXT
+    - country_code  : TEXT
+    - country_name  : TEXT
+    - geoname_id    : INTEGER
+    - name          : TEXT
+    - latitude      : DOUBLE PRECISION
+    - longitude     : DOUBLE PRECISION
+    - population    : INTEGER
+    - timezone      : TEXT
+    :meta:
+      :table: geonames
+      :extra_props: false
+
+  normalized_searches:
+    :columns:
+    - _id         : TEXT
+    - hash        : TEXT
+    - adults      : INTEGER
+    - budget      : INTEGER
+
+    :meta:
+      :table: searches
+      :extra_props: false
+
+  normalized_trips:
+    :columns:
+    - _id         : TEXT
+    - hash        : TEXT
+    - geoname_id  : INTEGER
+    - number      : INTEGER
+    - date        : DATE
+
+    :meta:
+      :table: trips
+      :extra_props: false
