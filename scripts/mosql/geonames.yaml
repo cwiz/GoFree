@@ -1,0 +1,14 @@
+ostroterra:
+  geonames:
+    :columns:
+    - _id: TEXT
+    - country_code	: TEXT
+    - country_name	: TEXT
+    - geoname_id	: INTEGER
+    - latitude		: DOUBLE PRECISION
+    - longitude		: DOUBLE PRECISION
+    - population	: INTEGER
+    - timezone		: TEXT
+    :meta:
+      :table: geonames
+      :extra_props: false

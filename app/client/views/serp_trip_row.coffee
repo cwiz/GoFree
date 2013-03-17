@@ -38,6 +38,7 @@ SERPTripRow = Backbone.View.extend
     'click .v-s-t-c-prefilter': 'setPreFilter'
 
   setPreFilter: (e)->
+    
     el    = $(e.target)
     data  = 
       signature: @signature
