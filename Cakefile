@@ -27,7 +27,13 @@ task "db:populate_airports", 'populate airports', ->
 	airports = exec "coffee scripts/airports/populateAirports.coffee"
 
 	airports.stdout.on 'data', console.log
-	airports.stderr.on 'data', console.log
+	airports.stderr.on 'data', console.warn
+
+task "db:run", 'run mongodb cluster and mosql daemon', ->
+	mongo = exec "sh scripts/mongo/run.sh"
+
+	mongo.stdout.on 'data', console.log
+	mongo.stderr.on 'data', console.warn
 
 task "db:populate_airlines", 'populate airports', ->
 	airports = exec "livescript scripts/airlines/populateAirlines.ls"
