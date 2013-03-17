@@ -29,11 +29,16 @@ task "db:populate_airports", 'populate airports', ->
 	airports.stdout.on 'data', console.log
 	airports.stderr.on 'data', console.warn
 
-task "db:run", 'run mongodb cluster and mosql daemon', ->
-	mongo = exec "sh scripts/mongo/run.sh"
+task "prod", 'run mongodb cluster and mosql daemon', ->
+	mongo = spawn "sh scripts/mongo/run.sh"
 
 	mongo.stdout.on 'data', console.log
 	mongo.stderr.on 'data', console.warn
+
+	server = exec "NODE_ENV=production PORT=8080 forever app.js"
+
+	server.stdout.on 'data', console.log
+	server.stderr.on 'data', console.warn
 
 task "db:populate_airlines", 'populate airports', ->
 	airports = exec "livescript scripts/airlines/populateAirlines.ls"
