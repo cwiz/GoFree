@@ -50,3 +50,9 @@ exports.conversions		= db.collection 'conversions'
 # Invites
 exports.invites 		= db.collection 'invites'
 exports.invites.ensureIndex guid : 1
+
+# Normalized -- Searches
+exports.normalized_searches = db.collection 'normalized_searches'
+
+# Normalized -- Trips
+exports.normalized_trips	= db.collection 'normalized_trips'

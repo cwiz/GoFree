@@ -1,0 +1,1 @@
+mosql --sql postgres://postgres@gofree.ru/gofree?password=biboran1569
