@@ -9,7 +9,7 @@
   xml2js = require("xml2js");
   parser = new xml2js.Parser(xml2js.defaults["0.1"]);
   moment.lang('ru');
-  exports.name = "eviterra";
+  exports.name = "eviterra.com";
   autocomplete = function(query, callback){
     var eviterraUrl;
     eviterraUrl = "https://eviterra.com/complete.json?val=" + query;
@@ -170,7 +170,7 @@
             departure: departureOriginDate.format("hh:mm"),
             duration: flightTimeSpan * 60 * 60,
             price: parseInt(variant.price),
-            provider: 'eviterra',
+            provider: exports.name,
             stops: variant.transferNumber - 1,
             url: variant.url + 'ostroterra',
             type: 'flight'

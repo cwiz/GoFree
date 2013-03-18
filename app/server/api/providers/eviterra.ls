@@ -11,7 +11,7 @@ parser = new xml2js.Parser(xml2js.defaults["0.1"])
 moment.lang('ru')
 
 # Providers
-exports.name = "eviterra"
+exports.name = "eviterra.com"
 
 autocomplete = (query, callback) ->
 	eviterraUrl = "https://eviterra.com/complete.json?val=#{query}"
@@ -129,7 +129,7 @@ process = (flights, cb) ->
 			departure : departureOriginDate.format "hh:mm"#\LL
 			duration  : flightTimeSpan * 60 * 60
 			price     : parseInt variant.price
-			provider  : \eviterra
+			provider  : exports.name
 			stops     : variant.transferNumber - 1
 			url       : variant.url + \ostroterra
 			type	  : \flight

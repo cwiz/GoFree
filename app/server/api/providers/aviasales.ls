@@ -8,7 +8,7 @@ request 	= require "request"
 TOKEN 	= "734301ac8a847e3845a2d89527aefcba"
 MARKER 	= "19041"
 
-exports.name = 'aviasales'
+exports.name = 'aviasales.ru'
 
 query = (origin, destination, extra, cb) ->
 
@@ -95,10 +95,12 @@ process = (json, cb) ->
 			departure : departure.format "hh:mm"
 			duration  : duration * 60 * 60
 			price     : ticket.total
-			provider  : \aviasales
+			provider  : exports.name
 			type	  : \flight
 			stops     : ticket.transferNumber - 1
-			url       : "http://nano.aviasales.ru/searches/#{json.search_id}/order_urls/#{_.keys(ticket.order_urls)[0]}/"
+			url		  : "http://nano.aviasales.ru/searches/#{json.search_id}/order_urls/#{_.keys(ticket.order_urls)[0]}/"
+
+
 
 	cb null, results
 

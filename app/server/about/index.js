@@ -5,12 +5,12 @@
     });
   };
   exports.about = function(req, res){
-    return res.render("about", {
+    return res.render("about/index", {
       title: 'About Page'
     });
   };
   exports.add_email = function(req, res){
-    return res.render("addemail");
+    return res.render("auth/addemail");
   };
   exports.error = function(req, res){
     return res.render("error", {

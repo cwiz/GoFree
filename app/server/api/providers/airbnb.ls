@@ -6,7 +6,7 @@ moment          = require "moment"
 request         = require "request"
 jsdom           = require("jsdom").jsdom
 
-exports.name    = "airbnb"
+exports.name    = "airbnb.com"
 
 exports.search = (origin, destination, extra, cb) ->
 
@@ -39,7 +39,7 @@ exports.search = (origin, destination, extra, cb) ->
                   price         : listing.price * 30 * days
                   rating        : null
                   photo         : listing.medium_url
-                  provider      : \airbnb
+                  provider      : exports.name
                   id            : listing.id
                   type          : 'apartment'
                   url           : "https://www.airbnb.com/rooms/#{listing.id}"
