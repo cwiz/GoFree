@@ -175,7 +175,7 @@
       app.get("/api/v2/get_location", backEnd.api.get_location);
       app.get("/api/v2/auth/add_email/:email", backEnd.api.add_email);
       app.get("/api/v2/hotels/details/:provider/:id", backEnd.api.hotels.details);
-      app.get("/redirect", backEnd.redirect.redirect);
+      app.get("/redirect/:hash", backEnd.redirect.redirect);
       app.get("/dashboard", backEnd.dashboard.dashboard);
       login = function(provider, req, res){
         var referer, tripHash, searchHash, redirectUrl;

@@ -47,9 +47,9 @@ exports.trips.ensureIndex 		{ search_hash 	: 1 }
 # Conversions
 exports.conversions		= db.collection 'conversions'
 
-# Invites
-exports.invites 		= db.collection 'invites'
-exports.invites.ensureIndex guid : 1
+# Links
+exports.links 			= db.collection 'links'
+exports.links.ensureIndex 		{ hash			: 1 }, 	{ unique: true }
 
 # Normalized -- Searches
 exports.normalized_searches = db.collection 'normalized_searches'

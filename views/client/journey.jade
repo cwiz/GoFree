@@ -5,8 +5,22 @@ section.p-journey
       //- span.p-j-h-action.p-j-h-newsearch Новый поиск
 
   .p-j-wrap.l-wrap
+
+    .social
+      .pluso(data-options="medium,round,line,horizontal,nocounter,theme=04", data-services="vkontakte,facebook,twitter,google", data-background="transparent")
+
     if !app.user
       include _partial_login
+
+    script
+      (function() {
+       if (window.pluso && typeof window.pluso.start == "function") return;
+       var d = document, s = d.createElement('script'), g = 'getElementsByTagName';
+       s.type = 'text/javascript'; s.charset='UTF-8'; s.async = true;
+       s.src = d.location.protocol  + '//share.pluso.ru/pluso-like.js';
+       var h=d[g]('head')[0] || d[g]('body')[0];
+       h.appendChild(s);
+      })();
     
     .p-j-loading Загрузка...
     .p-j-error Произошла ошибка. Неверная ссылка?

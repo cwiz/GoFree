@@ -4,7 +4,7 @@
   cache = require("./../../cache");
   database = require("./../../database");
   request = require("request");
-  exports.name = 'ostrovok';
+  exports.name = "ostrovok.ru";
   getOstrovokId = function(place, callback){
     if (place.ostrovok_id) {
       return callback(null, place.ostrovok_id);

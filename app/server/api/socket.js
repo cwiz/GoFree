@@ -1,9 +1,10 @@
 (function(){
-  var _, async, database, geobase, md5, providers, rome2rio, validation, fixDestination, makePairs;
+  var _, async, database, geobase, links, md5, providers, rome2rio, validation, fixDestination, makePairs;
   _ = require("underscore");
   async = require("async");
   database = require("./../database");
   geobase = require("./../geobase");
+  links = require("./links");
   md5 = require("MD5");
   providers = require("./providers");
   rome2rio = require("./providers/rome2rio");
@@ -139,13 +140,17 @@
               trips: pairs
             });
             resultReady = function(params){
-              var items, ref$, complete, error, progress;
+              var items, ref$, complete, error, i$, len$, item, progress;
               items = ((ref$ = params.result) != null ? ref$.results : void 8) || [];
               complete = ((ref$ = params.result) != null ? ref$.complete : void 8) || false;
               error = ((ref$ = params.error) != null ? ref$.message : void 8) || null;
               console.log("SOCKET: " + params.event + " | Complete: " + complete + " | Provider: " + params.provider.name + " | Error: " + error + " | # results: " + items.length);
               if (complete || error || !items.length) {
                 providersReady += 1;
+              }
+              for (i$ = 0, len$ = items.length; i$ < len$; ++i$) {
+                item = items[i$];
+                item.hash = links.getLinkHash(item);
               }
               socket.emit(params.event, {
                 error: error,

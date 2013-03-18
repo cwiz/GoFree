@@ -201,10 +201,10 @@ else
 	app.get "/api/v2/hotels/details/:provider/:id", backEnd.api.hotels.details
 
 	# --- Redirect ---
-	app.get "/redirect",						backEnd.redirect.redirect
+	app.get "/redirect/:hash",						backEnd.redirect.redirect
 
 	# --- Dashboard --- 
-	app.get "/dashboard",						backEnd.dashboard.dashboard
+	app.get "/dashboard",							backEnd.dashboard.dashboard
 
 	# --- login	
 	login = (provider, req, res) -> 

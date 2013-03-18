@@ -2,17 +2,22 @@
   var database;
   database = require("./../database");
   exports.redirect = function(req, res){
-    var url;
-    url = req.query.url;
-    if (!url) {
-      return res.send('supply url GET param', 404);
-    }
-    database.conversions.insert({
-      url: url,
-      user: req.user,
-      ip: req.ip,
-      cookies: req.cookies
+    return database.links.findOne({
+      hash: req.params.hash
+    }, function(error, result){
+      if (error || !result) {
+        return res.render("error");
+      }
+      res.render("redirect/index", {
+        result: result.result
+      });
+      return database.conversions.insert({
+        result: result,
+        url: result.url,
+        user: req.user,
+        ip: req.ip,
+        cookies: req.cookies
+      });
     });
-    return res.redirect(url);
   };
 }).call(this);

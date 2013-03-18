@@ -3,7 +3,7 @@ cache     = require "./../../cache"
 database  = require "./../../database"
 request   = require "request"
 
-exports.name = \ostrovok
+exports.name = "ostrovok.ru"
 
 getOstrovokId = (place, callback) ->
 	return callback(null, place.ostrovok_id) if place.ostrovok_id

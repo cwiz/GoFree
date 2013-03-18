@@ -73,9 +73,11 @@
     search_hash: 1
   });
   exports.conversions = db.collection('conversions');
-  exports.invites = db.collection('invites');
-  exports.invites.ensureIndex({
-    guid: 1
+  exports.links = db.collection('links');
+  exports.links.ensureIndex({
+    hash: 1
+  }, {
+    unique: true
   });
   exports.normalized_searches = db.collection('normalized_searches');
   exports.normalized_trips = db.collection('normalized_trips');

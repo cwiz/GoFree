@@ -2,6 +2,7 @@ _ 			= require "underscore"
 async		= require "async"
 database 	= require "./../database"
 geobase 	= require "./../geobase"
+links		= require "./links"
 md5 		= require "MD5"
 providers 	= require "./providers"
 rome2rio 	= require "./providers/rome2rio"
@@ -121,6 +122,10 @@ exports.search = (err, socket, session) ->
 			| \# results: #{items.length}"
 			
 			providersReady += 1 if (complete or error or not items.length)
+
+			# patching for redirect
+			for item in items
+				item.hash = links.getLinkHash item
 
 			socket.emit params.event, do
 				error     : error
