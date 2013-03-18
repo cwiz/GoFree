@@ -2,7 +2,7 @@ geobase 	= require "./../geobase"
 
 exports.details = (req, res) ->
 	
-	provider 	= req.params.provider
+	provider 	= req.params.provider.split('.')[0]
 	id 			= +req.params.id
 
 	return res.json {
