@@ -3,7 +3,7 @@
   geobase = require("./../geobase");
   exports.details = function(req, res){
     var provider, id, error;
-    provider = req.params.provider;
+    provider = req.params.provider.split('.')[0];
     id = +req.params.id;
     if (!provider || !id) {
       return res.json({
