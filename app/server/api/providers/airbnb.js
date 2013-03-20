@@ -20,7 +20,7 @@
     }()), function(i){
       return function(cb){
         var airUrl;
-        airUrl = "https://m.airbnb.com/api/v1/listings/search?checkin=" + origin.date + "&checkout=" + destination.date + "&location=" + destination.place.country_name_ru + "--" + destination.place.name_ru + "&number_of_guests=" + extra.adults + "&offset=" + i * 20;
+        airUrl = "https://m.airbnb.com/api/v1/listings/search?checkin=" + origin.date + "&checkout=" + destination.date + "&location=" + destination.place.name + "--" + destination.place.country_name + "&number_of_guests=" + extra.adults + "&offset=" + i * 20;
         return cache.request(airUrl, function(error, body){
           var json, results;
           if (error) {
