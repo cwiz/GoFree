@@ -15,7 +15,7 @@ exports.search = (origin, destination, extra, cb) ->
 
         return (cb) ->
 
-            airUrl = "https://m.airbnb.com/api/v1/listings/search?checkin=#{origin.date}&checkout=#{destination.date}&location=#{destination.place.country_name_ru}--#{destination.place.name_ru}&number_of_guests=#{extra.adults}&offset=#{i*20}"
+            airUrl = "https://m.airbnb.com/api/v1/listings/search?checkin=#{origin.date}&checkout=#{destination.date}&location=#{destination.place.name}--#{destination.place.country_name}&number_of_guests=#{extra.adults}&offset=#{i*20}"
 
             (error, body) <- cache.request airUrl
             return cb error, null if error
