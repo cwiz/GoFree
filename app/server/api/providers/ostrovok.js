@@ -10,24 +10,34 @@
       return callback(null, place.ostrovok_id);
     }
     return autocomplete(place.name_ru + ", " + place.country_name_ru, function(error, result){
-      var ostrovok_id;
+      var processResult;
       if (error) {
         return callback(error, null);
       }
+      processResult = function(result){
+        var ostrovok_id;
+        ostrovok_id = result[0].oid;
+        callback(null, ostrovok_id);
+        return database.geonames.update({
+          geoname_id: place.geoname_id
+        }, {
+          $set: {
+            ostrovok_id: ostrovok_id
+          }
+        });
+      };
       if (result.length === 0) {
-        return callback({
-          'nothing found': 'nothing found'
-        }, null);
+        return autocomplete(place.name_ru + "", function(error, result){
+          if (error || result.length === 0) {
+            return callback({
+              message: 'nothing found'
+            }, null);
+          }
+          return processResult(result);
+        });
+      } else {
+        return processResult(result);
       }
-      ostrovok_id = result[0].oid;
-      callback(null, ostrovok_id);
-      return database.geonames.update({
-        geoname_id: place.geoname_id
-      }, {
-        $set: {
-          ostrovok_id: ostrovok_id
-        }
-      });
     });
   };
   query = function(origin, destination, extra, cb){
@@ -133,7 +143,6 @@
       provider: exports.name,
       id: id
     }, function(error, hotel){
-      console.log(hotel);
       if (error || !hotel) {
         return callback(error, null);
       }

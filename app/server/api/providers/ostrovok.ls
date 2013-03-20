@@ -6,15 +6,23 @@ request   = require "request"
 exports.name = "ostrovok.ru"
 
 getOstrovokId = (place, callback) ->
-	return callback(null, place.ostrovok_id) if place.ostrovok_id
+	return callback null, place.ostrovok_id if place.ostrovok_id
 
 	(error, result) <- autocomplete "#{place.name_ru}, #{place.country_name_ru}"
-	return callback(error,              null)  if error
-	return callback({'nothing found'},  null)  if result.length is 0
+	return callback error, null if error
 
-	ostrovok_id = result[0].oid
-	callback null, ostrovok_id
-	database.geonames.update {geoname_id : place.geoname_id}, {$set: {ostrovok_id : ostrovok_id}}
+	processResult = (result) ->
+		ostrovok_id = result[0].oid
+		callback null, ostrovok_id
+		database.geonames.update {geoname_id : place.geoname_id}, {$set: {ostrovok_id : ostrovok_id}}
+
+	if result.length is 0
+		(error, result) <- autocomplete "#{place.name_ru}" 
+		return callback message: 'nothing found',  null if error or result.length is 0
+		processResult result
+
+	else
+		processResult result
 
 query = (origin, destination, extra, cb) ->
 
@@ -102,8 +110,6 @@ exports.details = (id, callback) ->
 	(error, hotel) <- database.hotels.findOne do 
 		provider: exports.name
 		id      : id
-
-	console.log hotel
 
 	return callback error, null if (error or not hotel)
 	callback null, hotel
