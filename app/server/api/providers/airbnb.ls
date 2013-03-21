@@ -10,7 +10,7 @@ exports.name    = "airbnb.com"
 
 exports.search = (origin, destination, extra, cb) ->
 
-    numPages  = 15
+    numPages  = 20
     operations = _.map [0 til numPages], (i) ->
 
         return (cb) ->
@@ -62,10 +62,9 @@ exports.search = (origin, destination, extra, cb) ->
 
         return cb error, {} if error
 
-        cb null, {
+        cb null, do
             results : _.flatten(results),
             complete: true
-        }
 
 exports.details = (id, callback) ->
 

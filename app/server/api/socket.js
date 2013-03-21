@@ -144,7 +144,6 @@
               items = ((ref$ = params.result) != null ? ref$.results : void 8) || [];
               complete = ((ref$ = params.result) != null ? ref$.complete : void 8) || false;
               error = ((ref$ = params.error) != null ? ref$.message : void 8) || null;
-              console.log("SOCKET: " + params.event + " | Complete: " + complete + " | Provider: " + params.provider.name + " | Error: " + error + " | # results: " + items.length);
               if (complete || error || !items.length) {
                 providersReady += 1;
               }
@@ -159,7 +158,6 @@
                 progress: 1
               });
               progress = _.min([1, providersReady.toFixed(2) / totalProviders]);
-              console.log("SOCKET: progress | value: " + progress);
               return socket.emit('progress', {
                 hash: searchParams.hash,
                 progress: progress

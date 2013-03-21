@@ -38,6 +38,12 @@ Search = Backbone.Model.extend
     @trigger('fetched', data)
 
   isValid: ->
+    valid = @isSemiValid() and @get('final'  ).get('date')
+    return !!valid
+
+    
+
+  isSemiValid: ->
     valid = true
 
     @get('trips').each (item) ->
@@ -45,9 +51,8 @@ Search = Backbone.Model.extend
       valid = valid and item.get('date')
 
     valid = valid and @get('initial').get('place').name
-    valid = valid and @get('final'  ).get('date')
 
-    !!valid
+    return !!valid
 
   serialize: ->
     json = @toJSON()

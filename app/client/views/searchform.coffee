@@ -72,6 +72,7 @@ SearchForm = Backbone.View.extend
     @$el.html(app.templates.searchform(@model.toJSON()))
 
   restrictBudget: ->
+    
     validate = (e) ->
       if (e.keyCode < 48 or e.keyCode > 57)
          app.e(e)
@@ -165,7 +166,7 @@ SearchForm = Backbone.View.extend
 
   collectionChanged: (e) ->
 
-    if @model.isValid()
+    if @model.isSemiValid()
       @addStopEl.removeClass('disabled')
       @canAddStop = true
       @model.preSave() 

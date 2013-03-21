@@ -66,22 +66,33 @@
     });
   };
   exports.details = function(id, callback){
-    var accomodationUrl;
-    accomodationUrl = "http://flatora.ru/api/v1/accommodation/json/getByIds?ids[]=" + id;
-    return cache.request(accomodationUrl, function(error, result){
-      var json, e, ref$, accommodations, filteredAccommodation, accommodation, images, apartment;
-      if (error) {
-        return callback(error, null);
+    return database.hotels.findOne({
+      provider: exports.name,
+      id: id
+    }, function(error, apartment){
+      var accomodationUrl;
+      if (apartment) {
+        return callback(null, apartment);
       }
-      try {
-        json = JSON.parse(result);
-      } catch (e$) {
-        e = e$;
-        return callback({
-          message: "couldn't parse JSON"
-        }, null);
-      }
-      if ((json != null ? json.status : void 8) === 'success' && ((ref$ = json.data) != null && ref$.response)) {
+      accomodationUrl = "http://flatora.ru/api/v1/accommodation/json/getByIds?ids[]=" + id;
+      return cache.request(accomodationUrl, function(error, result){
+        var json, e, ref$, accommodations, filteredAccommodation, accommodation, images, apartment;
+        if (error) {
+          return callback(error, null);
+        }
+        try {
+          json = JSON.parse(result);
+        } catch (e$) {
+          e = e$;
+          return callback({
+            message: "couldn't parse JSON"
+          }, null);
+        }
+        if (!((json != null ? json.status : void 8) === 'success' && ((ref$ = json.data) != null && ref$.response))) {
+          return callback({
+            message: 'bad response'
+          }, null);
+        }
         accommodations = (ref$ = json.data) != null ? ref$.response : void 8;
         filteredAccommodation = _.filter(accommodations, function(accommodation){
           return accommodation.id === id;
@@ -111,11 +122,9 @@
           type: 'apartment',
           url: "http://flatora.ru/flat_" + accommodation.id + ".html"
         };
+        database.hotels.insert(apartment);
         return callback(null, apartment);
-      }
-      return callback({
-        message: 'bad response'
-      }, null);
+      });
     });
   };
   query = function(origin, destination, extra, cb){
@@ -155,7 +164,7 @@
         return exports.details(accommodation.id, callback);
       };
     });
-    return async.series(operations, function(error, results){
+    return async.parallel(operations, function(error, results){
       var checkin, checkout, nights;
       if (!results) {
         return cb(null, error);
