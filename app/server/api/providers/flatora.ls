@@ -41,6 +41,13 @@ getFlatoraId = (place, callback) ->
     database.geonames.update {geoname_id : place.geoname_id}, $set : flatora_id : matchingCity.id
 
 exports.details = (id, callback) ->
+
+    (error, apartment) <- database.hotels.findOne do
+        provider: exports.name
+        id      : id
+
+    return callback null, apartment if apartment
+
     accomodationUrl = "http://flatora.ru/api/v1/accommodation/json/getByIds?ids[]=#{id}"
 
     (error, result) <- cache.request accomodationUrl
@@ -51,35 +58,36 @@ exports.details = (id, callback) ->
     catch 
         return callback message: "couldn't parse JSON", null 
 
-    if json?.status is \success and json.data?.response
-        accommodations          = json.data?.response
-        filteredAccommodation   = _.filter accommodations, (accommodation) -> accommodation.id is id
-        accommodation           = filteredAccommodation[0]
+    return callback message: 'bad response', null if not (json?.status is \success and json.data?.response)
+    
+    accommodations          = json.data?.response
+    filteredAccommodation   = _.filter accommodations, (accommodation) -> accommodation.id is id
+    accommodation           = filteredAccommodation[0]
 
-        return callback message : "no accomodation found", null if not accommodation
+    return callback message : "no accomodation found", null if not accommodation
 
-        images = _.map accommodation.photos, (image) -> "http://img.flatora.ru/images/accommodation/#{accommodation.id}/large/#{image.fileName}"
+    images = _.map accommodation.photos, (image) -> 
+        "http://img.flatora.ru/images/accommodation/#{accommodation.id}/large/#{image.fileName}"
 
-        apartment =
-            address     : accommodation.address
-            description : null
-            id          : accommodation.id
-            images      : images
-            latitude    : accommodation.lng
-            longitude   : accommodation.lat
-            name        : accommodation.title
-            photo       : images[0]
-            price       : accommodation.priceNight * 1.1 / 100
-            provider    : exports.name
-            rating      : null
-            stars       : null
-            type        : 'apartment'
-            url         : "http://flatora.ru/flat_#{accommodation.id}.html"
+    apartment =
+        address     : accommodation.address
+        description : null
+        id          : accommodation.id
+        images      : images
+        latitude    : accommodation.lng
+        longitude   : accommodation.lat
+        name        : accommodation.title
+        photo       : images[0]
+        price       : accommodation.priceNight * 1.1 / 100
+        provider    : exports.name
+        rating      : null
+        stars       : null
+        type        : 'apartment'
+        url         : "http://flatora.ru/flat_#{accommodation.id}.html"
 
-        return callback null, apartment
+    database.hotels.insert apartment
 
-    callback message: 'bad response', null
-
+    return callback null, apartment
 
 query = (origin, destination, extra, cb) ->
 
@@ -107,15 +115,15 @@ process = (accommodations, origin, destination, cb) ->
     operations = _.map accommodations, (accommodation) ->
         (callback) -> exports.details accommodation.id, callback
 
-    (error, results) <- async.series operations
+    (error, results) <- async.parallel operations
     return cb null, error if not results
 
     checkin = moment origin.date
     checkout= moment destination.date
     nights  = checkout.diff checkin, "days"
 
-    results = _.filter  results, (result) -> result?
-    results = _.filter  results, (result) -> 
+    results = _.filter results, (result) -> result?
+    results = _.filter results, (result) -> 
         filtered = true
         
         if result.nightMinCount

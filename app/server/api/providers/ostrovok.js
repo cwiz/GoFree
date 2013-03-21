@@ -56,7 +56,6 @@
       ostUrl = "http://ostrovok.ru/api/v1/search/page/" + extra.page + "/?region_id=" + ostrovokId.destination + "&arrivalDate=" + origin.date + "&departureDate=" + destination.date + "&room1_numberOfAdults=" + extra.adults;
       return cache.request(ostUrl, function(error, body){
         var json, page;
-        console.log("OSTROVOK: Queried ostrovok serp | " + ostUrl + " | success: " + !!body);
         if (error) {
           return cb(error, null);
         }
@@ -154,7 +153,6 @@
     ostUrl = "http://ostrovok.ru/api/site/multicomplete.json?query=" + query + "&regions_ver=v5";
     return cache.request(ostUrl, function(error, body){
       var json, finalJson, i$, ref$, len$, obj, country, name, id, displayName;
-      console.log("ostrovok.autocomplete | " + ostUrl + " | status " + !!body);
       if (error) {
         return callback(error, null);
       }

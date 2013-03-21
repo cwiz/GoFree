@@ -36,7 +36,7 @@ query = (origin, destination, extra, cb) ->
 	ostUrl = "http://ostrovok.ru/api/v1/search/page/#{extra.page}/?region_id=#{ostrovokId.destination}&arrivalDate=#{origin.date}&departureDate=#{destination.date}&room1_numberOfAdults=#{extra.adults}"
 
 	(error, body) <- cache.request ostUrl
-	console.log "OSTROVOK: Queried ostrovok serp | #{ostUrl} | success: #{!!body}"
+	# console.log "OSTROVOK: Queried ostrovok serp | #{ostUrl} | success: #{!!body}"
 	return cb(error, null) if error
 
 	json = JSON.parse(body)
@@ -116,7 +116,7 @@ exports.details = (id, callback) ->
 autocomplete = (query, callback) ->
 	ostUrl = "http://ostrovok.ru/api/site/multicomplete.json?query=#{query}&regions_ver=v5"
 	(error, body) <- cache.request ostUrl
-	console.log "ostrovok.autocomplete | #{ostUrl} | status #{!!body}"
+	# console.log "ostrovok.autocomplete | #{ostUrl} | status #{!!body}"
 	return callback error, null if error
 	
 	json      = JSON.parse(body)

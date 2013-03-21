@@ -115,11 +115,11 @@ exports.search = (err, socket, session) ->
 			complete = params.result?.complete  or false
 			error    = params.error?.message 	or null
 
-			console.log "SOCKET: #{params.event} 
-			| Complete: #{complete} 
-			| Provider: #{params.provider.name} 
-			| Error: #{error} 
-			| \# results: #{items.length}"
+			# console.log "SOCKET: #{params.event} 
+			# | Complete: #{complete} 
+			# | Provider: #{params.provider.name} 
+			# | Error: #{error} 
+			# | \# results: #{items.length}"
 			
 			providersReady += 1 if (complete or error or not items.length)
 
@@ -135,7 +135,7 @@ exports.search = (err, socket, session) ->
 
 			progress = _.min([1, providersReady.toFixed(2) / totalProviders])
 
-			console.log "SOCKET: progress | value: #{progress}"
+			# console.log "SOCKET: progress | value: #{progress}"
 			
 			socket.emit 'progress', do
 				hash	: searchParams.hash
