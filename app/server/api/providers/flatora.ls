@@ -115,8 +115,8 @@ process = (accommodations, origin, destination, cb) ->
     operations = _.map accommodations, (accommodation) ->
         (callback) -> exports.details accommodation.id, callback
 
-    (error, results) <- async.parallel operations
-    return cb error or {message : 'couldnt find anything', null if not results
+    (error, results) <- async.parallelLimit operations, 16
+    return cb (error or {message : 'couldnt find anything'}), null if not results
 
     checkin = moment origin.date
     checkout= moment destination.date

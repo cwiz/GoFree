@@ -164,10 +164,12 @@
         return exports.details(accommodation.id, callback);
       };
     });
-    return async.parallel(operations, function(error, results){
+    return async.parallelLimit(operations, 16, function(error, results){
       var checkin, checkout, nights;
       if (!results) {
-        return cb(null, error);
+        return cb(error || {
+          message: 'couldnt find anything'
+        }, null);
       }
       checkin = moment(origin.date);
       checkout = moment(destination.date);
