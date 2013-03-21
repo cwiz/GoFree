@@ -164,7 +164,7 @@
         return exports.details(accommodation.id, callback);
       };
     });
-    return async.parallelLimit(operations, 16, function(error, results){
+    return async.series(operations, function(error, results){
       var checkin, checkout, nights;
       if (!results) {
         return cb(error || {
@@ -200,7 +200,9 @@
   };
   exports.search = function(origin, destination, extra, cb){
     if (destination.place.country_code !== 'RU') {
-      return;
+      return cb({
+        message: "flatora works only in Russia"
+      }, null);
     }
     return query(origin, destination, extra, function(error, json){
       if (error) {
