@@ -1,10 +1,11 @@
 (function(){
-  var airbnb, eviterra, ostrovok, aviasales;
+  var airbnb, eviterra, ostrovok, aviasales, flatora;
   airbnb = require("./airbnb");
   eviterra = require("./eviterra");
   ostrovok = require("./ostrovok");
   aviasales = require("./aviasales");
-  exports.hotelProviders = [ostrovok, airbnb];
+  flatora = require("./flatora");
+  exports.hotelProviders = [flatora, ostrovok, airbnb];
   exports.flightProviders = [eviterra, aviasales];
   exports.allProviders = exports.hotelProviders.concat(exports.flightProviders);
 }).call(this);

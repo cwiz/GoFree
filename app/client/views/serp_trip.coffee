@@ -64,9 +64,9 @@ SERPTrip = Backbone.View.extend
       url     : "#{app.api.hotel_info}#{hotel.get('provider')}/#{hotel.get('id')}"
       cache   : true
       success : (resp) =>
-        resp.hotel.price = hotel.get 'price'
-        newHotel = new app.models.SERPTripHotel resp.hotel
-        @showHotelOverlay newHotel
+        delete resp.hotel.price
+        hotel.set resp.hotel
+        @showHotelOverlay hotel
           
   showHotelOverlay: (data)->
     @hotelOverlay.show(

@@ -8,7 +8,7 @@ li.m-c-l-item.v-s-t-item.hotel(data-cid=cid)
 
   .v-s-t-i-contents
     .v-s-t-i-details
-      if provider == 'airbnb'
+      if type == 'apartment'
         strong.v-s-t-i-name= app.utils.shortenString(name, 30, 'right')
       else
         strong.v-s-t-i-name= app.utils.shortenString(name, 20, 'right')

@@ -185,7 +185,7 @@
           });
         }
       }
-      callback(null, finalJson);
+      return callback(null, finalJson);
     });
   };
   function clone$(it){
