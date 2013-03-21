@@ -91,17 +91,16 @@ process = (json, cb) ->
 		
 		newHotels.push newHotel
 
-	cb null, {
+	cb null, do
 		results: newHotels,
 		complete: (not json._next_page)
-	}
 
 exports.search = (origin, destination, extra, cb) ->
-	error, hotelResult <- query origin, destination, extra
-	return cb(error, null) if error
+	error, hotelResult 	<- query origin, destination, extra
+	return cb error, null if error
 	
-	error, hotels <- process hotelResult 
-	return cb(error, null) if error
+	error, hotels 		<- process hotelResult 
+	return cb error, null if error
 
 	cb null, hotels
 
@@ -116,7 +115,7 @@ exports.details = (id, callback) ->
 
 autocomplete = (query, callback) ->
 	ostUrl = "http://ostrovok.ru/api/site/multicomplete.json?query=#{query}&regions_ver=v5"
-	(error, body) <-! cache.request ostUrl
+	(error, body) <- cache.request ostUrl
 	console.log "ostrovok.autocomplete | #{ostUrl} | status #{!!body}"
 	return callback error, null if error
 	

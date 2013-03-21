@@ -34,21 +34,20 @@ exports.search = (origin, destination, extra, cb) ->
                 days = moment.duration(moment(destination.date) - moment(origin.date)).days()
 
                 hotel =
-                  name          : listing.name
-                  stars         : null
-                  price         : listing.price * 30 * days
-                  rating        : null
-                  photo         : listing.medium_url
-                  provider      : exports.name
+                  address       : listing.address
                   id            : listing.id
-                  type          : 'apartment'
-                  url           : "https://www.airbnb.com/rooms/#{listing.id}"
-                  reviews_count : listing.reviews_count
-                  
+                  images        : listing.picture_urls
                   latitude      : listing.lat
                   longitude     : listing.lng
-                  images        : listing.picture_urls
-                  address       : listing.address
+                  name          : listing.name
+                  photo         : listing.medium_url
+                  price         : listing.price * 30 * days
+                  provider      : exports.name
+                  rating        : null
+                  reviews_count : listing.reviews_count
+                  stars         : null
+                  type          : 'apartment'
+                  url           : "https://www.airbnb.com/rooms/#{listing.id}"
 
                 dbHotel = ^^hotel
                 delete dbHotel.price

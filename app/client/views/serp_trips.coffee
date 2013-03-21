@@ -31,7 +31,7 @@ SERPTrips = Backbone.View.extend
     @amountLeftEl = $('.v-s-t-b-leftamount')
 
     app.socket.on('progress', _.bind(@updateProgress, @))
-    app.on('serp_selected', @updateBudgetAdd, @)
+    app.on('serp_selected',   @updateBudgetAdd, @)
     app.on('serp_deselected', @updateBudgetRemove, @)
     app.on('resize', @updateMeters, @)
 

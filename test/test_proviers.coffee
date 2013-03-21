@@ -8,6 +8,7 @@ moment		= require 'moment'
 airbnb 		= require './../app/server/api/providers/airbnb'
 aviasales 	= require './../app/server/api/providers/aviasales'
 eviterra 	= require './../app/server/api/providers/eviterra'
+flatora 	= require './../app/server/api/providers/flatora'
 ostrovok 	= require './../app/server/api/providers/ostrovok'
 
 # globals
@@ -56,55 +57,66 @@ generateData = () ->
 		extra		: extra
 	}
 
-describe 'Aviasales', ->
-
-	describe '#search',  ->
-		it 'should find MOW -> LON flights', (done) ->
-
-			data = generateData()
-
-			aviasales.search data.origin, data.destination, data.extra, (err, flights) ->
-				expect(err).to.be.equal null
-				expect(flights.results.length).to.be.above 	0
-				done()
-
-describe 'AirBnb', ->
-
-	describe '#search', ->
-		it 'should find something in Moscow', (done) ->
-
-			data = generateData()
-			
-			airbnb.search data.origin, data.destination, data.extra, (error, hotels) ->
-				expect(error).to.be.equal 					null
-				expect(hotels.results.length).to.be.above 	0
-				done() 
-
-
-describe 'Ostrovok', ->
+describe 'Flatora', ->
 
 	describe '#search', ->
 		it 'should find something in Moscow', (done) ->
 			
 			data = generateData()
 			
-			ostrovok.search data.origin, data.destination, data.extra, (error, hotels) ->
+			flatora.search data.origin, data.destination, data.extra, (error, hotels) ->
 				expect(error).to.be.equal 					null
 				expect(hotels.results.length).to.be.above 	0
 				done() if hotels.complete
+
+# describe 'Aviasales', ->
+
+# 	describe '#search',  ->
+# 		it 'should find MOW -> LON flights', (done) ->
+
+# 			data = generateData()
+
+# 			aviasales.search data.origin, data.destination, data.extra, (err, flights) ->
+# 				expect(err).to.be.equal null
+# 				expect(flights.results.length).to.be.above 	0
+# 				done()
+
+# describe 'AirBnb', ->
+
+# 	describe '#search', ->
+# 		it 'should find something in Moscow', (done) ->
+
+# 			data = generateData()
+			
+# 			airbnb.search data.origin, data.destination, data.extra, (error, hotels) ->
+# 				expect(error).to.be.equal 					null
+# 				expect(hotels.results.length).to.be.above 	0
+# 				done() 
+
+
+# describe 'Ostrovok', ->
+
+# 	describe '#search', ->
+# 		it 'should find something in Moscow', (done) ->
+			
+# 			data = generateData()
+			
+# 			ostrovok.search data.origin, data.destination, data.extra, (error, hotels) ->
+# 				expect(error).to.be.equal 					null
+# 				expect(hotels.results.length).to.be.above 	0
+# 				done() if hotels.complete
 					
 
-describe 'Eviterra', ->
+# describe 'Eviterra', ->
 
-	describe '#search',  ->
-		it 'should find MOW -> LED flights', (done) ->
+# 	describe '#search',  ->
+# 		it 'should find MOW -> LED flights', (done) ->
 
-			data = generateData()
+# 			data = generateData()
 			
-			eviterra.search data.origin, data.destination, data.extra, (err, results) ->
-				expect(err).to.be.equal null
-				done()
-
+# 			eviterra.search data.origin, data.destination, data.extra, (err, results) ->
+# 				expect(err).to.be.equal null
+# 				done()
 
 # socketURL = 'http://localhost:3000'
 # socketOptions =

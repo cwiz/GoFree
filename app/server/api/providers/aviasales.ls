@@ -87,7 +87,7 @@ process = (json, cb) ->
 		utcDeparture = departure.clone!.subtract 'hours', departureAirport.timezone
 		utcArrival   = arrival.clone!.subtract 'hours', arrivalAirport.timezone
 		
-		duration 	= utcArrival.diff utcDeparture, 'hours'
+		duration 	 = utcArrival.diff utcDeparture, 'hours'
 
 		result = 
 			arrival   : arrival.format "hh:mm"
@@ -112,4 +112,3 @@ exports.search = (origin, destination, extra, cb) ->
 	cb null, do
 		results	: results
 		complete: true
-

@@ -27,7 +27,7 @@ SERPTripRow = Backbone.View.extend
     @carouselEl.on('mod_shifted_right', _.bind(@shiftRight, @))
     @carouselEl.on('mod_shifted_left', _.bind(@shiftLeft, @))
 
-    app.on('hotel_overlay_select', @selectFromOverlay, @)
+    app.on('hotel_overlay_select',    _.bind(@selectFromOverlay, @))
 
     app.log('[app.views.SERPTripRow]: initialize')
 
@@ -64,8 +64,8 @@ SERPTripRow = Backbone.View.extend
     if @signature == data.signature
       item = @listEl.find('.v-s-t-item[data-cid="' + data.cid + '"]')
       data = 
-        signature: @signature
-        model: @collection.get(data.cid)
+        signature : @signature
+        model     : @collection.get(data.cid)
 
       @selected.removeClass('selected') if @selected
 

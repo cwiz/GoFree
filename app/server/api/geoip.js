@@ -19,16 +19,16 @@
       country_code: location.country,
       name: location.city
     }, function(error, city){
-      city.name_ru_lower = city.name_ru_lower_collection[0];
-      city.name_ru = city.name_ru_collection[0];
-      city.name_ru_inflected = city.name_ru_inflected_collection[0];
-      if (error) {
+      if (error || !city) {
         return res.json({
           status: 'error',
           message: error
         });
       }
       delete city._id;
+      city.name_ru_lower = city.name_ru_lower_collection[0];
+      city.name_ru = city.name_ru_collection[0];
+      city.name_ru_inflected = city.name_ru_inflected_collection[0];
       return res.json({
         status: 'ok',
         value: city

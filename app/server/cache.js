@@ -19,7 +19,6 @@
     valueKey = "cache-" + md5(key);
     inProgessKey = "inprogress-" + md5(key);
     return client.get(inProgessKey, function(error, inProgess){
-      console.log("CACHE: IN PROGRESS | key: " + inProgessKey + " | status: " + !!(!error || inProgess));
       if (inProgess && retry <= 1) {
         return setTimeout(function(){
           return exports.get(key, cb, retry + 1);
@@ -35,13 +34,11 @@
   };
   exports.request = function(url, cb){
     return exports.get(url, function(error, body){
-      console.log("CACHE: REDIS | url: " + url + " | status: " + !!body);
       if (body) {
         return cb(null, body);
       }
       setInProgress(url);
       return request(url, function(error, response, body){
-        console.log("CACHE: HTTP | url: " + url + " | status: " + !!body);
         if (error) {
           setNotInProgress(url);
           return cb(error, null);
@@ -54,12 +51,10 @@
   };
   exports.exec = function(command, cb){
     return exports.get(command, function(error, body){
-      console.log("CACHE: REDIS | command: " + command + " | status: " + !!body);
       if (body) {
         return cb(null, body);
       }
       return exec(command, function(error, body){
-        console.log("CACHE: EXEC | command: " + command + " | status: " + !!body);
         if (error) {
           setNotInProgress(command);
           return cb(error, null);
