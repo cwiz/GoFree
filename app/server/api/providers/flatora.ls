@@ -116,7 +116,7 @@ process = (accommodations, origin, destination, cb) ->
         (callback) -> exports.details accommodation.id, callback
 
     (error, results) <- async.parallel operations
-    return cb null, error if not results
+    return cb error or {message : 'couldnt find anything', null if not results
 
     checkin = moment origin.date
     checkout= moment destination.date
