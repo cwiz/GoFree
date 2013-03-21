@@ -66,9 +66,6 @@ SERPTrip = Backbone.View.extend
       success : (resp) =>
         delete resp.hotel.price
         hotel.set resp.hotel
-        # resp.hotel.price = hotel.get 'price'
-        # newHotel = new app.models.SERPTripHotel resp.hotel
-        # newHotel.cid = hotel.cid
         @showHotelOverlay hotel
           
   showHotelOverlay: (data)->
