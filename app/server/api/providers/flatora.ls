@@ -143,7 +143,7 @@ process = (accommodations, origin, destination, cb) ->
         complete: true
 
 exports.search = (origin, destination, extra, cb) ->
-    return if destination.place.country_code is not \RU
+    return cb {message: "flatora works only in Russia"} if destination.place.country_code is not \RU
 
     (error, json)     <- query origin, destination, extra
     return cb error, null if error
