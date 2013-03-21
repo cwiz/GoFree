@@ -26,7 +26,6 @@ getCities = (callback) ->
     
     callback message: 'bad response', null
 
-
 getFlatoraId = (place, callback) ->
     return callback null, place.flatora_id if place.flatora_id
 
@@ -116,6 +115,17 @@ process = (accommodations, origin, destination, cb) ->
     nights  = checkout.diff checkin, "days"
 
     results = _.filter  results, (result) -> result?
+    results = _.filter  results, (result) -> 
+        filtered = true
+        
+        if result.nightMinCount
+            filtered = filtered and result.nightMinCount <= nights
+
+        if result.nightMaxCount
+            filtered = filtered and result.nightMaxCount >= nights
+
+        return filtered
+    
     results = _.map     results, (result) -> 
         result.price *= nights
         return result

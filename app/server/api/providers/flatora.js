@@ -166,6 +166,17 @@
       results = _.filter(results, function(result){
         return result != null;
       });
+      results = _.filter(results, function(result){
+        var filtered;
+        filtered = true;
+        if (result.nightMinCount) {
+          filtered = filtered && result.nightMinCount <= nights;
+        }
+        if (result.nightMaxCount) {
+          filtered = filtered && result.nightMaxCount >= nights;
+        }
+        return filtered;
+      });
       results = _.map(results, function(result){
         result.price *= nights;
         return result;
