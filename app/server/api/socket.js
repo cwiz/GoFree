@@ -1,5 +1,5 @@
 (function(){
-  var _, async, database, geobase, links, md5, providers, rome2rio, validation, fixDestination, makePairs;
+  var _, async, database, geobase, links, md5, providers, rome2rio, validation, log, winston, fixDestination, makePairs;
   _ = require("underscore");
   async = require("async");
   database = require("./../database");
@@ -9,6 +9,8 @@
   providers = require("./providers");
   rome2rio = require("./providers/rome2rio");
   validation = require("./validation");
+  log = require("./../logging").getLogger("socket");
+  winston = require("winston");
   fixDestination = function(pair, cb){
     return geobase.findRoute(pair.origin.place, pair.destination.place, function(error, airports){
       if (error) {
@@ -147,7 +149,12 @@
               items = ((ref$ = params.result) != null ? ref$.results : void 8) || [];
               complete = ((ref$ = params.result) != null ? ref$.complete : void 8) || false;
               error = ((ref$ = params.error) != null ? ref$.message : void 8) || null;
-              console.log("SOCKET: " + params.event + " | Complete: " + complete + " | Provider: " + params.provider.name + " | Error: " + error + " | # results: " + items.length);
+              log.info("SOCKET: " + params.event, {
+                complete: complete,
+                provider: params.provider.name,
+                error: error,
+                results: items.length
+              });
               if (complete || error || !items.length) {
                 providersReady += 1;
               }
@@ -162,6 +169,9 @@
                 progress: 1
               });
               progress = _.min([1, providersReady.toFixed(2) / totalProviders]);
+              log.info("SOCKET: progress", {
+                value: progress
+              });
               return socket.emit('progress', {
                 hash: searchParams.hash,
                 progress: progress
@@ -176,7 +186,9 @@
                 _.map(providers.flightProviders, function(provider){
                   return function(){
                     return callbacks.push(function(callback){
+                      winston.profile(provider.name);
                       return provider.search(pair.origin, pair.destination, pair.extra, function(error, result){
+                        winston.profile(provider.name);
                         return resultReady({
                           error: error,
                           event: 'flights_ready',
@@ -195,7 +207,9 @@
                 return _.map(providers.hotelProviders, function(provider){
                   return function(){
                     return callbacks.push(function(callback){
+                      winston.profile(provider.name);
                       return provider.search(pair.origin, pair.destination, pair.extra, function(error, result){
+                        winston.profile(provider.name);
                         return resultReady({
                           error: error,
                           event: 'hotels_ready',

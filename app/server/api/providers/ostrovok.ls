@@ -1,3 +1,4 @@
+_         = require "underscore"
 async     = require "async"
 cache     = require "./../../cache"
 database  = require "./../../database"
@@ -35,10 +36,7 @@ query = (origin, destination, extra, cb) ->
     return cb(error, null) if error
 
     ostUrl = "http://ostrovok.ru/api/v1/search/page/#{extra.page}/?region_id=#{ostrovokId.destination}&arrivalDate=#{origin.date}&departureDate=#{destination.date}&room1_numberOfAdults=#{extra.adults}"
-
-    winston.profile "request"
     (error, body) <- cache.request ostUrl
-    winston.profile "request"
 
     # console.log "OSTROVOK: Queried ostrovok serp | #{ostUrl} | success: #{!!body}"
     return cb(error, null) if error
@@ -53,55 +51,54 @@ query = (origin, destination, extra, cb) ->
         query origin, destination, extra, cb
 
 process = (json, cb) ->
+
     return cb 'empty json', null if not json or not json.hotels?
 
     hotels = json.hotels
     rates  = json._meta?.rates
 
-    if not rates
-        return cb {message: 'no rates'}, null
-
-    newHotels = []
-    for hotel in hotels when hotel.rooms
-
-        rating = 0
-        if hotel.rating?.total?
-            count  = hotel.rating.count
-            rating = hotel.rating.total * count if count > 25
-
-        price = hotel.rooms[0].total_rate * rates[hotel.rooms[0].currency]
-        stars = 1
-        stars = hotel.star_rating/10.0 if hotel.star_rating
+    return cb {message: 'no rates'}, null if not rates
         
-        newHotel =
-            id          : hotel.ostrovok_id
-            name        : hotel.name
-            photo       : hotel.thumbnail_url_220
-            price       : price
-            provider    : exports.name
-            rating      : rating
-            stars       : stars
-            type        : 'hotel'
-            url         : "http://ostrovok.ru#{hotel.url}&partner_slug=ostroterra"
-            latitude    : hotel.latitude
-            longitude   : hotel.longitude
-            description : hotel.description_short
-            address     : hotel.address
-            images      : [hotel.thumbnail_url_220, hotel.thumbnail_url_220, hotel.thumbnail_url_220, hotel.thumbnail_url_220]
+    hotelsWithRooms = _.filter hotels, (hotel) -> hotel.rooms    
+    
+    operations      = _.map hotelsWithRooms, (hotel) -> 
 
-        dbHotel = ^^newHotel
-        delete dbHotel.price
-        database.hotels.insert dbHotel, (error, hotel) ->
+        (callback) ->
+
+            rating = 0
+            if hotel.rating?.total?
+                count  = hotel.rating.count
+                rating = hotel.rating.total * count if count > 25
+
+            price = hotel.rooms[0].total_rate * rates[hotel.rooms[0].currency]
+            stars = 1
+            stars = hotel.star_rating/10.0 if hotel.star_rating
+            
+            newHotel =
+                id          : hotel.ostrovok_id
+                name        : hotel.name
+                photo       : hotel.thumbnail_url_220
+                price       : price
+                provider    : exports.name
+                rating      : rating
+                stars       : stars
+                type        : 'hotel'
+                url         : "http://ostrovok.ru#{hotel.url}&partner_slug=ostroterra"
+                latitude    : hotel.latitude
+                longitude   : hotel.longitude
+                description : hotel.description_short
+                address     : hotel.address
+                images      : [hotel.thumbnail_url_220, hotel.thumbnail_url_220, hotel.thumbnail_url_220, hotel.thumbnail_url_220]
+
+            callback null, newHotel
+            database.hotels.insert newHotel
         
-        newHotels.push newHotel
-
-    cb null, do
-        results: newHotels,
-        complete: (not json._next_page)
+    async.series operations, (error, hotels) ->
+        cb null, do
+            results : hotels,
+            complete: (not json._next_page)
 
 exports.search = (origin, destination, extra, cb) ->
-
-    winston.info 'search 1'
 
     (error, hotelResult)  <- query(origin, destination, extra)
     return cb error, null if error

@@ -12,8 +12,18 @@ exports.name = 'aviasales.ru'
 
 query = (origin, destination, extra, cb) ->
 
+	if origin.nearest_airport?.iata
+		originIata = origin.nearest_airport?.iata
+	else
+		originIata = origin.place.iata 
+
+	if destination.nearest_airport?.iata
+		destinationIata = destination.nearest_airport?.iata 
+	else
+		destinationIata = destination.place.iata 
+
 	searchParams = 
-		origin_name		: origin.nearest_airport.iata
+		origin_name		: origin.nearest_airport.iata 		
 		destination_name: destination.nearest_airport.iata
 		depart_date		: origin.date
 		adults			: extra.adults

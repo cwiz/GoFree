@@ -1,5 +1,6 @@
 (function(){
-  var async, cache, database, request, winston, getOstrovokId, query, process, autocomplete;
+  var _, async, cache, database, request, winston, getOstrovokId, query, process, autocomplete;
+  _ = require("underscore");
   async = require("async");
   cache = require("./../../cache");
   database = require("./../../database");
@@ -55,10 +56,8 @@
         return cb(error, null);
       }
       ostUrl = "http://ostrovok.ru/api/v1/search/page/" + extra.page + "/?region_id=" + ostrovokId.destination + "&arrivalDate=" + origin.date + "&departureDate=" + destination.date + "&room1_numberOfAdults=" + extra.adults;
-      winston.profile("request");
       return cache.request(ostUrl, function(error, body){
         var json, page;
-        winston.profile("request");
         if (error) {
           return cb(error, null);
         }
@@ -73,7 +72,7 @@
     });
   };
   process = function(json, cb){
-    var hotels, rates, ref$, newHotels, i$, len$, hotel, rating, count, price, stars, newHotel, dbHotel;
+    var hotels, rates, ref$, hotelsWithRooms, operations;
     if (!json || json.hotels == null) {
       return cb('empty json', null);
     }
@@ -84,10 +83,12 @@
         message: 'no rates'
       }, null);
     }
-    newHotels = [];
-    for (i$ = 0, len$ = hotels.length; i$ < len$; ++i$) {
-      hotel = hotels[i$];
-      if (hotel.rooms) {
+    hotelsWithRooms = _.filter(hotels, function(hotel){
+      return hotel.rooms;
+    });
+    operations = _.map(hotelsWithRooms, function(hotel){
+      return function(callback){
+        var rating, ref$, count, price, stars, newHotel;
         rating = 0;
         if (((ref$ = hotel.rating) != null ? ref$.total : void 8) != null) {
           count = hotel.rating.count;
@@ -116,20 +117,18 @@
           address: hotel.address,
           images: [hotel.thumbnail_url_220, hotel.thumbnail_url_220, hotel.thumbnail_url_220, hotel.thumbnail_url_220]
         };
-        dbHotel = clone$(newHotel);
-        delete dbHotel.price;
-        database.hotels.insert(dbHotel, fn$);
-        newHotels.push(newHotel);
-      }
-    }
-    return cb(null, {
-      results: newHotels,
-      complete: !json._next_page
+        callback(null, newHotel);
+        return database.hotels.insert(newHotel);
+      };
     });
-    function fn$(error, hotel){}
+    return async.series(operations, function(error, hotels){
+      return cb(null, {
+        results: hotels,
+        complete: !json._next_page
+      });
+    });
   };
   exports.search = function(origin, destination, extra, cb){
-    winston.info('search 1');
     return query(origin, destination, extra, function(error, hotelResult){
       if (error) {
         return cb(error, null);
@@ -191,8 +190,4 @@
       return callback(null, finalJson);
     });
   };
-  function clone$(it){
-    function fun(){} fun.prototype = it;
-    return new fun;
-  }
 }).call(this);
