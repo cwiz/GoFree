@@ -9,6 +9,7 @@ exports.autocomplete = (req, res) ->
 	} if not query
 
 	(error, results) <- geobase.autocomplete query
+
 	return res.json { status : 'error', error : error } if error
 
 	res.json do

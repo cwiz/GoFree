@@ -84,8 +84,8 @@ process = (json, cb) ->
 		departure 	 = moment.unix ticket.direct_flights[0].departure
 		arrival 	 = moment.unix ticket.direct_flights[ticket.transferNumber-1].arrival
 
-		utcDeparture = departure.clone!.subtract 'hours', departureAirport.timezone
-		utcArrival   = arrival.clone!.subtract 'hours', arrivalAirport.timezone
+		utcDeparture = departure.clone!.subtract 'hours', 	departureAirport.timezone
+		utcArrival   = arrival.clone!.subtract 'hours', 	arrivalAirport.timezone
 		
 		duration 	 = utcArrival.diff utcDeparture, 'hours'
 

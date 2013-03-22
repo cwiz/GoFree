@@ -51,7 +51,7 @@
     if (place != null && place.eviterra_id) {
       return callback(null, place.eviterra_id);
     }
-    return autocomplete(place.name_ru + "", function(error, result){
+    return autocomplete(place.name_ru, function(error, result){
       var eviterra_id;
       if (error) {
         return callback(error, null);
@@ -69,7 +69,7 @@
         $set: {
           eviterra_id: eviterra_id
         }
-      });
+      }, function(error, place){});
     });
   };
   query = function(origin, destination, extra, cb){
@@ -87,7 +87,6 @@
       }
       evUrl = "http://api.eviterra.com/avia/v1/variants.xml?from=" + eviterraId.origin + "&to=" + eviterraId.destination + "&date1=" + origin.date + "&adults=" + extra.adults;
       return cache.request(evUrl, function(error, body){
-        console.log("EVITERRA: Queried Eviterra serp | " + evUrl + " | status: " + !!body);
         if (error) {
           return cb(error, null);
         }

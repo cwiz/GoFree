@@ -42,7 +42,6 @@ Search = Backbone.Model.extend
     return !!valid
 
     
-
   isSemiValid: ->
     valid = true
 

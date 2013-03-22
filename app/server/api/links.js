@@ -8,7 +8,7 @@
     database.links.insert({
       hash: hash,
       result: result
-    });
+    }, function(error, link){});
     return hash;
   };
 }).call(this);

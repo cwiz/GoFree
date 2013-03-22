@@ -38,7 +38,7 @@ getFlatoraId = (place, callback) ->
     return callback message: 'no matching city found', null if not matchingCity
 
     callback null, matchingCity.id
-    database.geonames.update {geoname_id : place.geoname_id}, $set : flatora_id : matchingCity.id
+    database.geonames.update {geoname_id : place.geoname_id}, {$set : flatora_id : matchingCity.id}, (error, place) ->
 
 exports.details = (id, callback) ->
 
@@ -85,9 +85,27 @@ exports.details = (id, callback) ->
         type        : 'apartment'
         url         : "http://flatora.ru/flat_#{accommodation.id}.html"
 
-    database.hotels.insert apartment
+    callback null, apartment
+    database.hotels.insert apartment, (error, apartment) ->
 
-    return callback null, apartment
+
+detailsInBulk = (ids, callback) ->
+
+    (error, hotels) <- database.hotels.find({
+        provider: exports.name
+        id      : $in : ids
+    }).toArray!
+
+    hotelIdsInDatabase      = _.map hotels, (hotel) -> hotel.id
+    hotelIdsNotInDatabase   = _.without ids, hotelIdsInDatabase
+
+    operations = _.map hotelIdsNotInDatabase, (id) ->
+        (cb) -> exports.details id, cb
+
+    (error, results) <- async.series operations
+    hotels = _.union hotels, results if results
+
+    callback null, hotels
 
 query = (origin, destination, extra, cb) ->
 
@@ -112,10 +130,8 @@ query = (origin, destination, extra, cb) ->
 
 process = (accommodations, origin, destination, cb) ->
 
-    operations = _.map accommodations, (accommodation) ->
-        (callback) -> exports.details accommodation.id, callback
-
-    (error, results) <- async.series operations
+    (error, results) <- detailsInBulk _.map accommodations, (a) -> a.id
+    
     return cb (error or {message : 'couldnt find anything'}), null if not results
 
     checkin = moment origin.date

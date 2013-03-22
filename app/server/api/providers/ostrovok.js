@@ -1,9 +1,10 @@
 (function(){
-  var async, cache, database, request, getOstrovokId, query, process, autocomplete;
+  var async, cache, database, request, winston, getOstrovokId, query, process, autocomplete;
   async = require("async");
   cache = require("./../../cache");
   database = require("./../../database");
   request = require("request");
+  winston = require("winston");
   exports.name = "ostrovok.ru";
   getOstrovokId = function(place, callback){
     if (place.ostrovok_id) {
@@ -24,7 +25,7 @@
           $set: {
             ostrovok_id: ostrovok_id
           }
-        });
+        }, function(error, place){});
       };
       if (result.length === 0) {
         return autocomplete(place.name_ru + "", function(error, result){
@@ -54,8 +55,10 @@
         return cb(error, null);
       }
       ostUrl = "http://ostrovok.ru/api/v1/search/page/" + extra.page + "/?region_id=" + ostrovokId.destination + "&arrivalDate=" + origin.date + "&departureDate=" + destination.date + "&room1_numberOfAdults=" + extra.adults;
+      winston.profile("request");
       return cache.request(ostUrl, function(error, body){
         var json, page;
+        winston.profile("request");
         if (error) {
           return cb(error, null);
         }
@@ -115,7 +118,7 @@
         };
         dbHotel = clone$(newHotel);
         delete dbHotel.price;
-        database.hotels.insert(dbHotel);
+        database.hotels.insert(dbHotel, fn$);
         newHotels.push(newHotel);
       }
     }
@@ -123,8 +126,10 @@
       results: newHotels,
       complete: !json._next_page
     });
+    function fn$(error, hotel){}
   };
   exports.search = function(origin, destination, extra, cb){
+    winston.info('search 1');
     return query(origin, destination, extra, function(error, hotelResult){
       if (error) {
         return cb(error, null);

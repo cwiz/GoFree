@@ -59,7 +59,7 @@
             };
             dbHotel = clone$(hotel);
             delete dbHotel.price;
-            database.hotels.insert(dbHotel);
+            database.hotels.insert(dbHotel, function(error, hotel){});
             return hotel;
           });
           return cb(null, results);

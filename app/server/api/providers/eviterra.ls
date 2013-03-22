@@ -43,13 +43,13 @@ autocomplete = (query, callback) ->
 getEviterraId = (place, callback) ->
 	return callback(null, place.eviterra_id) if place?.eviterra_id
 
-	(error, result) <- autocomplete "#{place.name_ru}"
+	(error, result) <- autocomplete place.name_ru
 	return callback(error,              null)  if error
 	return callback({'nothing found'},  null)  if result.length is 0
 
 	eviterra_id = result[0].iata
 	callback null, eviterra_id
-	database.geonames.update {geoname_id : place.geoname_id}, {$set: {eviterra_id : eviterra_id}}
+	database.geonames.update {geoname_id : place.geoname_id}, {$set: {eviterra_id : eviterra_id}}, (error, place) ->
 
 query = (origin, destination, extra, cb) ->
 
@@ -61,7 +61,7 @@ query = (origin, destination, extra, cb) ->
 	evUrl = "http://api.eviterra.com/avia/v1/variants.xml?from=#{eviterraId.origin}&to=#{eviterraId.destination}&date1=#{origin.date}&adults=#{extra.adults}"
 
 	(error, body) <- cache.request evUrl
-	console.log "EVITERRA: Queried Eviterra serp | #{evUrl} | status: #{!!body}"
+	# console.log "EVITERRA: Queried Eviterra serp | #{evUrl} | status: #{!!body}"
 	return cb(error, null) if error
 
 	(error, json) <- parser.parseString body

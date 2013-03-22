@@ -20,16 +20,12 @@
     valueKey = "cache-" + md5(key);
     inProgessKey = "inprogress-" + md5(key);
     return client.get(inProgessKey, function(error, inProgess){
-      winston.info("CACHE: IN PROGRESS | key: " + inProgessKey + " | status: " + !!inProgess);
       if (inProgess && retry <= 1) {
         return setTimeout(function(){
           return exports.get(key, cb, retry + 1);
         }, 1000);
       }
-      return client.get(valueKey, cb, function(error, value){
-        cb(error, value);
-        return winston.info("CACHE: GET | key: " + valueKey + " | status: " + !!value);
-      });
+      return client.get(valueKey, cb);
     });
   };
   exports.set = function(key, value){
@@ -39,13 +35,11 @@
   };
   exports.request = function(url, cb){
     return exports.get(url, function(error, body){
-      winston.info("CACHE: REDIS | url: " + url + " | status: " + !!body);
       if (body) {
         return cb(null, body);
       }
       setInProgress(url);
       return request(url, function(error, response, body){
-        winston.info("CACHE: HTTP | url: " + url + " | status: " + !!body);
         if (error) {
           setNotInProgress(url);
           return cb(error, null);
@@ -58,12 +52,10 @@
   };
   exports.exec = function(command, cb){
     return exports.get(command, function(error, result){
-      winston.info("CACHE: REDIS | command: " + command + " | status: " + !!result);
       if (result) {
         return cb(null, result);
       }
       return exec(command, function(error, body){
-        winston.info("CACHE: EXEC | command: " + command + " | status: " + !!body);
         if (error) {
           setNotInProgress(command);
           return cb(error, null);

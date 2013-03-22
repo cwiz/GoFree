@@ -79,7 +79,7 @@
             error: error
           });
         }
-        database.search.insert(data);
+        database.search.insert(data, function(error, search){});
         return socket.emit('search_ok', {});
       });
     });
@@ -90,6 +90,9 @@
         callbacks = [];
         _.map(pairs, function(pair){
           return function(){
+            if (!pair.origin.date || !pair.destination.date) {
+              return;
+            }
             _.map(providers.flightProviders, function(provider){
               return function(){
                 return callbacks.push(function(callback){
@@ -144,6 +147,7 @@
               items = ((ref$ = params.result) != null ? ref$.results : void 8) || [];
               complete = ((ref$ = params.result) != null ? ref$.complete : void 8) || false;
               error = ((ref$ = params.error) != null ? ref$.message : void 8) || null;
+              console.log("SOCKET: " + params.event + " | Complete: " + complete + " | Provider: " + params.provider.name + " | Error: " + error + " | # results: " + items.length);
               if (complete || error || !items.length) {
                 providersReady += 1;
               }
@@ -166,6 +170,9 @@
             callbacks = [];
             _.map(pairs, function(pair){
               return function(){
+                if (!pair.origin.date || !pair.destination.date) {
+                  return;
+                }
                 _.map(providers.flightProviders, function(provider){
                   return function(){
                     return callbacks.push(function(callback){
@@ -227,7 +234,7 @@
             trip_hash: data.trip_hash
           }, function(error, trip){
             if (!trip) {
-              database.trips.insert(data);
+              database.trips.insert(data, function(error, trip){});
             }
             session.trip_hash = data.trip_hash;
             session.search_hash = data.search_hash;
