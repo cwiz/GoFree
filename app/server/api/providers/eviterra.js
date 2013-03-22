@@ -1,5 +1,5 @@
 (function(){
-  var _, async, cache, database, moment, request, xml2js, parser, autocomplete, getEviterraId, query, process;
+  var _, async, cache, database, moment, request, xml2js, winston, parser, autocomplete, getEviterraId, query, process;
   _ = require("underscore");
   async = require("async");
   cache = require("./../../cache");
@@ -7,6 +7,7 @@
   moment = require("moment");
   request = require("request");
   xml2js = require("xml2js");
+  winston = require("winston");
   parser = new xml2js.Parser(xml2js.defaults["0.1"]);
   moment.lang('ru');
   exports.name = "eviterra.com";
@@ -48,10 +49,10 @@
     });
   };
   getEviterraId = function(place, callback){
-    if (place != null && place.eviterra_id) {
+    if ((place != null && place.eviterra_id) && (place != null && place.iata)) {
       return callback(null, place.eviterra_id);
     }
-    return autocomplete(place.name_ru + "", function(error, result){
+    return autocomplete(place.name_ru, function(error, result){
       var eviterra_id;
       if (error) {
         return callback(error, null);
@@ -67,7 +68,8 @@
         geoname_id: place.geoname_id
       }, {
         $set: {
-          eviterra_id: eviterra_id
+          eviterra_id: eviterra_id,
+          iata: eviterra_id
         }
       });
     });
@@ -87,7 +89,6 @@
       }
       evUrl = "http://api.eviterra.com/avia/v1/variants.xml?from=" + eviterraId.origin + "&to=" + eviterraId.destination + "&date1=" + origin.date + "&adults=" + extra.adults;
       return cache.request(evUrl, function(error, body){
-        console.log("EVITERRA: Queried Eviterra serp | " + evUrl + " | status: " + !!body);
         if (error) {
           return cb(error, null);
         }
@@ -131,67 +132,73 @@
     });
     allCarriers = _.uniq(allCarriers);
     allAirports = _.uniq(allAirports);
-    return database.airports.find({
-      iata: {
-        $in: allAirports
+    return async.parallel([
+      function(callback){
+        return database.airports.find({
+          iata: {
+            $in: allAirports
+          }
+        }).toArray(callback);
+      }, function(callback){
+        return database.airlines.find({
+          iata: {
+            $in: allCarriers
+          }
+        }).toArray(callback);
       }
-    }).toArray(function(err, airportsInfo){
-      return database.airlines.find({
-        iata: {
-          $in: allCarriers
+    ], function(error, results){
+      var airportsInfo, airlinesInfo, newFlights, i$, ref$, len$, variant, arrivalDestinationDate, departureOriginDate, departureAirport, arrivalAirport, carrier, utcArrivalDate, utcDepartureDate, flightTimeSpan, newFlight;
+      airportsInfo = results[0];
+      airlinesInfo = results[1];
+      newFlights = [];
+      for (i$ = 0, len$ = (ref$ = flights.variant).length; i$ < len$; ++i$) {
+        variant = ref$[i$];
+        arrivalDestinationDate = moment(variant.lastFlight.arrivalDate + 'T' + variant.lastFlight.arrivalTime);
+        departureOriginDate = moment(variant.firstFlight.departureDate + 'T' + variant.firstFlight.departureTime);
+        departureAirport = _.filter(airportsInfo, fn$)[0];
+        arrivalAirport = _.filter(airportsInfo, fn1$)[0];
+        carrier = _.filter(airlinesInfo, fn2$)[0];
+        if (carrier) {
+          delete carrier._id;
         }
-      }).toArray(function(err, airlinesInfo){
-        var newFlights, i$, ref$, len$, variant, arrivalDestinationDate, departureOriginDate, departureAirport, arrivalAirport, carrier, utcArrivalDate, utcDepartureDate, flightTimeSpan, newFlight;
-        newFlights = [];
-        for (i$ = 0, len$ = (ref$ = flights.variant).length; i$ < len$; ++i$) {
-          variant = ref$[i$];
-          arrivalDestinationDate = moment(variant.lastFlight.arrivalDate + 'T' + variant.lastFlight.arrivalTime);
-          departureOriginDate = moment(variant.firstFlight.departureDate + 'T' + variant.firstFlight.departureTime);
-          departureAirport = _.filter(airportsInfo, fn$)[0];
-          arrivalAirport = _.filter(airportsInfo, fn1$)[0];
-          carrier = _.filter(airlinesInfo, fn2$)[0];
-          if (carrier) {
-            delete carrier._id;
-          }
-          if (!(departureAirport && arrivalAirport)) {
-            return cb({
-              message: "No airport found | departure: " + departureAirport + " | arrival: " + arrivalAirport
-            }, null);
-          }
-          utcArrivalDate = arrivalDestinationDate.clone().subtract('hours', arrivalAirport.timezone);
-          utcDepartureDate = departureOriginDate.clone().subtract('hours', departureAirport.timezone);
-          flightTimeSpan = utcArrivalDate.diff(utcDepartureDate, 'hours');
-          if (flightTimeSpan === 0) {
-            flightTimeSpan = 1;
-          }
-          newFlight = {
-            arrival: arrivalDestinationDate.format("hh:mm"),
-            carrier: carrier ? [carrier] : null,
-            departure: departureOriginDate.format("hh:mm"),
-            duration: flightTimeSpan * 60 * 60,
-            price: parseInt(variant.price),
-            provider: exports.name,
-            stops: variant.transferNumber - 1,
-            url: variant.url + 'ostroterra',
-            type: 'flight'
-          };
-          newFlights.push(newFlight);
+        if (!(departureAirport && arrivalAirport)) {
+          return cb({
+            message: "No airport found | departure: " + departureAirport + " | arrival: " + arrivalAirport
+          }, null);
         }
-        return cb(null, {
-          results: newFlights,
-          complete: true
-        });
-        function fn$(el){
-          return el.iata === variant.firstFlight.departure;
+        utcArrivalDate = arrivalDestinationDate.clone().subtract('hours', arrivalAirport.timezone);
+        utcDepartureDate = departureOriginDate.clone().subtract('hours', departureAirport.timezone);
+        flightTimeSpan = utcArrivalDate.diff(utcDepartureDate, 'hours');
+        if (flightTimeSpan === 0) {
+          flightTimeSpan = 1;
         }
-        function fn1$(el){
-          return el.iata === variant.lastFlight.arrival;
-        }
-        function fn2$(el){
-          var ref$;
-          return el.iata === (((ref$ = variant.lastFlight) != null ? ref$.marketingCarrier : void 8) != null);
-        }
+        newFlight = {
+          arrival: arrivalDestinationDate.format("hh:mm"),
+          carrier: carrier ? [carrier] : null,
+          departure: departureOriginDate.format("hh:mm"),
+          duration: flightTimeSpan * 60 * 60,
+          price: parseInt(variant.price),
+          provider: exports.name,
+          stops: variant.transferNumber - 1,
+          url: variant.url + 'ostroterra',
+          type: 'flight'
+        };
+        newFlights.push(newFlight);
+      }
+      return cb(null, {
+        results: newFlights,
+        complete: true
       });
+      function fn$(el){
+        return el.iata === variant.firstFlight.departure;
+      }
+      function fn1$(el){
+        return el.iata === variant.lastFlight.arrival;
+      }
+      function fn2$(el){
+        var ref$;
+        return el.iata === (((ref$ = variant.lastFlight) != null ? ref$.marketingCarrier : void 8) != null);
+      }
     });
   };
   exports.search = function(origin, destination, extra, cb){

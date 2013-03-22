@@ -7,6 +7,8 @@ md5 		= require "MD5"
 providers 	= require "./providers"
 rome2rio 	= require "./providers/rome2rio"
 validation 	= require "./validation"
+log     	= require("./../logging").getLogger "socket"
+winston 	= require "winston"
 
 fixDestination = (pair, cb) ->
 
@@ -65,7 +67,7 @@ exports.search = (err, socket, session) ->
 		(error, data) <- validation.search data
 		return socket.emit 'search_error', error: error if error
 
-		database.search.insert(data)
+		database.search.insert data, (error, search) ->
 		socket.emit 'search_ok', {} 
 
 	socket.on 'pre_search', (searchParams) ->
@@ -75,6 +77,8 @@ exports.search = (err, socket, session) ->
 
 		callbacks = []
 		_.map pairs, (pair) -> do ->
+
+			return if (not pair.origin.date or not pair.destination.date)
 
 			# flights
 			_.map providers.flightProviders, (provider) -> do ->
@@ -115,11 +119,11 @@ exports.search = (err, socket, session) ->
 			complete = params.result?.complete  or false
 			error    = params.error?.message 	or null
 
-			# console.log "SOCKET: #{params.event} 
-			# | Complete: #{complete} 
-			# | Provider: #{params.provider.name} 
-			# | Error: #{error} 
-			# | \# results: #{items.length}"
+			log.info "SOCKET: #{params.event}", do
+				complete: complete
+				provider: params.provider.name
+				error	: error
+				results	: items.length
 			
 			providersReady += 1 if (complete or error or not items.length)
 
@@ -135,7 +139,7 @@ exports.search = (err, socket, session) ->
 
 			progress = _.min([1, providersReady.toFixed(2) / totalProviders])
 
-			# console.log "SOCKET: progress | value: #{progress}"
+			log.info "SOCKET: progress", {value: progress}
 			
 			socket.emit 'progress', do
 				hash	: searchParams.hash
@@ -144,10 +148,14 @@ exports.search = (err, socket, session) ->
 		callbacks = []
 		_.map pairs, (pair) -> do ->
 
+			return if (not pair.origin.date or not pair.destination.date)
+
 			# flights
 			_.map providers.flightProviders, (provider) -> do ->
 				callbacks.push (callback) ->
+					winston.profile provider.name
 					(error, result) <- provider.search pair.origin, pair.destination, pair.extra
+					winston.profile provider.name
 					resultReady do
 						error 		: error
 						event 		: \flights_ready
@@ -160,7 +168,9 @@ exports.search = (err, socket, session) ->
 			return if not pair.hotels_signature
 			_.map providers.hotelProviders, (provider) -> do ->
 				callbacks.push (callback) ->
+					winston.profile provider.name
 					(error, result) <- provider.search pair.origin, pair.destination, pair.extra
+					winston.profile provider.name
 					resultReady do
 						error 		: error
 						event 		: \hotels_ready
@@ -180,7 +190,9 @@ exports.search = (err, socket, session) ->
 		return socket.emit 'serp_selected_error', error : error if error
 
 		(error, trip)			<- database.trips.findOne trip_hash : data.trip_hash
-		database.trips.insert data if not trip
+		
+		if not trip
+			database.trips.insert data, (error, trip) ->
 
 		session.trip_hash 	= data.trip_hash
 		session.search_hash = data.search_hash

@@ -1,8 +1,9 @@
 Mongolian = require "mongolian"
 
 # Database stuff
-server        			= new Mongolian()
-db            			= server.db "ostroterra"
+# db = new mongodb.Db "ostroterra", new mongodb.Server!, w:1
+server = new Mongolian()
+db = server.db "ostroterra"
 
 # Airports
 exports.airports 		= db.collection 'airports'

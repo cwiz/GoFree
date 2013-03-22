@@ -1,3 +1,8 @@
+# require('nodetime').profile({
+# 	accountKey: 'f68f618099c7801d1b070fd8abc8e1f9c6a19d8a'
+# 	appName: 'Node.js Application'
+# })
+
 _ 					= require "underscore"
 cluster     		= require "cluster"
 connect-redis		= require "connect-redis"

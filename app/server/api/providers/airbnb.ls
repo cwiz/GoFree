@@ -52,8 +52,7 @@ exports.search = (origin, destination, extra, cb) ->
                 dbHotel = ^^hotel
                 delete dbHotel.price
                 
-                database.hotels.insert dbHotel
-                
+                database.hotels.insert dbHotel, (error, hotel) -> 
                 return hotel
 
             cb null, results

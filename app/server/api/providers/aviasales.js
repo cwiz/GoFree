@@ -10,7 +10,17 @@
   MARKER = "19041";
   exports.name = 'aviasales.ru';
   query = function(origin, destination, extra, cb){
-    var searchParams, sortedKeys, paramsString, signature, command;
+    var ref$, originIata, destinationIata, searchParams, sortedKeys, paramsString, signature, command;
+    if ((ref$ = origin.nearest_airport) != null && ref$.iata) {
+      originIata = (ref$ = origin.nearest_airport) != null ? ref$.iata : void 8;
+    } else {
+      originIata = origin.place.iata;
+    }
+    if ((ref$ = destination.nearest_airport) != null && ref$.iata) {
+      destinationIata = (ref$ = destination.nearest_airport) != null ? ref$.iata : void 8;
+    } else {
+      destinationIata = destination.place.iata;
+    }
     searchParams = {
       origin_name: origin.nearest_airport.iata,
       destination_name: destination.nearest_airport.iata,

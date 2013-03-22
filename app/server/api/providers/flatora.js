@@ -1,5 +1,5 @@
 (function(){
-  var _, async, cache, database, moment, request, url, getCities, getFlatoraId, query, process;
+  var _, async, cache, database, moment, request, url, getCities, getFlatoraId, detailsInBulk, query, process;
   _ = require("underscore");
   async = require("async");
   cache = require("./../../cache");
@@ -62,7 +62,7 @@
         $set: {
           flatora_id: matchingCity.id
         }
-      });
+      }, function(error, place){});
     });
   };
   exports.details = function(id, callback){
@@ -122,8 +122,34 @@
           type: 'apartment',
           url: "http://flatora.ru/flat_" + accommodation.id + ".html"
         };
-        database.hotels.insert(apartment);
-        return callback(null, apartment);
+        callback(null, apartment);
+        return database.hotels.insert(apartment, function(error, apartment){});
+      });
+    });
+  };
+  detailsInBulk = function(ids, callback){
+    return database.hotels.find({
+      provider: exports.name,
+      id: {
+        $in: ids
+      }
+    }).toArray(function(error, hotels){
+      var hotelIdsInDatabase, hotelIdsNotInDatabase, operations;
+      hotelIdsInDatabase = _.map(hotels, function(hotel){
+        return hotel.id;
+      });
+      hotelIdsNotInDatabase = _.without(ids, hotelIdsInDatabase);
+      operations = _.map(hotelIdsNotInDatabase, function(id){
+        return function(cb){
+          return exports.details(id, cb);
+        };
+      });
+      return async.series(operations, function(error, results){
+        var hotels;
+        if (results) {
+          hotels = _.union(hotels, results);
+        }
+        return callback(null, hotels);
       });
     });
   };
@@ -158,13 +184,9 @@
     });
   };
   process = function(accommodations, origin, destination, cb){
-    var operations;
-    operations = _.map(accommodations, function(accommodation){
-      return function(callback){
-        return exports.details(accommodation.id, callback);
-      };
-    });
-    return async.series(operations, function(error, results){
+    return detailsInBulk(_.map(accommodations, function(a){
+      return a.id;
+    }), function(error, results){
       var checkin, checkout, nights;
       if (!results) {
         return cb(error || {
@@ -202,7 +224,7 @@
     if (destination.place.country_code !== 'RU') {
       return cb({
         message: "flatora works only in Russia"
-      });
+      }, null);
     }
     return query(origin, destination, extra, function(error, json){
       if (error) {

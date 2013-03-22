@@ -4,6 +4,10 @@ io 			= require 'socket.io-client'
 md5			= require 'MD5'
 moment		= require 'moment'
 
+database 	= require './../app/server/database'
+
+delay 		= (timeout, func) -> setTimeout func, timeout
+
 # providers
 airbnb 		= require './../app/server/api/providers/airbnb'
 aviasales 	= require './../app/server/api/providers/aviasales'
@@ -22,20 +26,23 @@ generateTrips = () ->
 					date: moment().add('days', 7).format("YYYY-MM-DD")
 					removable: false
 					place: 
-						iata			: "MOW"
-						name_ru			: "Москва"
-						country_name_ru	: "Россия"
-					signature:  md5(moment().format('MMMM Do YYYY, h:mm:ss a'))
-				}
-				{
-					date: moment().add('days', 14).format("YYYY-MM-DD")
-					removable: false
-					place: 
+						country_code	: "GB"
 						iata			: "LON"
 						name_ru			: "Лондон"
 						country_name_ru	: "Великобритания"
 					signature: md5(moment().format('MMMM Do YYYY, h:mm:ss a'))
 				}
+				{
+					date: moment().add('days', 14).format("YYYY-MM-DD")
+					removable: false
+					place: 
+						country_code	: "RU"
+						iata			: "MOW"
+						name_ru			: "Москва"
+						country_name_ru	: "Россия"
+					signature:  md5(moment().format('MMMM Do YYYY, h:mm:ss a'))
+				}
+
 			]
 		adults: 1
 		budget: 100000
@@ -57,17 +64,19 @@ generateData = () ->
 		extra		: extra
 	}
 
-describe 'Flatora', ->
 
-	describe '#search', ->
-		it 'should find something in Moscow', (done) ->
+
+# describe 'Flatora', ->
+
+# 	describe '#search', ->
+# 		it 'should find something in Moscow', (done) ->
 			
-			data = generateData()
+# 			data = generateData()
 			
-			flatora.search data.origin, data.destination, data.extra, (error, hotels) ->
-				expect(error).to.be.equal 					null
-				expect(hotels.results.length).to.be.above 	0
-				done() if hotels.complete
+# 			flatora.search data.origin, data.destination, data.extra, (error, hotels) ->
+# 				expect(error).to.be.equal 					null
+# 				expect(hotels.results.length).to.be.above 	0
+# 				done() if hotels.complete
 
 describe 'Aviasales', ->
 
@@ -79,44 +88,46 @@ describe 'Aviasales', ->
 			aviasales.search data.origin, data.destination, data.extra, (err, flights) ->
 				expect(err).to.be.equal null
 				expect(flights.results.length).to.be.above 	0
+				console.log flights.results.length
 				done()
 
-describe 'AirBnb', ->
+# describe 'AirBnb', 	->
 
-	describe '#search', ->
-		it 'should find something in Moscow', (done) ->
+# 	describe '#search', ->
+# 		it 'should find something in Moscow', (done) ->
 
-			data = generateData()
+# 			data = generateData()
 			
-			airbnb.search data.origin, data.destination, data.extra, (error, hotels) ->
-				expect(error).to.be.equal 					null
-				expect(hotels.results.length).to.be.above 	0
-				done() 
+# 			airbnb.search data.origin, data.destination, data.extra, (error, hotels) ->
+# 				expect(error).to.be.equal 					null
+# 				expect(hotels.results.length).to.be.above 	0
+# 				done() 
 
 
-describe 'Ostrovok', ->
+# describe 'Ostrovok', ->
 
-	describe '#search', ->
-		it 'should find something in Moscow', (done) ->
+# 	describe '#search', ->
+# 		it 'should find something in Moscow', (done) ->
 			
-			data = generateData()
+# 			data = generateData()
 			
-			ostrovok.search data.origin, data.destination, data.extra, (error, hotels) ->
-				expect(error).to.be.equal 					null
-				expect(hotels.results.length).to.be.above 	0
-				done() if hotels.complete
+# 			ostrovok.search data.origin, data.destination, data.extra, (error, hotels) ->
+# 				expect(error).to.be.equal 					null
+# 				expect(hotels.results.length).to.be.above 	0
+# 				done() if hotels.complete
 					
 
-describe 'Eviterra', ->
+# describe 'Eviterra', ->
 
-	describe '#search',  ->
-		it 'should find MOW -> LED flights', (done) ->
+# 	describe '#search',  ->
+# 		it 'should find MOW -> LED flights', (done) ->
 
-			data = generateData()
+# 			data = generateData()
 			
-			eviterra.search data.origin, data.destination, data.extra, (err, results) ->
-				expect(err).to.be.equal null
-				done()
+# 			eviterra.search data.origin, data.destination, data.extra, (err, results) ->
+# 				expect(err).to.be.equal null
+# 				expect(results.results.length).to.be.above 	0
+# 				done()
 
 # socketURL = 'http://localhost:3000'
 # socketOptions =

@@ -5,6 +5,7 @@ database    = require "./../../database"
 moment      = require "moment"
 request     = require "request"
 xml2js      = require "xml2js"
+winston		= require "winston"
 
 # Globals
 parser = new xml2js.Parser(xml2js.defaults["0.1"])
@@ -41,15 +42,15 @@ autocomplete = (query, callback) ->
 	callback null, finalJson
 
 getEviterraId = (place, callback) ->
-	return callback(null, place.eviterra_id) if place?.eviterra_id
+	return callback(null, place.eviterra_id) if (place?.eviterra_id and place?.iata)
 
-	(error, result) <- autocomplete "#{place.name_ru}"
+	(error, result) <- autocomplete place.name_ru
 	return callback(error,              null)  if error
 	return callback({'nothing found'},  null)  if result.length is 0
 
 	eviterra_id = result[0].iata
 	callback null, eviterra_id
-	database.geonames.update {geoname_id : place.geoname_id}, {$set: {eviterra_id : eviterra_id}}
+	database.geonames.update {geoname_id : place.geoname_id}, {$set: {eviterra_id : eviterra_id, iata : eviterra_id}}
 
 query = (origin, destination, extra, cb) ->
 
@@ -59,9 +60,9 @@ query = (origin, destination, extra, cb) ->
 
 	return cb error, null if error
 	evUrl = "http://api.eviterra.com/avia/v1/variants.xml?from=#{eviterraId.origin}&to=#{eviterraId.destination}&date1=#{origin.date}&adults=#{extra.adults}"
-
+	
 	(error, body) <- cache.request evUrl
-	console.log "EVITERRA: Queried Eviterra serp | #{evUrl} | status: #{!!body}"
+	# console.log "EVITERRA: Queried Eviterra serp | #{evUrl} | status: #{!!body}"
 	return cb(error, null) if error
 
 	(error, json) <- parser.parseString body
@@ -95,8 +96,13 @@ process = (flights, cb) ->
 
 	allAirports = _.uniq allAirports
 
-	(err, airportsInfo) <- database.airports.find({iata:{$in:allAirports}}).toArray()
-	(err, airlinesInfo) <- database.airlines.find({iata:{$in:allCarriers}}).toArray()
+	(error, results) <- async.parallel [
+		(callback) -> database.airports.find({iata:{$in:allAirports}}).toArray(callback), 
+		(callback) -> database.airlines.find({iata:{$in:allCarriers}}).toArray(callback), 
+	]
+
+	airportsInfo = results[0]
+	airlinesInfo = results[1]
 
 	newFlights = []
 
