@@ -99,6 +99,7 @@ SERPTrips = Backbone.View.extend
       max     : @budget
       step    : 1000
       minRange: 10000
+      disabled: true
     })
 
   updateBudgetMeter: (data) ->
@@ -171,8 +172,8 @@ SERPTrips = Backbone.View.extend
   destroy: ->
     @undelegateEvents()
     app.socket.removeAllListeners('progress')
-    app.off('serp_selected', @updateBudgetAdd, @)
-    app.off('serp_deselected', @updateBudgetRemove, @)
+    app.off('serp_selected',    @updateBudgetAdd,     @)
+    app.off('serp_deselected',  @updateBudgetRemove,  @)
     app.off('resize', @updateMeters, @)
 
     progress = 0
