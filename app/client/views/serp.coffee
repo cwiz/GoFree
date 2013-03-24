@@ -11,7 +11,6 @@ SERP = Backbone.View.extend
 
     app.on('resize', @updatePageHeight, @)
     app.socket.on('start_search_error', _.bind(@searchError, @))
-
     @setup(opts)
 
     # KISSMetrics
@@ -24,10 +23,11 @@ SERP = Backbone.View.extend
     'click .p-s-h-bookselected'   : 'selectedSave'
 
   setup: (@opts)->
-    @hash = @opts.hash
-    @search = @opts.search
+    @hash       = @opts.hash
+    @search     = @opts.search
     @collection = @opts.collection
-    @selected = @opts.selected
+    @selected   = @opts.selected
+    @budget     = @search.get('budget')
 
     @serpTrips = null
 
@@ -87,11 +87,12 @@ SERP = Backbone.View.extend
     @serpPart.addClass('loaded')
 
     @serpHeader.html(app.templates.serp_header())
-
+    
     @serpTrips = new app.views.SERPTrips(
-      el: @tripsContent
+      el        : @tripsContent
       collection: @collection
-      hash: @hash
+      hash      : @hash
+      budget    : @budget
       # search: @search
       )
 

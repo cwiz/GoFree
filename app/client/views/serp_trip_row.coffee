@@ -4,30 +4,30 @@ SERPTripRow = Backbone.View.extend
   selected: null
 
   initialize: (@opts) ->
-    @template   = @opts.template
-    @signature  = @opts.signature
+    @template     = @opts.template
+    @signature    = @opts.signature
 
-    @carouselEl = @$el.find('.m-carousel')
+    @carouselEl   = @$el.find('.m-carousel')
 
     @listEl       = @$el.find('.m-c-list')
     @counterEl    = @$el.find('.v-s-t-c-count')
     @preFiltersEl = @$el.find('.v-s-t-c-prefilters')
     @filtersEl    = @$el.find('.v-s-t-c-filters')
 
-    @carousel   = @carouselEl.m_carousel()[0]
+    @carousel     = @carouselEl.m_carousel()[0]
 
-    @counter    = 0
-    @length     = 0
-    @rendered   = 0
-    @progress   = 0
+    @counter      = 0
+    @length       = 0
+    @rendered     = 0
+    @progress     = 0
 
     @collection.on('progress', @newData, @)
-    @collection.on('filtered', @update, @)
+    @collection.on('filtered', @update,  @)
 
     @carouselEl.on('mod_shifted_right', _.bind(@shiftRight, @))
-    @carouselEl.on('mod_shifted_left', _.bind(@shiftLeft, @))
+    @carouselEl.on('mod_shifted_left',  _.bind(@shiftLeft,  @))
 
-    app.on('hotel_overlay_select',    _.bind(@selectFromOverlay, @))
+    app.on('hotel_overlay_select',      _.bind(@selectFromOverlay, @))
 
     app.log('[app.views.SERPTripRow]: initialize')
 
@@ -66,6 +66,7 @@ SERPTripRow = Backbone.View.extend
       data = 
         signature : @signature
         model     : @collection.get(data.cid)
+        index     : @index
 
       @selected.removeClass('selected') if @selected
 
@@ -78,8 +79,9 @@ SERPTripRow = Backbone.View.extend
     el = $(e.target)
     item = el.parents('.v-s-t-item')
     data = 
-      signature: @signature
-      model: @collection.get(item.data('cid'))
+      signature : @signature
+      model     : @collection.get(item.data('cid'))
+      index     : @index
 
     @selected.removeClass('selected') if @selected
 
@@ -90,8 +92,9 @@ SERPTripRow = Backbone.View.extend
 
   deselectItem: (e)->
     data = 
-      signature: @signature
-      model: @collection.get(@selected.data('cid'))
+      signature : @signature
+      model     : @collection.get(@selected.data('cid'))
+      index     : @index
 
     @selected.removeClass('selected')
     @selected = null

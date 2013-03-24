@@ -5,10 +5,10 @@ section.v-searchform.l-wrap
 
     form.v-s-form
 
+      h2 Откуда
+
       .v-s-initial
 
-        h2 Откуда
-        
         .vs-initial-place
 
         .v-s-guests
@@ -17,19 +17,20 @@ section.v-searchform.l-wrap
               - var selected = (adults === i);
               option(value=i, selected=selected)= app.utils.choosePlural(i, ['гость', 'гостя', 'гостей'])
 
-      //- .v-s-conditions
-      //-   .v-s-budget.m-validate-container(data-for="budget")
-      //-     label Бюджет
-      //-     input.v-s-amount.small(type="text", name="budget", min=10000, value=budget, data-validate="true", data-error="Выберите бюджет", data-filter="number", required)
-      //-     small руб
+      .v-s-budget
 
-      h2 Путешествие
+        label Бюджет, тысяч рублей
+
+        input.v-s-amount(type="text", name="budget", min=10, value=budget/1000, data-validate="true", data-error="Выберите бюджет", data-filter="number", required)
+
 
       .destinations-wrapper
 
+        h2 Путешествие
+
         ul.v-s-destinations
+
         .v-s-t-stop.vs-final-place
-          
           .v-s-t-s-place
             label
 
@@ -37,6 +38,16 @@ section.v-searchform.l-wrap
 
         p.v-s-destinations-add
           span.v-s-d-add.pointy.disabled &plus; добавить город
+
+
+
+      //- h2 Бюджет
+
+      //- .v-s-conditions
+      //-   .v-s-budget.m-validate-container(data-for="budget")
+      //-     input.v-s-amount(type="text", name="budget", min=10000, value=budget, data-validate="true", data-error="Выберите бюджет", data-filter="number", required)
+      //-     small руб
+
 
       .v-s-error Пожалуйста, выберите города из выпадающих списков.
 
