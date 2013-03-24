@@ -13,7 +13,7 @@
 .quinn .reset, .quinn .minus, .quinn .plus, .quinn .help {
   /* If you change the image URL, be sure to also change the URL for the
    * HiDPI sprite at the bottom of this CSS file. */
-  background-image: url(/img/slider/default.png);
+  // background-image: url(/img/slider/default.png);
   background-repeat: no-repeat;
 }
 
@@ -203,7 +203,7 @@
 }
 
 .oxye .bar .main {
-  background: url('/img/slider/background.png');
+  background: url('/img/slider/bar-background.png');
   background-repeat: no-repeat;
 }
 
@@ -216,19 +216,24 @@
 }
 
 .oxye, .oxye .bar, .oxye .bar .main, .oxye .quinn {
-  height: 21px;
+  height: 23px;
 }
 
 .oxye .quinn.multiple .handle, .oxye .handle {
   height: 23px;
   width: 14px;
   background: url('/img/slider/handle.png');
-  margin-top: -1px;
-  box-shadow: 0 3px 3px black;
+  margin-top: 0;//2px;
+  // box-shadow: 0 3px 3px black;
 }
 
 .quinn .handle:active, .quinn .handle.active {
   background-position: 0 0;
+}
+
+.oxye .quinn .delta-bar {
+  height: 23px;
+  background: cyan;
 }
 
 .oxye .bar .value-label, .oxye .bar .text-label {
