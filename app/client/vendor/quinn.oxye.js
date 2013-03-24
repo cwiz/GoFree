@@ -950,7 +950,7 @@
         }
 
         if (left !== null) {
-            this.deltaBar.css('left', this.position(left) + 'px');
+            this.deltaBar.css('left', 0);//this.position(left) + 'px');
         }
 
         if (right !== null) {
