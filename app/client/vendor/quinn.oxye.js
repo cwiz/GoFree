@@ -838,10 +838,10 @@
 
         addRoundingElements(this.bar);
 
-        if (this.model.values.length <= 2) {
+        //if (this.model.values.length <= 2) {
             addRoundingElements(this.deltaBar);
             this.bar.append(this.deltaBar);
-        }
+        //}
 
         this.wrapper.html(this.bar);
         this.wrapper.addClass('quinn');
