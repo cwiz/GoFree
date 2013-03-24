@@ -1064,7 +1064,7 @@
         // disabled, however this may not work perfectly with older Internet
         // Explorer versions when using transparent PNGs. Setting this to 1.0
         // will tell Quinn not to fade the slider when disabled.
-        disabledOpacity: 0.5,
+        disabledOpacity: 1.0,
 
         // If using Quinn on an element which isn't attached to the DOM, the
         // library won't be able to determine it's width; supply it as a
