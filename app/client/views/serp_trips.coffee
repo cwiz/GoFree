@@ -99,7 +99,7 @@ SERPTrips = Backbone.View.extend
       max     : @budget
       step    : 1000
       minRange: 10000
-      disabled: true
+      disable : true
     })
 
   updateBudgetMeter: (data) ->
