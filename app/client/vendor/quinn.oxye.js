@@ -15,6 +15,7 @@
         DRAG_END_E       = 'touchend';
         IS_TOUCH_ENABLED =  true;
     }
+    
 
     /**
      * Given an event, returns the horizontal location on the page on which
