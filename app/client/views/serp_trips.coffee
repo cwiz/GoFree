@@ -16,11 +16,7 @@ SERPTrips = Backbone.View.extend
     @hash   = @opts.hash
     @budget = @opts.budget
 
-    @subtotal = []
-    for i in [0...@collection.length]
-      @subtotal.push 0
-    @subtotal.push @budget
-    
+    @subtotal = _.map(@collection, (elem) -> 0).concat([@budget])    
     @render()
 
     @progressMeterEl= $         '.v-s-t-p-meter'
@@ -31,23 +27,10 @@ SERPTrips = Backbone.View.extend
 
     app.socket.on('progress',       _.bind(@updateProgress, @))
     app.on('serp_subtotal_changed', @updateBudgetMeter,     @)
-    app.on('serp_selected',         @updateBudgetAdd,       @)
-    app.on('serp_deselected',       @updateBudgetRemove,    @)
-    app.on('resize',                @updateMeters,          @)
 
     @initTrips()
-    @expandFirst()
-    @updateMeters()
 
     app.log('[app.views.SERPTrips]: initialize')
-
-  setBudget: (num)->
-    @budget = num
-    @setBudgetMeter()
-
-  updateMeters: ->
-    @setProgressMeter()
-    @setBudgetMeter()
 
   updateProgress: (data) ->
     return unless data.hash == @hash
@@ -55,33 +38,12 @@ SERPTrips = Backbone.View.extend
     @setProgressMeter()
     app.log('[app.views.SERPTrips]: progress ' + Math.floor(@progress * 100) + '%')
 
-  updateBudgetAdd: (data)->
-    @_budgetHash[data.signature] = data.model.get('price')
-    @setBudgetMeter()
-
-  updateBudgetRemove: (data)->
-    delete @_budgetHash[data.signature]
-    @setBudgetMeter()
-
   setProgressMeter: ->
     pos = app.size.width * @progress
     @progressMeterEl.animate({left: pos}, 10, 'linear')
 
-  setBudgetMeter: ->
-    @spent = _.reduce(_.values(@_budgetHash), (memo, num)->
-      memo + num
-    , 0)
-
-    diff = @budget - @spent
-    perc = Math.min(@spent / @budget, 1) # in case we're going over budget
-    pos  = app.size.width * perc
-
-    @amountSpentEl.html(app.utils.formatNum(@spent))
-    @amountLeftEl.html(app.utils.formatNum(diff))
-
-    @budgetMeterEl.css(left: pos)
-
   initBudgetMeter: ->
+
     cities = @collection.map (elem) -> elem.get('destination').place.name_ru
 
     budgetCities = []
@@ -99,6 +61,8 @@ SERPTrips = Backbone.View.extend
       minRange: 10000
       disable : true
     })
+
+    return @budgetSlider
 
   updateBudgetMeter: (data) ->
     
@@ -128,40 +92,10 @@ SERPTrips = Backbone.View.extend
         search    : @opts.search
         index     : @collection.indexOf model
       )
-      @trips[model.cid].on('expand', _.bind(@beforeExpand, @))
-      @trips[model.cid].on('collapse', _.bind(@beforeCollapse, @))
     
     @collection.each(iterator)
 
     @initBudgetMeter()
-
-  expandFirst: ->
-    first = _.values(@trips)[0]
-    first.expand()
-
-    @_locked = first
-    @_locked.setCollapsable(false)
-
-  findLastExpanded: ->
-    for k, v of @_expandedHash
-      if v then res = k
-
-    res
-
-  beforeExpand: (cid)->
-    @expanded++
-    @_expandedHash[cid] = true
-    @_locked.setCollapsable(true) if @_locked
-
-  beforeCollapse: (cid)->
-    return if not @trips[cid]._collapsable
-
-    @expanded--
-    @_expandedHash[cid] = false
-
-    if @expanded == 1
-      @_locked = @trips[@findLastExpanded()]
-      @_locked.setCollapsable(false)
 
   render: ->
     @$el.html(app.templates.serp_trips())
@@ -169,13 +103,11 @@ SERPTrips = Backbone.View.extend
   destroy: ->
     @undelegateEvents()
     app.socket.removeAllListeners('progress')
-    app.off('serp_selected',    @updateBudgetAdd,     @)
-    app.off('serp_deselected',  @updateBudgetRemove,  @)
-    app.off('resize', @updateMeters, @)
+    app.off('serp_subtotal_changed',  @updateBudgetMeter,   @)
 
-    progress = 0
-    budget = 0
-    spent = 0
+    progress  = 0
+    budget    = 0
+    spent     = 0
   
     for k, v of @trips
       v.destroy()
@@ -186,6 +118,10 @@ SERPTrips = Backbone.View.extend
     delete @_expandedHash
     delete @_budgetHash
     delete @_locked
+
+    @budgetSlider.elem.remove()
+    @budgetSlider.elem.parent().empty()
+    delete @budgetSlider
 
     delete @container
     delete @collection

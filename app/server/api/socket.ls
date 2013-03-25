@@ -57,6 +57,17 @@ makePairs = (data, cb) ->
 
 	allSignatures 	= flightSignatures.concat hotelSignatures
 
+	for i in [0 til (pairs.length-1)]
+		pair 		= pairs[i]
+		nextPair 	= pairs[i+1]
+
+		if pair.origin.place is nextPair.destination.place
+			pair.destination.roundTrip = true
+
+	pairs = _.filter pairs, (pair) -> not pair.origin.roundTrip?
+
+	console.log pairs
+
 	cb null, do
 		pairs 			: pairs
 		signatures 		: allSignatures

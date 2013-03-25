@@ -5,22 +5,21 @@ Index = Backbone.View.extend
     @render()
 
     @searchPart = @$el.find('#part-search')
-    @serpPart = @$el.find('#part-serp')
+    @serpPart   = @$el.find('#part-serp')
 
     @searchForm = @searchPart.find('.p-s-formwrap')
 
-    @bg = @searchPart.find('.p-s-bg-img')
-    @preloader = $('<img/>')
+    @bg         = @searchPart.find('.p-s-bg-img')
+    @preloader  = $('<img/>')
 
     @collection = @model.get('trips')
 
     @updatePageHeight()
 
-    @searchFormView = new app.views.SearchForm(
+    @searchFormView = new app.views.SearchForm
       el        : @searchForm
       model     : @model
       collection: @collection
-    )
 
     @show()
 
@@ -37,7 +36,7 @@ Index = Backbone.View.extend
     app.utils.scroll(app.size.height, 300, =>
       app.router.navigate('search/' + data.hash, trigger: true)
       @searchPart.hide()
-      )
+    )
 
   render: ->
     return if @$el.find('#part-search').length

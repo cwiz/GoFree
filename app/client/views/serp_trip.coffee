@@ -47,14 +47,12 @@ SERPTrip = Backbone.View.extend
     app.on('serp_selected',   @updateSelected,  @)
     app.on('serp_deselected', @removeSelected,  @)
 
-    @initialCollapse()
     @showTrip()
     @fetchBackground()
 
     app.log('[app.views.SERPTrip]: initialize')
 
   events:
-    'click .v-s-t-places'           : 'toggleCollapse'
     'click .v-s-t-i-photo'          : 'loadHotelOverlay'
 
   loadHotelOverlay: (e)->
@@ -108,20 +106,6 @@ SERPTrip = Backbone.View.extend
       @totalsEl.removeClass('picked')
       app.trigger 'serp_subtotal_changed', {index: @index, total: 0}
 
-  initialCollapse: ->
-    @heightFull = @$el.outerHeight()
-
-    @$el.addClass('collapsed')
-    @heightCollapsed = @$el.find('.v-s-t-header').height()
-
-    @$el.hide()
-
-    @collapsed = true
-    @$el.css(height: @heightCollapsed)
-
-  toggleCollapse: ->
-    if @collapsed then @expand() else @collapse()
-
   fetchBackground: ->
     $.ajax
       url: "#{app.api.images}#{@model.get('destination').place.country_code}/#{@model.get('destination').place.name}"
@@ -138,37 +122,6 @@ SERPTrip = Backbone.View.extend
 
   showTrip: (e)->
     @$el.fadeIn(500)
-
-  setCollapsable: (bool)->
-    @_collapsable = bool
-
-    if @_collapsable
-      @$el.removeClass('nocollapse')
-    else
-      @$el.addClass('nocollapse')
-
-  expand: ->
-    return unless @collapsed
-
-    @trigger('expand', @model.cid)
-
-    @collapsed = false
-    @$el.removeClass('collapsed')
-    @$el.animate({ height: @heightFull }, { duration: 500, queue: false })
-
-    @trigger('expanding', @model.cid)
-
-  collapse: ->
-    return if @collapsed
-
-    @trigger('collapse', @model.cid)
-    return if not @_collapsable
-
-    @collapsed = true
-    @$el.addClass('collapsed')
-    @$el.animate({ height: @heightCollapsed }, { duration: 500, queue: false })
-
-    @trigger('collapsing', @model.cid)
 
   render: ->
     @$el.html(app.templates.serp_trip(@model.toJSON()))

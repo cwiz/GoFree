@@ -15,7 +15,6 @@
         DRAG_END_E       = 'touchend';
         IS_TOUCH_ENABLED =  true;
     }
-    
 
     /**
      * Given an event, returns the horizontal location on the page on which
@@ -1276,9 +1275,9 @@
 
         params = _.extend(params, customFunctions);
         params.minRange = params.minRange || 0;
-        params.min      = 0;//params.minRange;
-        params.max      = params.max;//params.max - params.minRange;
-        params.drawTo   = { left: 0, right: params.max}; //+ params.minRange };
+        params.min      = 0;
+        params.max      = params.max;
+        params.drawTo   = { left: 0, right: params.max};
         
         quinnElem = this.quinn(params);
         return {

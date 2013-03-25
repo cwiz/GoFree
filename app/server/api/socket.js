@@ -55,7 +55,7 @@
         return callback(null, pair);
       });
     }, function(error, pairs){
-      var flightSignatures, hotelSignatures, allSignatures;
+      var flightSignatures, hotelSignatures, allSignatures, i$, ref$, len$, i, pair, nextPair;
       if (error) {
         return cb(error, null);
       }
@@ -67,10 +67,29 @@
       });
       hotelSignatures.pop();
       allSignatures = flightSignatures.concat(hotelSignatures);
+      for (i$ = 0, len$ = (ref$ = (fn$())).length; i$ < len$; ++i$) {
+        i = ref$[i$];
+        pair = pairs[i];
+        nextPair = pairs[i + 1];
+        if (pair.origin.place === nextPair.destination.place) {
+          pair.destination.roundTrip = true;
+        }
+      }
+      pairs = _.filter(pairs, function(pair){
+        return pair.origin.roundTrip == null;
+      });
+      console.log(pairs);
       return cb(null, {
         pairs: pairs,
         signatures: allSignatures
       });
+      function fn$(){
+        var i$, to$, results$ = [];
+        for (i$ = 0, to$ = pairs.length - 1; i$ < to$; ++i$) {
+          results$.push(i$);
+        }
+        return results$;
+      }
     });
   };
   exports.search = function(err, socket, session){
