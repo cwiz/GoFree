@@ -167,8 +167,11 @@ SearchForm = Backbone.View.extend
   collectionChanged: (e) ->
 
     if @model.isSemiValid()
-      @addStopEl.removeClass('disabled')
-      @canAddStop = true
+      
+      if @model.get('trips').length < 5
+        @addStopEl.removeClass('disabled')
+        @canAddStop = true
+        
       @model.preSave() 
 
   adultsChanged: (e) ->

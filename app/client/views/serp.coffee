@@ -4,14 +4,13 @@ SERP = Backbone.View.extend
   initialize: (opts) ->
     @render()
 
-    @searchPart   = @$el.find '#part-search'
-    @serpPart     = @$el.find '#part-serp'
-    @serpHeader   = @serpPart.find '.p-s-header-wrap'
-    @tripsContent = @serpPart.find '.p-s-t-content'
+    @searchPart   = @$el.find       '#part-search'
+    @serpPart     = @$el.find       '#part-serp'
+    @serpHeader   = @serpPart.find  '.p-s-header-wrap'
+    @tripsContent = @serpPart.find  '.p-s-t-content'
 
     app.on('resize', @updatePageHeight, @)
     app.socket.on('start_search_error', _.bind(@searchError, @))
-
     @setup(opts)
 
     # KISSMetrics
@@ -24,20 +23,21 @@ SERP = Backbone.View.extend
     'click .p-s-h-bookselected'   : 'selectedSave'
 
   setup: (@opts)->
-    @hash = @opts.hash
-    @search = @opts.search
+    @hash       = @opts.hash
+    @search     = @opts.search
     @collection = @opts.collection
-    @selected = @opts.selected
+    @selected   = @opts.selected
+    @budget     = @search.get('budget')
 
-    @serpTrips = null
+    @serpTrips  = null
 
     @search.setHash(@hash).observe()
     @collection.setHash(@hash).observe()
     @selected.setHash(@hash).observe()
 
-    @search.on('fetched', @paramsReady, @)
+    # @search.on('fetched',     @paramsReady,     @)
     @collection.on('fetched', @collectionReady, @)
-    @selected.on('saved', @selectedSaved, @)
+    @selected.on('saved',     @selectedSaved,   @)
 
     app.socket.emit('search_start', hash: @hash)
 
@@ -61,7 +61,10 @@ SERP = Backbone.View.extend
     @serpPart.show()
 
   showForm: ->
-    @searchPart.css('min-height': app.size.height, display: 'block')
+    @searchPart.css
+      'min-height': app.size.height
+      display     : 'block'
+    
     app.utils.scroll(app.size.height, 0)
 
     app.utils.scroll(0, 300, =>
@@ -87,18 +90,17 @@ SERP = Backbone.View.extend
     @serpPart.addClass('loaded')
 
     @serpHeader.html(app.templates.serp_header())
-
+    
     @serpTrips = new app.views.SERPTrips(
-      el: @tripsContent
+      el        : @tripsContent
       collection: @collection
-      hash: @hash
+      hash      : @hash
+      budget    : @budget
       # search: @search
-      )
+    )
 
-    @serpTrips.setBudget(@search.get('budget'))
-
-  paramsReady: ->
-    @serpTrips.setBudget(@search.get('budget')) if @serpTrips?
+  # paramsReady: ->
+  #   @serpTrips.setBudget(@search.get('budget')) if @serpTrips?
 
   searchError: ->
     @serpPart.addClass('error')
@@ -107,9 +109,9 @@ SERP = Backbone.View.extend
     @tripsContent.html('')
     @serpPart.removeClass('loaded error')
 
-    @search?.off('fetched', @paramsReady, @)
+    # @search?.off('fetched',     @paramsReady,     @)
     @collection?.off('fetched', @collectionReady, @)
-    @selected?.off('saved', @selectedSaved, @)
+    @selected?.off('saved',     @selectedSaved,   @)
 
     if @serpTrips
       @serpTrips.destroy()

@@ -6,7 +6,12 @@
 .v-serp-trip-content.l-wrap
   header.v-s-t-header
     .v-s-t-meta
-      h2.v-s-t-places #{origin.place.name_ru} &ndash; #{destination.place.name_ru}
+      
+      if !destination.roundTrip
+        h2.v-s-t-places #{origin.place.name_ru} &ndash; #{destination.place.name_ru}
+      else
+        h2.v-s-t-places #{destination.place.name_ru}
+      
       if origin.date < destination.date
         small.v-s-t-dates #{app.utils.humanizeDatesSpan(origin.date, destination.date)}
       else
@@ -36,10 +41,13 @@
 
   if flights_signature
     .v-s-t-flights
-      h3.v-s-t-title Перелеты #{origin.nearest_airport.name_ru} &rarr; #{destination.nearest_airport.name_ru}
+      if !destination.roundTrip
+        h3.v-s-t-title Перелеты #{origin.nearest_airport.name_ru} &rarr; #{destination.nearest_airport.name_ru}
+      else
+        h3.v-s-t-title Перелеты #{origin.nearest_airport.name_ru} &rarr; #{destination.nearest_airport.name_ru} &rarr; #{origin.nearest_airport.name_ru}
 
       .v-s-t-rowcontrols
-        ul.v-s-t-c-filters
+        ul.v-s-t-c-filters(style='display:none')
           li.v-s-t-c-filter.selected(data-filter="none") Все
           li.v-s-t-c-filter(data-filter="convenient") Оптимальные
           //- li.v-s-t-c-filter(data-filter="cheap") Дешевые
@@ -47,11 +55,12 @@
 
         span.v-s-t-c-count 0/0
 
-      div.v-s-t-carousel.m-carousel
+      - var klass = (!destination.roundTrip ? 'v-s-t-carousel m-carousel' : 'v-s-t-carousel v-s-t-carousel-big m-carousel')
+      div(class=klass)
         span.m-c-prev.m-c-control.disabled
         span.m-c-next.m-c-control
 
-        .m-c-coutainer
+        div(class="m-c-coutainer")
           ul.m-c-list
           .v-s-t-c-loading
             span Загрузка...

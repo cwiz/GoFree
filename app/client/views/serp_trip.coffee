@@ -8,51 +8,51 @@ SERPTrip = Backbone.View.extend
   _hotelPrice: 0
 
   initialize: (@opts) ->
-    @container = @opts.container
+    @container        = @opts.container
+    @index            = @opts.index
+
     @render()
 
-    @bg = @$el.find('.v-s-t-bg-img')
-    @preloader = $('<img/>')
+    @bg               = @$el.find('.v-s-t-bg-img')
+    @preloader        = $('<img/>')
 
-    @totalsEl = @$el.find('.v-s-t-totals')
-    @resultsFlightEl = @$el.find('.v-s-t-r-flight')
-    @resultsHotelEl = @$el.find('.v-s-t-r-hotel')
+    @totalsEl         = @$el.find('.v-s-t-totals')
+    @resultsFlightEl  = @$el.find('.v-s-t-r-flight')
+    @resultsHotelEl   = @$el.find('.v-s-t-r-hotel')
 
     if @model.get('flights_signature')
       @flightsRow = new app.views.SERPTripRow(
-        el: @$el.find('.v-s-t-flights')
-        model: @model
+        el        : @$el.find('.v-s-t-flights')
+        model     : @model
         collection: @model.get('flights_filtered')
-        template: app.templates.serp_trip_flight
-        signature: @model.get('flights_signature')
-        )
+        template  : app.templates.serp_trip_flight
+        signature : @model.get('flights_signature')
+      )
 
     if @model.get('hotels_signature')
       @hotelsRow = new app.views.SERPTripRow(
-        el: @$el.find('.v-s-t-hotels')
-        model: @model
+        el        : @$el.find('.v-s-t-hotels')
+        model     : @model
         collection: @model.get('hotels_filtered')
-        template: app.templates.serp_trip_hotel
-        signature: @model.get('hotels_signature')
-        )
+        template  : app.templates.serp_trip_hotel
+        signature : @model.get('hotels_signature')
+      )
 
       @hotelOverlay = new app.views.HotelOverlay(
-        signature: @model.get('hotels_signature')
+        signature : @model.get('hotels_signature')
         # search: @opts.search
-        )
+      )
 
-    @preloader.on('load', _.bind(@updateBG, @))
-    app.on('serp_selected', @updateSelected, @)
-    app.on('serp_deselected', @removeSelected, @)
+    @preloader.on('load',     _.bind(@updateBG, @))
+    app.on('serp_selected',   @updateSelected,  @)
+    app.on('serp_deselected', @removeSelected,  @)
 
-    @initialCollapse()
     @showTrip()
     @fetchBackground()
 
     app.log('[app.views.SERPTrip]: initialize')
 
   events:
-    'click .v-s-t-places'           : 'toggleCollapse'
     'click .v-s-t-i-photo'          : 'loadHotelOverlay'
 
   loadHotelOverlay: (e)->
@@ -84,7 +84,10 @@ SERPTrip = Backbone.View.extend
       @resultsHotelEl.addClass('picked').find('.v-s-t-r-value-num').html(app.utils.formatNum(Math.floor(@_hotelPrice)))
 
     if @_flightPrice or @_hotelPrice
-      @totalsEl.addClass('picked').find('.v-s-t-t-value-num').html(app.utils.formatNum(Math.floor(@_flightPrice + @_hotelPrice)))
+      total = Math.floor(@_flightPrice + @_hotelPrice)      
+      @totalsEl.addClass('picked').find('.v-s-t-t-value-num').html app.utils.formatNum Math.floor total
+      console.log @index
+      app.trigger 'serp_subtotal_changed', {index: @index, total: total}
 
   removeSelected: (data)->
     if @model.get('flights_signature') == data.signature
@@ -96,23 +99,12 @@ SERPTrip = Backbone.View.extend
       @resultsHotelEl.removeClass('picked')
 
     if @_flightPrice or @_hotelPrice
-      @totalsEl.addClass('picked').find('.v-s-t-t-value-num').html(app.utils.formatNum(Math.floor(@_flightPrice + @_hotelPrice)))
+      total = Math.floor(@_flightPrice + @_hotelPrice)
+      @totalsEl.addClass('picked').find('.v-s-t-t-value-num').html app.utils.formatNum total
+      app.trigger 'serp_subtotal_changed', {index: @index, total: total}
     else
       @totalsEl.removeClass('picked')
-
-  initialCollapse: ->
-    @heightFull = @$el.outerHeight()
-
-    @$el.addClass('collapsed')
-    @heightCollapsed = @$el.find('.v-s-t-header').height()
-
-    @$el.hide()
-
-    @collapsed = true
-    @$el.css(height: @heightCollapsed)
-
-  toggleCollapse: ->
-    if @collapsed then @expand() else @collapse()
+      app.trigger 'serp_subtotal_changed', {index: @index, total: 0}
 
   fetchBackground: ->
     $.ajax
@@ -122,44 +114,14 @@ SERPTrip = Backbone.View.extend
           @preloader.attr('src', resp.value.blured)
 
   updateBG: (e)->
-    @bg.fadeOut(200, =>
-      @bg.attr('src', e.target.src)
-      @bg.fadeIn(200)
-      )
+    timeout = 200
+    @bg.fadeOut(timeout, =>
+      @bg.attr 'src', e.target.src
+      @bg.fadeIn timeout
+    )
 
   showTrip: (e)->
     @$el.fadeIn(500)
-
-  setCollapsable: (bool)->
-    @_collapsable = bool
-
-    if @_collapsable
-      @$el.removeClass('nocollapse')
-    else
-      @$el.addClass('nocollapse')
-
-  expand: ->
-    return unless @collapsed
-
-    @trigger('expand', @model.cid)
-
-    @collapsed = false
-    @$el.removeClass('collapsed')
-    @$el.animate({ height: @heightFull }, { duration: 500, queue: false })
-
-    @trigger('expanding', @model.cid)
-
-  collapse: ->
-    return if @collapsed
-
-    @trigger('collapse', @model.cid)
-    return if not @_collapsable
-
-    @collapsed = true
-    @$el.addClass('collapsed')
-    @$el.animate({ height: @heightCollapsed }, { duration: 500, queue: false })
-
-    @trigger('collapsing', @model.cid)
 
   render: ->
     @$el.html(app.templates.serp_trip(@model.toJSON()))

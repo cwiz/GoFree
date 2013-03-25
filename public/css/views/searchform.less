@@ -52,18 +52,40 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, .5);
 
     .v-s-destinations-add {
-      margin-top: 20px;
-
+      margin-top: 10px;
       font-weight: 300;
       font-size: 11px;
-
-      text-align: center;
+      text-align: left;
+      height: 34px;
+      line-height: 34px;
+      padding-left: 10px;
 
       .v-s-d-add.disabled {
         opacity: .5;
         cursor: default;
         .helper_noselect;
       }
+    }
+
+    .v-s-budget {
+      input {
+        width: 115px;
+        font-size: 14px;
+        line-height: 22px;
+        color: #565d61;
+        font-weight: 300;
+      }
+
+      label {
+        width: 300px;
+        float: left;
+        display: block;
+        height: 34px;
+        line-height: 34px;
+        font-weight: bold;
+      }
+
+      margin-bottom: 10px;
     }
 
     .v-s-t-s-place {
@@ -79,24 +101,20 @@
     .v-s-initial {
 
       .cf;
-      margin-bottom: 20px;
-      margin-top: 10px;
-
-      .vs-initial-place {
-        margin-top: 5px;
-      }
+      margin-bottom : 10px;
+      margin-top    : 10px;
 
       .v-s-guests {
-        width: 100px;
-        float: left;
+        width       : 100px;
+        float       : left;
       }
       
     }
 
     .v-s-conditions {
-      margin-top: 10px;
+      margin-top    : 10px;
       padding-bottom: 20px;
-      padding-left: 55px;
+      padding-left  : 55px;
 
       .cf;
 

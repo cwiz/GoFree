@@ -2,52 +2,35 @@ SERPTrips = Backbone.View.extend
   trips: {}
   _expandedHash: {}
   _budgetHash: {}
-  el: '.p-s-trips-wrap'
+  
+  el      : '.p-s-trips-wrap'
 
   progress: 0
-  budget: 0
-  spent: 0
+  budget  : 0
+  spent   : 0
 
   expanded: 0
-  _locked: null
+  _locked : null
 
   initialize: (@opts)->
-    @hash = @opts.hash
+    @hash   = @opts.hash
+    @budget = @opts.budget
+
+    @subtotal = _.map(@collection, (elem) -> 0).concat([@budget])    
     @render()
 
-    # tyt hyuta moya
-    #@progressMeterEl = @$el.find('.v-s-t-p-meter')
-    @progressMeterEl = $('.v-s-t-p-meter')
-    
-    #@budgetMeterEl = @$el.find('.v-s-t-b-meter')
-    @budgetMeterEl = $('.v-s-t-b-meter')
+    @progressMeterEl= $         '.v-s-t-p-meter'
+    @budgetMeterEl  = $         '.v-s-t-b-meter'
+    @container      = @$el.find '.v-serp-trips-container'
+    @amountSpentEl  = $         '.v-s-t-b-spentamount'
+    @amountLeftEl   = $         '.v-s-t-b-leftamount'
 
-    @container = @$el.find('.v-serp-trips-container')
-
-    #@amountSpentEl = @$el.find('.v-s-t-b-spentamount')
-    @amountSpentEl = $('.v-s-t-b-spentamount')
-    
-    #@amountLeftEl = @$el.find('.v-s-t-b-leftamount')
-    @amountLeftEl = $('.v-s-t-b-leftamount')
-
-    app.socket.on('progress', _.bind(@updateProgress, @))
-    app.on('serp_selected',   @updateBudgetAdd, @)
-    app.on('serp_deselected', @updateBudgetRemove, @)
-    app.on('resize', @updateMeters, @)
+    app.socket.on('progress',       _.bind(@updateProgress, @))
+    app.on('serp_subtotal_changed', @updateBudgetMeter,     @)
 
     @initTrips()
-    @expandFirst()
-    @updateMeters()
 
     app.log('[app.views.SERPTrips]: initialize')
-
-  setBudget: (num)->
-    @budget = num
-    @setBudgetMeter()
-
-  updateMeters: ->
-    @setProgressMeter()
-    @setBudgetMeter()
 
   updateProgress: (data) ->
     return unless data.hash == @hash
@@ -55,70 +38,64 @@ SERPTrips = Backbone.View.extend
     @setProgressMeter()
     app.log('[app.views.SERPTrips]: progress ' + Math.floor(@progress * 100) + '%')
 
-  updateBudgetAdd: (data)->
-    @_budgetHash[data.signature] = data.model.get('price')
-    @setBudgetMeter()
-
-  updateBudgetRemove: (data)->
-    delete @_budgetHash[data.signature]
-    @setBudgetMeter()
-
   setProgressMeter: ->
     pos = app.size.width * @progress
     @progressMeterEl.animate({left: pos}, 10, 'linear')
 
-  setBudgetMeter: ->
-    @spent = _.reduce(_.values(@_budgetHash), (memo, num)->
-      memo + num
-    , 0)
+  initBudgetMeter: ->
 
-    diff = @budget - @spent
-    perc = Math.min(@spent / @budget, 1) # in case we're going over budget
-    pos = app.size.width * perc
+    cities = @collection.map (elem) -> elem.get('destination').place.name_ru
 
-    @amountSpentEl.html(app.utils.formatNum(@spent))
-    @amountLeftEl.html(app.utils.formatNum(diff))
+    budgetCities = []
+    for i in [0...(cities.length-1)]
+      budgetCities.push 0
+    budgetCities.push 0
+    
+    cities.push 'Осталось'
 
-    @budgetMeterEl.css(left: pos)
+    @budgetSlider = $('.slider').oxyeSlider({
+      value   : budgetCities,
+      labels  : cities
+      max     : @budget
+      step    : 1000
+      minRange: 10000
+      disable : true
+    })
+
+    return @budgetSlider
+
+  updateBudgetMeter: (data) ->
+    
+    left = @budget 
+    @subtotal[data.index] = data.total
+
+    for i in [0...(@subtotal.length-1)]
+      left -= @subtotal[i]
+
+    @subtotal[@subtotal.length - 1] = left
+
+    values = []
+    for i in [0...(@subtotal.length-1)]
+      value = 0
+      for j in [0..i]
+        value += @subtotal[j]
+
+      values.push value
+
+    @budgetSlider.setValues values
 
   initTrips: ->
     iterator = (model) =>
       @trips[model.cid] = new app.views.SERPTrip(
-        container: @container
-        model: model
-        search: @opts.search
-        )
-      @trips[model.cid].on('expand', _.bind(@beforeExpand, @))
-      @trips[model.cid].on('collapse', _.bind(@beforeCollapse, @))
+        container : @container
+        model     : model
+        search    : @opts.search
+        index     : @collection.indexOf model
+      )
+    
     @collection.each(iterator)
 
-  expandFirst: ->
-    first = _.values(@trips)[0]
-    first.expand()
-
-    @_locked = first
-    @_locked.setCollapsable(false)
-
-  findLastExpanded: ->
-    for k, v of @_expandedHash
-      if v then res = k
-
-    res
-
-  beforeExpand: (cid)->
-    @expanded++
-    @_expandedHash[cid] = true
-    @_locked.setCollapsable(true) if @_locked
-
-  beforeCollapse: (cid)->
-    return if not @trips[cid]._collapsable
-
-    @expanded--
-    @_expandedHash[cid] = false
-
-    if @expanded == 1
-      @_locked = @trips[@findLastExpanded()]
-      @_locked.setCollapsable(false)
+    @initBudgetMeter()
 
   render: ->
     @$el.html(app.templates.serp_trips())
@@ -126,13 +103,11 @@ SERPTrips = Backbone.View.extend
   destroy: ->
     @undelegateEvents()
     app.socket.removeAllListeners('progress')
-    app.off('serp_selected', @updateBudgetAdd, @)
-    app.off('serp_deselected', @updateBudgetRemove, @)
-    app.off('resize', @updateMeters, @)
+    app.off('serp_subtotal_changed',  @updateBudgetMeter,   @)
 
-    progress = 0
-    budget = 0
-    spent = 0
+    progress  = 0
+    budget    = 0
+    spent     = 0
   
     for k, v of @trips
       v.destroy()
@@ -143,6 +118,10 @@ SERPTrips = Backbone.View.extend
     delete @_expandedHash
     delete @_budgetHash
     delete @_locked
+
+    @budgetSlider.elem.remove()
+    @budgetSlider.elem.parent().empty()
+    delete @budgetSlider
 
     delete @container
     delete @collection

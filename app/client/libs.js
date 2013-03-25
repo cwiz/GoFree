@@ -4,5 +4,7 @@
 
 //= require vendor/underscore.js
 //= require vendor/backbone.js
+//= require vendor/backbone.js
+//= require vendor/quinn.oxye.js
 
 //= require_tree vendor/plugins
