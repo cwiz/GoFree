@@ -60,9 +60,12 @@ query = (origin, destination, extra, cb) ->
 
 	return cb error, null if error
 	evUrl = "http://api.eviterra.com/avia/v1/variants.xml?from=#{eviterraId.origin}&to=#{eviterraId.destination}&date1=#{origin.date}&adults=#{extra.adults}"
+
+	if destination.roundTrip
+		evUrl += "&date2=#{destination.date}"
 	
 	(error, body) <- cache.request evUrl
-	# console.log "EVITERRA: Queried Eviterra serp | #{evUrl} | status: #{!!body}"
+	console.log "EVITERRA: Queried Eviterra serp | #{evUrl} | status: #{!!body}"
 	return cb(error, null) if error
 
 	(error, json) <- parser.parseString body
@@ -71,76 +74,84 @@ query = (origin, destination, extra, cb) ->
 	cb null, json
 
 process = (flights, cb) -> 
-	if not flights or not flights.variant
-		return cb({message: 'No flights found'}, null)
+	
+	return cb message: 'No flights found' , null if (not flights or not flights.variant)
+	variants = flights.variant
 
-	for variant in flights.variant
-		if variant.segment.flight.length?
-			variant.transferNumber  = variant.segment.flight.length
-			variant.firstFlight     = variant.segment.flight[0]
-			variant.lastFlight      = variant.segment.flight[variant.transferNumber-1]
+	for variant in variants
 		
-		else
-			variant.transferNumber  = 1
-			variant.firstFlight     = variant.segment.flight
-			variant.lastFlight      = variant.firstFlight    
+		segments 		 = if not variant.segment.length then [variant.segment] else variant.segment
+		variant.segments = segments
+
+		for segment in segments
+			
+			if segment.flight.length?
+				segment.transferNumber  = segment.flight.length
+				segment.firstFlight     = segment.flight[0]
+				segment.lastFlight      = segment.flight[segment.transferNumber-1]
+			
+			else
+				segment.transferNumber  = 1
+				segment.firstFlight     = segment.flight
+				segment.lastFlight      = segment.firstFlight    
 
 	allAirports   = []
-	for variant in flights.variant
-		allAirports.push variant.firstFlight.departure
-		allAirports.push variant.lastFlight.arrival
+	for variant in variants
+		for segment in variant.segments
+			allAirports.push segment.firstFlight.departure
+			allAirports.push segment.lastFlight.arrival
 
 	# todo add all list!
-	allCarriers = _.map flights.variant, (variant) -> variant.firstFlight?.marketingCarrier?
+	allCarriers = _.map variants, (variant) -> variant.firstFlight?.marketingCarrier?
 	allCarriers = _.uniq allCarriers
-
 	allAirports = _.uniq allAirports
 
-	(error, results) <- async.parallel [
-		(callback) -> database.airports.find({iata:{$in:allAirports}}).toArray(callback), 
-		(callback) -> database.airlines.find({iata:{$in:allCarriers}}).toArray(callback), 
-	]
-
-	airportsInfo = results[0]
-	airlinesInfo = results[1]
+	(error, airportsInfo) <- database.airports.find( iata: $in : allAirports ).toArray()
+	(error, airlinesInfo) <- database.airlines.find( iata: $in : allCarriers ).toArray()
 
 	newFlights = []
+	for variant in variants
 
-	for variant in flights.variant
+		flights = []
+
+		for segment in variant.segments
 		
-		arrivalDestinationDate  = moment variant.lastFlight.arrivalDate     + 'T' + variant.lastFlight.arrivalTime
-		departureOriginDate     = moment variant.firstFlight.departureDate  + 'T' + variant.firstFlight.departureTime
+			arrivalDestinationDate  = moment segment.lastFlight.arrivalDate     + 'T' + segment.lastFlight.arrivalTime
+			departureOriginDate     = moment segment.firstFlight.departureDate  + 'T' + segment.firstFlight.departureTime
 
-		departureAirport        = _.filter( airportsInfo, (el) -> el.iata is variant.firstFlight.departure      )[0]
-		arrivalAirport          = _.filter( airportsInfo, (el) -> el.iata is variant.lastFlight.arrival         )[0]
+			departureAirport        = _.filter( airportsInfo, (el) -> el.iata is segment.firstFlight.departure      )[0]
+			arrivalAirport          = _.filter( airportsInfo, (el) -> el.iata is segment.lastFlight.arrival         )[0]
 
-		carrier                 = _.filter( airlinesInfo, (el) -> el.iata is variant.lastFlight?.marketingCarrier?)[0]
-		delete carrier._id if carrier
+			carrier                 = _.filter( airlinesInfo, (el) -> el.iata is segment.lastFlight?.marketingCarrier?)[0]
+			delete carrier._id if carrier
 
-		return cb(
-			{ message: "No airport found | departure: #{departureAirport} | arrival: #{arrivalAirport}" }, 
-			null
-		) if not(departureAirport and arrivalAirport)
+			return cb(
+				{ message: "No airport found | departure: #{departureAirport} | arrival: #{arrivalAirport}" }, 
+				null
+			) if not(departureAirport and arrivalAirport)
 
-		# UTC massage
-		utcArrivalDate          = arrivalDestinationDate.clone().subtract 'hours', arrivalAirport.timezone  
-		utcDepartureDate        = departureOriginDate.clone().subtract    'hours', departureAirport.timezone
+			# UTC massage
+			utcArrivalDate          = arrivalDestinationDate.clone().subtract 'hours', arrivalAirport.timezone  
+			utcDepartureDate        = departureOriginDate.clone().subtract    'hours', departureAirport.timezone
 
-		flightTimeSpan          = utcArrivalDate.diff utcDepartureDate,   'hours'
-		flightTimeSpan          = 1 if (flightTimeSpan is 0)
+			flightTimeSpan          = utcArrivalDate.diff utcDepartureDate,   'hours'
+			flightTimeSpan          = 1 if (flightTimeSpan is 0)
 
-		newFlight = 
-			arrival   : arrivalDestinationDate.format "hh:mm"#\LL
-			carrier   : if carrier then [carrier] else null
-			departure : departureOriginDate.format "hh:mm"#\LL
-			duration  : flightTimeSpan * 60 * 60
-			price     : parseInt variant.price
-			provider  : exports.name
-			stops     : variant.transferNumber - 1
-			url       : variant.url + \ostroterra
-			type	  : \flight
+			newFlight = 
+				arrival   : arrivalDestinationDate.format "hh:mm"#\LL
+				carrier   : if carrier then [carrier] else null
+				departure : departureOriginDate.format "hh:mm"#\LL
+				duration  : flightTimeSpan * 60 * 60
+				stops     : segment.transferNumber - 1
+				url       : segment.url + \ostroterra
+				
+			flights.push newFlight
 
-		newFlights.push newFlight
+		newFlights.push do
+			price     	: parseInt variant.price
+			provider  	: exports.name
+			segments 	: flights
+			type	  	: \flight
 
 	cb null, do
 		results : newFlights

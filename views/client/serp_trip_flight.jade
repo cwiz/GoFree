@@ -5,31 +5,52 @@ li.m-c-l-item.v-s-t-item.flight(data-cid=cid)
 
     p.v-s-t-meta
       span.v-s-t-i-provider= provider
-      span.v-s-t-i-carrier
-        if carrier
-          each item, i in carrier
-            img(class='carrier-' + (i + 1), src='/img/airlines/' + item.iata + '.png', alt=item.name)
-        else
-          img(class='carrier-1', src='/img/airlines/default.png', alt='Ruskie airways')
+      //- span.v-s-t-i-carrier
+      //-   if carrier
+      //-     each item, i in carrier
+      //-       img(class='carrier-' + (i + 1), src='/img/airlines/' + item.iata + '.png', alt=item.name)
+      //-   else
+      //-     img(class='carrier-1', src='/img/airlines/default.png', alt='Ruskie airways')
 
   .v-s-t-i-contents
-    .v-s-t-i-times
-      .v-s-t-i-origin
-        span.v-s-t-i-t-time= departure
-        span.v-s-t-i-t-place= origin.nearest_airport.name_ru
+    - var counter = 0
+    for segment in segments
 
-      .v-s-t-i-duration
-        small= app.utils.humanizeDuration(duration)
+      .v-s-t-i-segment
 
-      .v-s-t-i-destination
-        span.v-s-t-i-t-time= arrival
-        span.v-s-t-i-t-place= destination.nearest_airport.name_ru
+        .v-s-t-i-s-date
+          if counter == 0
+            span=app.utils.humanizeDate(origin.date)
+          else
+            span=app.utils.humanizeDate(destination.date)
 
-    .v-s-t-i-stops
-      if stops
-        =app.utils.choosePlural(stops, ['пересадка', 'пересадки', 'пересадок'])
-      else
-        | Без пересадок
+        .v-s-t-i-s-time
+          .v-s-t-i-times
+            .v-s-t-i-origin
+              span.v-s-t-i-t-time= segment.departure
+              if counter == 0
+                span.v-s-t-i-t-place= origin.nearest_airport.name_ru
+              else
+                span.v-s-t-i-t-place= destination.nearest_airport.name_ru
+
+            .v-s-t-i-duration
+              small= app.utils.humanizeDuration(segment.duration)
+
+            .v-s-t-i-destination
+              span.v-s-t-i-t-time= segment.arrival
+
+              if counter == 0
+                span.v-s-t-i-t-place= destination.nearest_airport.name_ru
+              else
+                span.v-s-t-i-t-place= origin.nearest_airport.name_ru
+
+        .v-s-t-i-stops
+          if segment.stops
+            =app.utils.choosePlural(segment.stops, ['пересадка', 'пересадки', 'пересадок'])
+          else
+            | Без пересадок
+
+      - counter++
 
   .v-s-t-i-footer
     span.v-s-t-i-pick.button.medium.green Выбрать
