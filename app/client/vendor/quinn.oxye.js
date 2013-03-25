@@ -1171,8 +1171,6 @@
           else {
             reCalculateValues = options.recalculate;
           }
-
-          console.log(reCalculateValues);
           
           if (valueLabels.length === 0){
             createLabels();

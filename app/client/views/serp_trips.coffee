@@ -120,7 +120,6 @@ SERPTrips = Backbone.View.extend
 
       values.push value
 
-    console.log values
     @budgetSlider.setValues values
 
   initTrips: ->
