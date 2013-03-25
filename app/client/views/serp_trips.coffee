@@ -20,9 +20,7 @@ SERPTrips = Backbone.View.extend
     for i in [0...@collection.length]
       @subtotal.push 0
     @subtotal.push @budget
-
-    console.log @subtotal
-
+    
     @render()
 
     @progressMeterEl= $         '.v-s-t-p-meter'
