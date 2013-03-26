@@ -149,7 +149,7 @@
           }
           delete searchParams._id;
           return makePairs(searchParams, function(error, result){
-            var pairs, signatures, totalProviders, i$, len$, pair, i, providersReady, resultReady, callbacks;
+            var pairs, signatures, totalProviders, i$, len$, i, pair, providersReady, resultReady, callbacks;
             pairs = result.pairs;
             signatures = _.object(
             _.map(result.signatures, function(signature){
@@ -157,8 +157,8 @@
             }));
             totalProviders = 0;
             for (i$ = 0, len$ = pairs.length; i$ < len$; ++i$) {
-              pair = i$;
-              i = pairs[i$];
+              i = i$;
+              pair = pairs[i$];
               if (i === pairs.length - 1 && !pair.destination.roundTrip) {
                 totalProviders += providers.flightProviders.length;
               } else {
