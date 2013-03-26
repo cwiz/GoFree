@@ -116,7 +116,7 @@ exports.search = (err, socket, session) ->
 		signatures 			= _.map(result.signatures, (signature) -> [signature, 0]) |> _.object
 		
 		totalProviders 		= 0
-		for i, pair in pairs
+		for pair, i in pairs
 			if i is (pairs.length - 1) and not pair.destination.roundTrip
 				totalProviders += providers.flightProviders.length
 			else
