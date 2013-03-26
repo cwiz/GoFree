@@ -188,16 +188,18 @@
               carrier: carrier ? [carrier] : null,
               departure: departureOriginDate.format("hh:mm"),
               duration: flightTimeSpan * 60 * 60,
-              stops: segment.transferNumber - 1,
-              url: segment.url + 'ostroterra'
+              stops: segment.transferNumber - 1
             };
             flights.push(newFlight);
           }
           newFlights.push({
+            duration: _.reduce(flights, fn3$, 0),
+            stops: _.reduce(flights, fn4$, 0),
             price: parseInt(variant.price),
             provider: exports.name,
             segments: flights,
-            type: 'flight'
+            type: 'flight',
+            url: variant.url + 'ostroterra'
           });
         }
         return cb(null, {
@@ -213,6 +215,12 @@
         function fn2$(el){
           var ref$;
           return el.iata === (((ref$ = segment.lastFlight) != null ? ref$.marketingCarrier : void 8) != null);
+        }
+        function fn3$(memo, segment){
+          return memo + segment.duration;
+        }
+        function fn4$(memo, segment){
+          return memo + segment.stops;
         }
       });
     });

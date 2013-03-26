@@ -38,7 +38,7 @@ SERPTrip = Backbone.Model.extend
         
         return _.sortBy(
           _.filter(src, (model) -> 
-            model.get('stops') <= 1 and model.get('duration') <= 24*60*60
+            model.get('stops') <= 2 and model.get('duration') <= 24*60*60
           ), 
           (elem) -> minDuration / elem.get('duration')
         )

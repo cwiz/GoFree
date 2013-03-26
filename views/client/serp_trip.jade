@@ -47,10 +47,9 @@
         h3.v-s-t-title Перелеты #{origin.nearest_airport.name_ru} &rarr; #{destination.nearest_airport.name_ru} &rarr; #{origin.nearest_airport.name_ru}
 
       .v-s-t-rowcontrols
-        ul.v-s-t-c-filters(style='display:none')
+        ul.v-s-t-c-filters
           li.v-s-t-c-filter.selected(data-filter="none") Все
           li.v-s-t-c-filter(data-filter="convenient") Оптимальные
-          //- li.v-s-t-c-filter(data-filter="cheap") Дешевые
           li.v-s-t-c-filter(data-filter="direct") Прямые
 
         span.v-s-t-c-count 0/0
