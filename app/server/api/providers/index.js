@@ -6,6 +6,6 @@
   aviasales = require("./aviasales");
   flatora = require("./flatora");
   exports.hotelProviders = [flatora, ostrovok, airbnb];
-  exports.flightProviders = [aviasales, aviasales];
+  exports.flightProviders = [aviasales, eviterra];
   exports.allProviders = exports.hotelProviders.concat(exports.flightProviders);
 }).call(this);
