@@ -32,12 +32,19 @@
       trip_class: 0,
       direct: 0
     };
+    if (destination.roundTrip) {
+      searchParams.return_date = destination.date;
+    }
     sortedKeys = _.keys(searchParams).sort();
     paramsString = [TOKEN, MARKER].concat(_.map(sortedKeys, function(key){
       return searchParams[key];
     })).join(':');
     signature = md5(paramsString);
-    command = "curl -v \\\n\t-d \"signature=" + signature + "\" \\\n\t-d \"enable_api_auth=true\" \\\n\t-d \"search[marker]=" + MARKER + "\" \\\n\t-d \"search[params_attributes][origin_name]=" + searchParams.origin_name + "\" \\\n\t-d \"search[params_attributes][destination_name]=" + searchParams.destination_name + "\"\\\n\t-d \"search[params_attributes][depart_date]=" + searchParams.depart_date + "\" \\\n\t-d \"search[params_attributes][adults]=" + searchParams.adults + "\" \\\n\t-d \"search[params_attributes][range]=" + searchParams.range + "\" \\\n\t-d \"search[params_attributes][children]=" + searchParams.children + "\" \\\n\t-d \"search[params_attributes][infants]=" + searchParams.infants + "\" \\\n\t-d \"search[params_attributes][trip_class]=" + searchParams.trip_class + "\" \\\n\t-d \"search[params_attributes][direct]=" + searchParams.direct + "\" \\\n\thttp://nano.aviasales.ru/searches.json";
+    if (!destination.roundTrip) {
+      command = "curl -v \\\n\t-d \"signature=" + signature + "\" \\\n\t-d \"enable_api_auth=true\" \\\n\t-d \"search[marker]=" + MARKER + "\" \\\n\t-d \"search[params_attributes][origin_name]=" + searchParams.origin_name + "\" \\\n\t-d \"search[params_attributes][destination_name]=" + searchParams.destination_name + "\"\\\n\t-d \"search[params_attributes][depart_date]=" + searchParams.depart_date + "\" \\\n\t-d \"search[params_attributes][adults]=" + searchParams.adults + "\" \\\n\t-d \"search[params_attributes][range]=" + searchParams.range + "\" \\\n\t-d \"search[params_attributes][children]=" + searchParams.children + "\" \\\n\t-d \"search[params_attributes][infants]=" + searchParams.infants + "\" \\\n\t-d \"search[params_attributes][trip_class]=" + searchParams.trip_class + "\" \\\n\t-d \"search[params_attributes][direct]=" + searchParams.direct + "\" \\\n\thttp://nano.aviasales.ru/searches.json";
+    } else {
+      command = "curl -v \\\n\t-d \"signature=" + signature + "\" \\\n\t-d \"enable_api_auth=true\" \\\n\t-d \"search[marker]=" + MARKER + "\" \\\n\t-d \"search[params_attributes][origin_name]=" + searchParams.origin_name + "\" \\\n\t-d \"search[params_attributes][destination_name]=" + searchParams.destination_name + "\"\\\n\t-d \"search[params_attributes][depart_date]=" + searchParams.depart_date + "\" \\\n\t-d \"search[params_attributes][return_date]=" + searchParams.return_date + "\" \\\n\t-d \"search[params_attributes][adults]=" + searchParams.adults + "\" \\\n\t-d \"search[params_attributes][range]=" + searchParams.range + "\" \\\n\t-d \"search[params_attributes][children]=" + searchParams.children + "\" \\\n\t-d \"search[params_attributes][infants]=" + searchParams.infants + "\" \\\n\t-d \"search[params_attributes][trip_class]=" + searchParams.trip_class + "\" \\\n\t-d \"search[params_attributes][direct]=" + searchParams.direct + "\" \\\n\thttp://nano.aviasales.ru/searches.json";
+    }
     return cache.exec(command, function(err, result){
       var res, error;
       if (err) {
@@ -52,7 +59,7 @@
       return cb(null, res);
     });
   };
-  process = function(json, cb){
+  process = function(json, isRoundTrip, cb){
     var i$, ref$, len$, ticket, allAirports, allCarriers;
     if (!json || !json.tickets) {
       return cb({
@@ -61,25 +68,44 @@
     }
     for (i$ = 0, len$ = (ref$ = json.tickets).length; i$ < len$; ++i$) {
       ticket = ref$[i$];
-      ticket.transferNumber = ticket.direct_flights.length;
-      ticket.firstFlight = ticket.direct_flights[0];
-      ticket.lastFlight = ticket.direct_flights[ticket.transferNumber - 1];
+      ticket.transferDirectNumber = ticket.direct_flights.length;
+      ticket.firstDirectFlight = ticket.direct_flights[0];
+      ticket.lastDirectFlight = ticket.direct_flights[ticket.transferDirectNumber - 1];
+      if (isRoundTrip) {
+        ticket.transferReturnNumber = ticket.return_flights.length;
+        ticket.firstReturnFlight = ticket.return_flights[0];
+        ticket.lastReturnFlight = ticket.return_flights[ticket.transferReturnNumber - 1];
+      }
     }
     allAirports = _.map(json.tickets, function(ticket){
-      return ticket.firstFlight.origin;
+      return ticket.firstDirectFlight.origin;
     });
     allAirports = allAirports.concat(_.map(json.tickets, function(ticket){
-      return ticket.firstFlight.destination;
+      return ticket.firstDirectFlight.destination;
     }));
     allAirports = allAirports.concat(_.map(json.tickets, function(ticket){
-      return ticket.lastFlight.origin;
+      return ticket.lastDirectFlight.origin;
     }));
     allAirports = allAirports.concat(_.map(json.tickets, function(ticket){
-      return ticket.lastFlight.destination;
+      return ticket.lastDirectFlight.destination;
     }));
+    if (isRoundTrip) {
+      allAirports = allAirports.concat(_.map(json.tickets, function(ticket){
+        return ticket.firstReturnFlight.origin;
+      }));
+      allAirports = allAirports.concat(_.map(json.tickets, function(ticket){
+        return ticket.firstReturnFlight.destination;
+      }));
+      allAirports = allAirports.concat(_.map(json.tickets, function(ticket){
+        return ticket.lastReturnFlight.origin;
+      }));
+      allAirports = allAirports.concat(_.map(json.tickets, function(ticket){
+        return ticket.lastReturnFlight.destination;
+      }));
+    }
     allAirports = _.uniq(allAirports);
     allCarriers = _.map(json.tickets, function(ticket){
-      return ticket.firstFlight.airline;
+      return ticket.firstDirectFlight.airline;
     });
     allCarriers = _.uniq(allCarriers);
     return database.airports.find({
@@ -94,33 +120,64 @@
       }).toArray(function(err, airlinesInfo){
         var results;
         results = _.map(json.tickets, function(ticket){
-          var departureAirport, arrivalAirport, carrier, departure, arrival, utcDeparture, utcArrival, duration, result;
+          var departureAirport, arrivalAirport, carrier, departure, arrival, utcDeparture, utcArrival, duration, directFlight, segments, returnFlight;
           departureAirport = _.filter(airportsInfo, function(el){
-            return el.iata === ticket.firstFlight.origin;
+            return el.iata === ticket.firstDirectFlight.origin;
           })[0];
           arrivalAirport = _.filter(airportsInfo, function(el){
-            return el.iata === ticket.firstFlight.destination;
+            return el.iata === ticket.firstDirectFlight.destination;
           })[0];
           carrier = _.filter(airlinesInfo, function(el){
-            return el.iata === ticket.firstFlight.airline;
+            return el.iata === ticket.firstDirectFlight.airline;
           })[0];
           if (carrier) {
             delete carrier._id;
           }
           departure = moment.unix(ticket.direct_flights[0].departure);
-          arrival = moment.unix(ticket.direct_flights[ticket.transferNumber - 1].arrival);
+          arrival = moment.unix(ticket.direct_flights[ticket.transferDirectNumber - 1].arrival);
           utcDeparture = departure.clone().subtract('hours', departureAirport.timezone);
           utcArrival = arrival.clone().subtract('hours', arrivalAirport.timezone);
           duration = utcArrival.diff(utcDeparture, 'hours');
-          return result = {
+          directFlight = {
             arrival: arrival.format("hh:mm"),
             carrier: [carrier],
             departure: departure.format("hh:mm"),
             duration: duration * 60 * 60,
+            stops: ticket.transferNumber - 1
+          };
+          segments = [directFlight];
+          if (isRoundTrip) {
+            departureAirport = _.filter(airportsInfo, function(el){
+              return el.iata === ticket.firstReturnFlight.origin;
+            })[0];
+            arrivalAirport = _.filter(airportsInfo, function(el){
+              return el.iata === ticket.firstReturnFlight.destination;
+            })[0];
+            carrier = _.filter(airlinesInfo, function(el){
+              return el.iata === ticket.firstReturnFlight.airline;
+            })[0];
+            if (carrier) {
+              delete carrier._id;
+            }
+            departure = moment.unix(ticket.return_flights[0].departure);
+            arrival = moment.unix(ticket.return_flights[ticket.transferReturnNumber - 1].arrival);
+            utcDeparture = departure.clone().subtract('hours', departureAirport.timezone);
+            utcArrival = arrival.clone().subtract('hours', arrivalAirport.timezone);
+            duration = utcArrival.diff(utcDeparture, 'hours');
+            returnFlight = {
+              arrival: arrival.format("hh:mm"),
+              carrier: [carrier],
+              departure: departure.format("hh:mm"),
+              duration: duration * 60 * 60,
+              stops: ticket.transferNumber - 1
+            };
+            segments.push(returnFlight);
+          }
+          return {
+            segments: segments,
             price: ticket.total,
             provider: exports.name,
             type: 'flight',
-            stops: ticket.transferNumber - 1,
             url: "http://nano.aviasales.ru/searches/" + json.search_id + "/order_urls/" + _.keys(ticket.order_urls)[0] + "/"
           };
         });
@@ -133,7 +190,7 @@
       if (error) {
         return cb(error, null);
       }
-      return process(json, function(error, results){
+      return process(json, !!destination.roundTrip, function(error, results){
         if (error) {
           return cb(error, null);
         }

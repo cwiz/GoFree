@@ -8,7 +8,6 @@ providers 	= require "./providers"
 rome2rio 	= require "./providers/rome2rio"
 validation 	= require "./validation"
 log     	= require("./../logging").getLogger "socket"
-winston 	= require "winston"
 
 fixDestination = (pair, cb) ->
 
@@ -66,8 +65,6 @@ makePairs = (data, cb) ->
 
 	pairs = _.filter pairs, (pair) -> not pair.origin.roundTrip?
 
-	console.log pairs
-
 	cb null, do
 		pairs 			: pairs
 		signatures 		: allSignatures
@@ -117,7 +114,14 @@ exports.search = (err, socket, session) ->
 		(error, result)		<- makePairs searchParams
 		pairs 				= result.pairs
 		signatures 			= _.map(result.signatures, (signature) -> [signature, 0]) |> _.object
-		totalProviders 		= (pairs.length - 1) * providers.allProviders.length + providers.flightProviders.length
+		
+		totalProviders 		= 0
+		for i, pair in pairs
+			if i is (pairs.length - 1) and not pair.destination.roundTrip
+				totalProviders += providers.flightProviders.length
+			else
+				totalProviders += providers.allProviders.length
+
 		providersReady		= 0
 		
 		socket.emit 'search_started', do
@@ -164,9 +168,7 @@ exports.search = (err, socket, session) ->
 			# flights
 			_.map providers.flightProviders, (provider) -> do ->
 				callbacks.push (callback) ->
-					winston.profile provider.name
 					(error, result) <- provider.search pair.origin, pair.destination, pair.extra
-					winston.profile provider.name
 					resultReady do
 						error 		: error
 						event 		: \flights_ready
@@ -179,9 +181,7 @@ exports.search = (err, socket, session) ->
 			return if not pair.hotels_signature
 			_.map providers.hotelProviders, (provider) -> do ->
 				callbacks.push (callback) ->
-					winston.profile provider.name
 					(error, result) <- provider.search pair.origin, pair.destination, pair.extra
-					winston.profile provider.name
 					resultReady do
 						error 		: error
 						event 		: \hotels_ready
