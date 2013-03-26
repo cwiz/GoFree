@@ -143,15 +143,18 @@ process = (flights, cb) ->
 				departure : departureOriginDate.format "hh:mm"#\LL
 				duration  : flightTimeSpan * 60 * 60
 				stops     : segment.transferNumber - 1
-				url       : segment.url + \ostroterra
 				
 			flights.push newFlight
 
 		newFlights.push do
+			duration  	: _.reduce flights, ((memo, segment) -> memo + segment.duration), 0
+			stops  	    : _.reduce flights, ((memo, segment) -> memo + segment.stops),	 0
+
 			price     	: parseInt variant.price
 			provider  	: exports.name
 			segments 	: flights
 			type	  	: \flight
+			url			: variant.url + \ostroterra
 
 	cb null, do
 		results : newFlights
