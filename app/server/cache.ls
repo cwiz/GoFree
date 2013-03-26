@@ -54,7 +54,7 @@ exports.exec = (command, cb) ->
     log.info "CACHE: REDIS", { command: command, status: !!result }
     return cb null, result if result
 
-    (error, body) <- exec command
+    (error, body) <- exec command, maxBuffer: 1024*1024
     log.info "CACHE: EXEC",  { command: command, status: !!body }
     
     if error

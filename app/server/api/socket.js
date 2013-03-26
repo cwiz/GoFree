@@ -1,5 +1,5 @@
 (function(){
-  var _, async, database, geobase, links, md5, providers, rome2rio, validation, log, winston, fixDestination, makePairs;
+  var _, async, database, geobase, links, md5, providers, rome2rio, validation, log, fixDestination, makePairs;
   _ = require("underscore");
   async = require("async");
   database = require("./../database");
@@ -10,7 +10,6 @@
   rome2rio = require("./providers/rome2rio");
   validation = require("./validation");
   log = require("./../logging").getLogger("socket");
-  winston = require("winston");
   fixDestination = function(pair, cb){
     return geobase.findRoute(pair.origin.place, pair.destination.place, function(error, airports){
       if (error) {
@@ -78,7 +77,6 @@
       pairs = _.filter(pairs, function(pair){
         return pair.origin.roundTrip == null;
       });
-      console.log(pairs);
       return cb(null, {
         pairs: pairs,
         signatures: allSignatures
@@ -151,13 +149,22 @@
           }
           delete searchParams._id;
           return makePairs(searchParams, function(error, result){
-            var pairs, signatures, totalProviders, providersReady, resultReady, callbacks;
+            var pairs, signatures, totalProviders, i$, len$, pair, i, providersReady, resultReady, callbacks;
             pairs = result.pairs;
             signatures = _.object(
             _.map(result.signatures, function(signature){
               return [signature, 0];
             }));
-            totalProviders = (pairs.length - 1) * providers.allProviders.length + providers.flightProviders.length;
+            totalProviders = 0;
+            for (i$ = 0, len$ = pairs.length; i$ < len$; ++i$) {
+              pair = i$;
+              i = pairs[i$];
+              if (i === pairs.length - 1 && !pair.destination.roundTrip) {
+                totalProviders += providers.flightProviders.length;
+              } else {
+                totalProviders += providers.allProviders.length;
+              }
+            }
             providersReady = 0;
             socket.emit('search_started', {
               form: searchParams,
@@ -205,9 +212,7 @@
                 _.map(providers.flightProviders, function(provider){
                   return function(){
                     return callbacks.push(function(callback){
-                      winston.profile(provider.name);
                       return provider.search(pair.origin, pair.destination, pair.extra, function(error, result){
-                        winston.profile(provider.name);
                         return resultReady({
                           error: error,
                           event: 'flights_ready',
@@ -226,9 +231,7 @@
                 return _.map(providers.hotelProviders, function(provider){
                   return function(){
                     return callbacks.push(function(callback){
-                      winston.profile(provider.name);
                       return provider.search(pair.origin, pair.destination, pair.extra, function(error, result){
-                        winston.profile(provider.name);
                         return resultReady({
                           error: error,
                           event: 'hotels_ready',

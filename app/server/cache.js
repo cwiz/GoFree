@@ -77,7 +77,9 @@
       if (result) {
         return cb(null, result);
       }
-      return exec(command, function(error, body){
+      return exec(command, {
+        maxBuffer: 1024 * 1024
+      }, function(error, body){
         log.info("CACHE: EXEC", {
           command: command,
           status: !!body
