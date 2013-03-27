@@ -181,7 +181,7 @@
                 error: error,
                 results: items.length
               });
-              if (complete || error || !items.length) {
+              if (complete || error) {
                 providersReady += 1;
               }
               for (i$ = 0, len$ = items.length; i$ < len$; ++i$) {

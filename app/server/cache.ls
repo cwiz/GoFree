@@ -16,12 +16,12 @@ exports.get = (key, cb, retry=1) ->
     inProgessKey    = "inprogress-#{md5(key)}"
 
     (error, inProgess) <- client.get inProgessKey
-    log.info "CACHE: IN PROGRESS", { key: inProgessKey, status: !!inProgess }
+    # log.info "CACHE: IN PROGRESS", { key: inProgessKey, status: !!inProgess }
     if inProgess and retry <= 1 
         return setTimeout ( -> exports.get key, cb, retry + 1 ), 1000
     
     (error, value) <- client.get valueKey
-    log.info "CACHE: GET", { key: valueKey, status: !!value }
+    # log.info "CACHE: GET", { key: valueKey, status: !!value }
     cb error, value
 
 exports.set = (key, value) -> 
@@ -34,12 +34,12 @@ exports.request = (url, cb) ->
 
     (error, body) <- exports.get url
 
-    log.info "CACHE: REDIS", { url: url, status: !!body }
+    # log.info "CACHE: REDIS", { url: url, status: !!body }
     return cb null, body if body
     
     setInProgress url
     (error, response, body) <- request url
-    log.info "CACHE: HTTP",  { url: url, status: !!body }
+    # log.info "CACHE: HTTP",  { url: url, status: !!body }
     
     if error
         setNotInProgress url
@@ -51,11 +51,11 @@ exports.request = (url, cb) ->
 
 exports.exec = (command, cb) ->
     (error, result) <- exports.get command
-    log.info "CACHE: REDIS", { command: command, status: !!result }
+    # log.info "CACHE: REDIS", { command: command, status: !!result }
     return cb null, result if result
 
     (error, body) <- exec command, maxBuffer: 1024*1024
-    log.info "CACHE: EXEC",  { command: command, status: !!body }
+    # log.info "CACHE: EXEC",  { command: command, status: !!body }
     
     if error
         setNotInProgress command
