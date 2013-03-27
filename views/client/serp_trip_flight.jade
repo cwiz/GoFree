@@ -20,8 +20,10 @@ li.m-c-l-item.v-s-t-item.flight(data-cid=cid)
 
         .v-s-t-i-s-date
           if counter == 0
+            .plane-right
             span=app.utils.humanizeDate(origin.date)
           else
+            .plane-left
             span=app.utils.humanizeDate(destination.date)
 
         .v-s-t-i-s-time
@@ -44,11 +46,11 @@ li.m-c-l-item.v-s-t-item.flight(data-cid=cid)
               else
                 span.v-s-t-i-t-place= origin.nearest_airport.name_ru
 
-        .v-s-t-i-stops
-          if segment.stops
-            =app.utils.choosePlural(segment.stops, ['пересадка', 'пересадки', 'пересадок'])
-          else
-            | Без пересадок
+          .v-s-t-i-stops
+            if segment.stops
+              =app.utils.choosePlural(segment.stops, ['пересадка', 'пересадки', 'пересадок'])
+            else
+              | Без пересадок
 
       - counter++
 
