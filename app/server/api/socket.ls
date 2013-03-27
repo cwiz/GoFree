@@ -41,7 +41,6 @@ makePairs = (data, cb) ->
 		return cb error, null if error
 
 		pair.flights_signature 	= md5(JSON.stringify(pair.origin.place) 		+ JSON.stringify(pair.destination.place) 	+ pair.origin.date)
-		
 		pair.hotels_signature 	= md5(JSON.stringify(pair.destination.place) 	+ pair.origin.date 							+ pair.destination.date)
 		pair.hotels_signature 	= null if trip.isLast
 			
@@ -140,7 +139,7 @@ exports.search = (err, socket, session) ->
 				error	: error
 				results	: items.length
 			
-			providersReady += 1 if (complete or error or not items.length)
+			providersReady += 1 if (complete or error)
 
 			# patching for redirect
 			for item in items
@@ -154,6 +153,9 @@ exports.search = (err, socket, session) ->
 
 			progress = _.min([1, providersReady.toFixed(2) / totalProviders])
 
+			# console.log providersReady
+			# console.log totalProviders
+
 			log.info "SOCKET: progress", {value: progress}
 			
 			socket.emit 'progress', do
@@ -161,6 +163,9 @@ exports.search = (err, socket, session) ->
 				progress: progress
 		
 		callbacks = []
+
+		# console.log pairs
+
 		_.map pairs, (pair) -> do ->
 
 			return if (not pair.origin.date or not pair.destination.date)
