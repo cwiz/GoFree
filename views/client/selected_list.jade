@@ -32,18 +32,35 @@ ul.v-selected-list
                         img(class='carrier-' + (i + 1), src='/img/airlines/' + item.iata + '.png', alt=item.name)
                     else
                       img(class='carrier-1', src='/img/airlines/default.png', alt='Ruskie airways')
-                .v-s-i-c-flightdetails
-                  .v-s-i-c-route #{trip.origin.place.name_ru} &ndash; #{trip.destination.place.name_ru}
-                  p.v-s-i-c-flighttime Вылет &ndash; 
-                    span= trip.flight.departure
-                  p.v-s-i-c-flighttime Прилет &ndash; 
-                    span= trip.flight.arrival
 
-                  p.v-s-i-c-stops
-                    if trip.flight.stops
-                      =app.utils.choosePlural(trip.flight.stops, ['пересадка', 'пересадки', 'пересадок'])
-                    else
-                      | Без пересадок
+                - var counter = 0
+                for segment in trip.flight.segments
+                  .v-s-i-c-segment
+
+                    .v-s-i-c-flightdetails
+
+                      if trip.flight.segments.length > 1
+                        if counter === 0
+                          strong Прямой
+                        else
+                          strong Обратный
+                      
+                      if counter === 0
+                        .v-s-i-c-route #{trip.origin.place.name_ru} &ndash; #{trip.destination.place.name_ru}
+                      else
+                        .v-s-i-c-route #{trip.destination.place.name_ru} &ndash; #{trip.origin.place.name_ru}
+                      
+                      p.v-s-i-c-flighttime Вылет &ndash; 
+                        span= segment.departure
+                      p.v-s-i-c-flighttime Прилет &ndash; 
+                        span= segment.arrival
+
+                      p.v-s-i-c-stops
+                        if segment.stops
+                          =app.utils.choosePlural(segment.stops, ['пересадка', 'пересадки', 'пересадок'])
+                        else
+                          | Без пересадок
+                  - counter++
 
           if trip.hotel
             .v-s-i-hotel
@@ -65,7 +82,7 @@ ul.v-selected-list
   if failed == slen
     li.v-s-emptyset Ничего не выбрано
   
-  if total
+  if total && selected.length > 1
     li.v-selected-item
       .v-s-i-header.total
         .v-s-i-h-location

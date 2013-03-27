@@ -153,9 +153,6 @@ exports.search = (err, socket, session) ->
 
 			progress = _.min([1, providersReady.toFixed(2) / totalProviders])
 
-			# console.log providersReady
-			# console.log totalProviders
-
 			log.info "SOCKET: progress", {value: progress}
 			
 			socket.emit 'progress', do
