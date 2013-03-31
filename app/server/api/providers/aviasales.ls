@@ -141,7 +141,7 @@ process = (json, isRoundTrip, cb) ->
 			carrier   : [carrier]
 			departure : departure.format "hh:mm"
 			duration  : duration * 60 * 60
-			stops     : ticket.transferNumber - 1
+			stops     : ticket.transferDirectNumber - 1
 
 		segments = [directFlight]
 			
@@ -166,16 +166,21 @@ process = (json, isRoundTrip, cb) ->
 				carrier   : [carrier]
 				departure : departure.format "hh:mm"
 				duration  : duration * 60 * 60
-				stops     : ticket.transferNumber - 1
+				stops     : ticket.transferReturnNumber - 1
 
 			segments.push returnFlight
 
-		return do
+		result =
+			duration  : _.reduce segments, ((memo, segment) -> memo + segment.duration), 0
+			stops  	  : _.reduce segments, ((memo, segment) -> memo + segment.stops),	 0
+
 			segments  : segments
 			price     : ticket.total
 			provider  : exports.name
 			type	  : \flight
 			url		  : "http://nano.aviasales.ru/searches/#{json.search_id}/order_urls/#{_.keys(ticket.order_urls)[0]}/"
+
+		return result
 
 	cb null, results
 

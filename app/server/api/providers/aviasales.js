@@ -120,7 +120,7 @@
       }).toArray(function(err, airlinesInfo){
         var results;
         results = _.map(json.tickets, function(ticket){
-          var departureAirport, arrivalAirport, carrier, departure, arrival, utcDeparture, utcArrival, duration, directFlight, segments, returnFlight;
+          var departureAirport, arrivalAirport, carrier, departure, arrival, utcDeparture, utcArrival, duration, directFlight, segments, returnFlight, result;
           departureAirport = _.filter(airportsInfo, function(el){
             return el.iata === ticket.firstDirectFlight.origin;
           })[0];
@@ -143,7 +143,7 @@
             carrier: [carrier],
             departure: departure.format("hh:mm"),
             duration: duration * 60 * 60,
-            stops: ticket.transferNumber - 1
+            stops: ticket.transferDirectNumber - 1
           };
           segments = [directFlight];
           if (isRoundTrip) {
@@ -169,17 +169,24 @@
               carrier: [carrier],
               departure: departure.format("hh:mm"),
               duration: duration * 60 * 60,
-              stops: ticket.transferNumber - 1
+              stops: ticket.transferReturnNumber - 1
             };
             segments.push(returnFlight);
           }
-          return {
+          result = {
+            duration: _.reduce(segments, function(memo, segment){
+              return memo + segment.duration;
+            }, 0),
+            stops: _.reduce(segments, function(memo, segment){
+              return memo + segment.stops;
+            }, 0),
             segments: segments,
             price: ticket.total,
             provider: exports.name,
             type: 'flight',
             url: "http://nano.aviasales.ru/searches/" + json.search_id + "/order_urls/" + _.keys(ticket.order_urls)[0] + "/"
           };
+          return result;
         });
         return cb(null, results);
       });
