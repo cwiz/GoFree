@@ -33,8 +33,16 @@ SearchPlaceCalendar= Backbone.View.extend
   updateCalendar: ->
     @calendar.unlockDates()
 
-    if @minDate then @calendar.lockDates(null, @minDate)
-    if @maxDate then @calendar.lockDates(@maxDate, null)
+    console.log('----');
+    console.log(@minDate);
+    console.log(@maxDate);
+    console.log('----');
+
+    if @minDate
+      @calendar.lockDates(null, @minDate)
+    
+    if @maxDate
+      @calendar.lockDates(@maxDate, null)
 
   render: ->
     @$el.html(app.templates.search_place_calendar(@model.toJSON()))

@@ -363,6 +363,7 @@
       
       var el = $(this);
       if (!el.hasClass('disabled') && !that.isAnimated) {
+
         that.scrollCalendarTo(
           that.dates.current.getFullYear(),
           that.dates.current.getMonth() + (el.hasClass('m-i-c-control-up') ? -1 : 1)
@@ -379,6 +380,47 @@
 
     var activateCal = function(e) {
       that.els.block.toggleClass('active');
+      
+      now       = that.now; 
+      minDate   = that.minDate  && that.YMDToDate(that.minDate);
+      maxDate   = that.maxDate  && that.YMDToDate(that.maxDate);
+      selected  = that.selected && that.YMDToDate(that.selected);
+      scrollTo  = null;
+
+      if( selected && (minDate && (selected < minDate) ) || (selected < now) ){
+        selected = null;
+      }
+      
+      if(minDate && maxDate && maxDate < minDate) {
+        tmp = maxDate;
+        maxDate = minDate;
+        minDate = tmp;
+      }
+
+      if(minDate && minDate < now) {
+        minDate = null;
+      }
+
+      if(maxDate && maxDate < now){
+        maxDate = null;
+      }
+
+      if(selected){
+        scrollTo = selected;
+      }
+
+      else if ( (minDate && !maxDate) || (minDate && maxDate && minDate <= maxDate) ) {
+        scrollTo = minDate;
+      }
+
+      else if (maxDate) {
+        scrollTo = maxDate;
+      }
+
+      if(scrollTo){
+        that.scrollCalendarTo(scrollTo.getFullYear(), scrollTo.getMonth(), true);
+      }
+
     };
 
     var handleBasicClick = function(e) {
@@ -595,6 +637,9 @@
       end = this.dateToYMD(tmp);
     }
 
+    this.minDate = end;
+    this.maxDate = start;
+
     if (this.selected) {
       var startDate = this.YMDToDate(start),
           endDate = this.YMDToDate(end),
@@ -609,25 +654,6 @@
         this.deselectDate();
       }
     }
-
-    // if (ymd1 && ymd2) {
-    //   if ((tsCurrent > tsStart) && (tsCurrent < tsEnd)) {
-    //     this.deselectDate(); // uncertain what to pick
-    //   }
-    // }
-    // if (!ymd1) {
-    //   if (tsCurrent < tsEnd) {
-    //     endDate.setDate(endDate.getDate() + 1);
-    //     this.selectDate(this.dateToYMD(endDate));
-    //   }
-    // }
-
-    // if (!ymd2) {
-    //   if (tsCurrent > tsStart) {
-    //     startDate.setDate(startDate.getDate() - 1);
-    //     this.selectDate(this.dateToYMD(startDate));
-    //   }
-    // }
 
     this.selectRange(start, end, 'locked', true);
   };
