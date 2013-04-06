@@ -172,7 +172,23 @@ else
 
 		# sets user to locals
 		app.use (req, res, next) ->
-			app.locals.user = if req.user then req.user else null
+			user = if req.user then req.user else null
+			
+			app.locals.user = user
+
+			if user
+				app.locals.user_id = user.displayName
+			
+			else
+				timestamp 		= Math.round((new Date()).getTime() / 1000)
+				cookie_user_id 	= req.cookies.user_id
+				user_id 		= cookie_user_id if cookie_user_id else "user#{timestamp}"
+				res.cookie 'user_id', user_id, maxAge: 900000, httpOnly: false
+				app.locals.user_id = user_id
+
+			session_id = req.cookies.session_id or "session#{timestamp}"
+			res.cookie 'session_id', user_id, maxAge: 60*60, httpOnly: false
+
 			next!
 
 		# app.use (req, res, next) -> 
@@ -231,16 +247,17 @@ else
 			redirectUrl = '/'
 
 		req.session.postLoginRedirect = redirectUrl
-		passport.authenticate(provider, { scope: [ 'email' ]} )(req, res)
+		passport.authenticate(provider, { scope: ['email']})(req, res)
 
 	callback = (req, res) ->
+		
 		if req.session.postLoginRedirect
 			res.redirect req.session.postLoginRedirect
 		else
 			res.redirect '/#'
 
 	app.get "/auth/facebook", 			(req, res) -> login('facebook', req, res)
-	app.get "/auth/facebook/callback", passport.authenticate('facebook'), callback
+	app.get "/auth/facebook/callback",  passport.authenticate('facebook'), callback
 
 	app.get "/auth/vkontakte", 			(req, res) -> login('vkontakte', req, res)
 	app.get "/auth/vkontakte/callback", passport.authenticate('vkontakte'), callback

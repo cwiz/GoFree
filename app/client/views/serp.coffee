@@ -73,6 +73,8 @@ SERP = Backbone.View.extend
       @cleanup()
     )
 
+    _kmq.push ['record', 'serp-form']
+
   updatePageHeight: ->
     @serpPart.css('min-height': app.size.height)
 

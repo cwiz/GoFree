@@ -153,7 +153,21 @@
         app.use(passport.session());
         app.use(express.compress());
         app.use(function(req, res, next){
-          app.locals.user = req.user ? req.user : null;
+          var user, timestamp, user_id, ref$;
+          user = req.user ? req.user : null;
+          app.locals.user = user;
+          if (user) {
+            app.locals.user_id = user.displayName;
+          } else {
+            timestamp = Math.round(new Date().getTime() / 1000);
+            user_id = (((ref$ = req.cookies.user_id) != null ? ref$.displayName : void 8) || req.cookies.user_id) || "user" + timestamp;
+            console.log(user_id);
+            res.cookie('user_id', user_id, {
+              maxAge: 900000,
+              httpOnly: false
+            });
+            app.locals.user_id = user_id;
+          }
           return next();
         });
         app.use(app.router);

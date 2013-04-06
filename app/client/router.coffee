@@ -15,8 +15,9 @@ Router = Backbone.Router.extend
   initialize: ->
 
     #  KISSMetrics identify users
-    if app.user
-      _kmq.push ['identify', app.user.email or app.user.displayName]
+
+    user_id = $.cookie "user_id"
+    _kmq.push ['identify', user_id]
 
     @on('route', @_manageHistory)
     app.log('[app.Router]: initialize')

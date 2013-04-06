@@ -53,8 +53,8 @@ Index = Backbone.View.extend
 
   updateBG: (e)->
     @bg.fadeOut(200, =>
-      @bg.attr('src', e.target.src)
-      @bg.fadeIn(200)
+      @bg.attr  'src', e.target.src
+      @bg.fadeIn 200
     )
 
   placeChanged: (model, place) ->

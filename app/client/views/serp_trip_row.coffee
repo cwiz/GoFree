@@ -140,9 +140,13 @@ SERPTripRow = Backbone.View.extend
       @rendered = end
       @carousel.reset()
 
+    _kmq.push ['record', 'serp:items@right']
+
   shiftLeft: ->
     @counter = @counter = Math.max(@counter - @itemsNum, 0)
     @counterEl.html(@counter + '/' + @length)
+
+    _kmq.push ['record', 'serp:items@left']
 
   render: (model)->
     @template _.extend model.toJSON(),
