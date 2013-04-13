@@ -52,8 +52,6 @@ task "an:sync_to_pg", 'copy mongodb data to postgres database for easy analytics
 	flattenSearchTrips.stdout.on 'data', console.log
 	flattenSearchTrips.stderr.on 'data', console.warn
 
-	
-
 task 'init', "perform init operations", ->
 	exec "npm install ."
 	exec "cake db:restore_geonames"
