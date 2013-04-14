@@ -10,7 +10,7 @@ airports  = db.collection("airports")
 
 objects = []
 
-csv().from.path "airports.csv",
+csv().from.path "scripts/airports/airports.csv",
 	delimiter: ","
 	columns: null
 
@@ -49,4 +49,4 @@ csv().from.path "airports.csv",
 	console.log ">> Airports insert"
 	airports.insert objects
 	console.log ">> END"
-	#process.exit()
+	process.exit()
