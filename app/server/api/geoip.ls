@@ -3,7 +3,7 @@ geoip 		= require "geoip-lite"
 
 exports.get_location = (req, res) ->
 	ip = req.connection.remoteAddress
-	ip = '93.80.144.90' if ip is '127.0.0.1'
+	ip = '93.80.144.90' #if ip is '127.0.0.1'
 	
 	location = geoip.lookup(ip)
 

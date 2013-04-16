@@ -1,16 +1,14 @@
 String.prototype.trim = ->
 	return this.replace(/^\s+|\s+$/g, "")
 
-csv       = require("csv")
-Mongolian = require("mongolian")
+csv       	= require("csv")
+database	= require "./../../app/server/database"
 
-server    = new Mongolian()
-db        = server.db("ostroterra")
-airports  = db.collection("airports")
+airports 	= database.airports
 
 objects = []
 
-csv().from.path "scripts/airports/airports.csv",
+csv().from.path "./scripts/airports/airports.csv",
 	delimiter: ","
 	columns: null
 
@@ -46,7 +44,12 @@ csv().from.path "scripts/airports/airports.csv",
 .on "end", (count) ->
 	console.log ">> Airports drop"
 	airports.drop()
-	console.log ">> Airports insert"
+	console.log ">> Airports insert: #{objects.length} objects"
 	airports.insert objects
-	console.log ">> END"
-	process.exit()
+
+	# ugly hack sick airports.insert does not provide onEnd callback
+	setTimeout (
+		->
+			console.log ">> END"
+			process.exit()
+		), 5000

@@ -5,9 +5,7 @@
   exports.get_location = function(req, res){
     var ip, location;
     ip = req.connection.remoteAddress;
-    if (ip === '127.0.0.1') {
-      ip = '93.80.144.90';
-    }
+    ip = '93.80.144.90';
     location = geoip.lookup(ip);
     if (!location) {
       return res.json({

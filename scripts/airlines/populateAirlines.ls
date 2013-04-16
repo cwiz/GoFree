@@ -36,7 +36,7 @@ valid_geo_ids = {}
 
 syncAirlines = (callback)->
 	importFile(
-		"/airlines.csv",  
+		"/airlines.csv",
 		(
 			(data, index) ->
 				object = {
@@ -53,7 +53,7 @@ syncAirlines = (callback)->
 				callback null, operations.length
 		)
 	)
-	
+
 setTimeout( (
 	->
 		async.series([
