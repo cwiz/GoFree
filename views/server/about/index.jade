@@ -1,18 +1,88 @@
 extends ../splash
 
 block body
-  section.p-content
 
-    .p-c-content
-      h2 GoFree
+	.p-content
+		a(href="/").logo
+		.p-about
+			header.p-about-header
+				h1 Теперь путешествовать действительно просто.
+				div
+					span.bordered
+					span.logo-name GF
+					span.bordered
+				p Мы собрали тысячи вариантов отелей, хостелов, апартаментов, перелетов, переездов и переплывов,
+					br
+					|чтобы вы могли составить свое путешествие на одном сайте.
+				p И сделать это удобно и быстро.
+			section
+				.p-about-content
+					.p-about-content-first
+						h2 составь
+							span.bigger  свое
+							br
+							span.medium путешествие
+						p Выберите места, где вы хотите побывать, а мы позаботимся обо всем остальном &#8211; подберем лучшие отели, оптимальные варианты перелетов и даже закажем вам такси из аэропорта!
 
-      .l-wrap
-      
-        p GoFree — это новый помощник в подготовке ваших незабываемых поездок. Мы объединили на одном сайте все, что понадобится вам для путешествия: авиабилеты, отели, апартаменты, страховки и многое другое. 
+					img.p-about-image(src="/img/views/first-screenshot.png", alt="Мы позаботимся о вашем отдыхе")
 
-        p Мы ищем на множестве тревел-ресурсов и автоматически показываем оптимальные варианты, экономя ваше время.
+			section
+				.p-about-content
+					.p-about-content-second 
+						h2 
+							span.bigger  с нами
+							br
+							|не заблудишься 
 
-        p В скором времени мы готовим кое-что революционное, благодаря чему вы даже и не подумаете искать свои путешествия где-то еще. Обещаем.
-        
-        p Хотите сотрудничать? – Пишите на 
-          a(href="mailto:hello@gofree.ru") hello@gofree.ru 
+						p Хотите покататься на лыжах в Шамони, но там нет аэропорта? Не волнуйтесь, вам не придется заново продумывать свое путешествие &#8211; мы всегда предложим вам самые удобные способы добраться туда, куда вы хотите!
+
+					img.p-about-image(src="/img/views/second-screenshot.png", alt="Мы позаботимся о вашем отдыхе")
+
+			section
+				.p-about-content 
+					.p-about-content-third
+						h2 
+							span.medium  рассчитай 
+							br
+							|свое путешествие 
+							br
+							span.bigger заранее
+						p Не хотите тратить слишком много? Укажите, сколько вы готовы потратить на путешествие, а мы подберем все самое лучшее за эти деньги.
+
+					img.p-about-image(src="/img/views/third-screenshot.png", alt="Мы позаботимся о вашем отдыхе", style='box-shadow: none')
+			section.our-partners
+				.p-about-content
+					h2.medium Наши партнеры
+					div 
+						div
+							a(href="https://www.airbnb.ru/")
+								img(src="/img/views/airbnb-icon.png")
+									a(href="http://ostrovok.ru/")
+								img(src="/img/views/ostrovok-icon.png")
+							a(href="http://flatora.ru/")
+								img(src="/img/views/flatora-icon.png")
+					div
+							a(href="https://eviterra.com/")
+								img(src="/img/views/eviterra-icon.png")
+							a(href="http://www.aviasales.ru/")
+								img(src="/img/views/aviasales-icon.png")
+
+			section.reviews
+				.p-about-content 
+					h2.medium О нас пишут в 
+						a(href="#")
+							img(src="/img/views/zuckerberg-icon.png")
+
+			section.vacancy 
+				.p-about-content 
+					h2.medium Нам нужен 
+						strong.bigger Front-end 
+						br
+						span.medium разработчик
+					ul.requirements
+						li имеешь существенный опыт в дизайне эффектных, качественных пользовательских интерфейсов;
+						li носитель экспертноо знания HTML/CSS;
+						li имеешь опыт Javascript;
+						li обладаешь отличным навыком работы в Adobe Creative Suite (в частности Photoshop и Illustrator);
+						li способен добиваться результатов в сжатые сроки
+					img(src="/img/views/megafon.png", alt="Нам нужен front-end разработчик")
