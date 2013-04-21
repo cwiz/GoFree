@@ -32,7 +32,7 @@ SearchForm = Backbone.View.extend
     @collection.on('change:date',     @dateChanged,       @)
     @collection.on('change:place',    @hideError,         @)
     @collection.on('change',          @collectionChanged, @)
-    
+
     @model.get('final').on   'change:date add',   @dateChanged,       @
     @model.get('final').on   'change:date',       @collectionChanged, @
 
@@ -72,7 +72,7 @@ SearchForm = Backbone.View.extend
     @$el.html(app.templates.searchform(@model.toJSON()))
 
   restrictBudget: ->
-    
+
     validate = (e) ->
       if (e.keyCode < 48 or e.keyCode > 57)
          app.e(e)
@@ -89,7 +89,7 @@ SearchForm = Backbone.View.extend
     @collection.each(iterator)
 
   getInitialLocation: () ->
-    $.ajax 
+    $.ajax
       url: app.api.get_location
       success: (resp) =>
         if resp and resp.value
@@ -153,7 +153,7 @@ SearchForm = Backbone.View.extend
 
     if prev
       @stops[prev.cid].calendar.setMaxDate(date)
-    
+
     if next
       @stops[next.cid].calendar.setMinDate(date)
 
@@ -167,18 +167,18 @@ SearchForm = Backbone.View.extend
   collectionChanged: (e) ->
 
     if @model.isSemiValid()
-      
+
       if @model.get('trips').length < 5
         @addStopEl.removeClass('disabled')
         @canAddStop = true
-        
+
       @model.preSave() 
 
   adultsChanged: (e) ->
     @model.set('adults', parseInt(e.target.value))
 
   budgetChanged: (e) ->
-    @model.set('budget', parseInt(e.target.value, 10))
+    @model.set('budget', parseInt(e.target.value, 10)*1000)
 
   showError: ->
     unless @errorVisible

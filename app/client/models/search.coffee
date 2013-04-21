@@ -6,7 +6,7 @@ Search = Backbone.Model.extend
 
     initial       : null
     final         : null
-   
+
     trips         : null
     hash          : null
 
@@ -41,7 +41,6 @@ Search = Backbone.Model.extend
     valid = @isSemiValid() and @get('final'  ).get('date')
     return !!valid
 
-    
   isSemiValid: ->
     valid = true
 

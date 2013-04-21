@@ -27,7 +27,6 @@ SERP = Backbone.View.extend
     @search     = @opts.search
     @collection = @opts.collection
     @selected   = @opts.selected
-    @budget     = @search.get('budget')
 
     @serpTrips  = null
 
@@ -35,7 +34,6 @@ SERP = Backbone.View.extend
     @collection.setHash(@hash).observe()
     @selected.setHash(@hash).observe()
 
-    # @search.on('fetched',     @paramsReady,     @)
     @collection.on('fetched', @collectionReady, @)
     @selected.on('saved',     @selectedSaved,   @)
 
@@ -64,7 +62,7 @@ SERP = Backbone.View.extend
     @searchPart.css
       'min-height': app.size.height
       display     : 'block'
-    
+
     app.utils.scroll(app.size.height, 0)
 
     app.utils.scroll(0, 300, =>
@@ -83,7 +81,7 @@ SERP = Backbone.View.extend
 
   selectedSaved: ->
     @selectedConfirmed()
-      
+
   selectedConfirmed: ->
     app.router.navigate('/journey/' + @selected._hash, trigger: true)
     @destroy()
@@ -91,18 +89,15 @@ SERP = Backbone.View.extend
   collectionReady: ->
     @serpPart.addClass('loaded')
 
+    @budget     = @search.get('budget')
+
     @serpHeader.html(app.templates.serp_header())
-    
     @serpTrips = new app.views.SERPTrips(
       el        : @tripsContent
       collection: @collection
       hash      : @hash
       budget    : @budget
-      # search: @search
     )
-
-  # paramsReady: ->
-  #   @serpTrips.setBudget(@search.get('budget')) if @serpTrips?
 
   searchError: ->
     @serpPart.addClass('error')
@@ -111,7 +106,6 @@ SERP = Backbone.View.extend
     @tripsContent.html('')
     @serpPart.removeClass('loaded error')
 
-    # @search?.off('fetched',     @paramsReady,     @)
     @collection?.off('fetched', @collectionReady, @)
     @selected?.off('saved',     @selectedSaved,   @)
 
