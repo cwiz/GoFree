@@ -153,21 +153,28 @@
         app.use(passport.session());
         app.use(express.compress());
         app.use(function(req, res, next){
-          var user, timestamp, user_id, ref$;
+          var user, timestamp, cookie_user_id, user_id, session_id;
           user = req.user ? req.user : null;
           app.locals.user = user;
           if (user) {
             app.locals.user_id = user.displayName;
           } else {
             timestamp = Math.round(new Date().getTime() / 1000);
-            user_id = (((ref$ = req.cookies.user_id) != null ? ref$.displayName : void 8) || req.cookies.user_id) || "user" + timestamp;
-            console.log(user_id);
+            cookie_user_id = req.cookies.user_id;
+            user_id = cookie_user_id
+              ? cookie_user_id
+              : "user" + timestamp;
             res.cookie('user_id', user_id, {
               maxAge: 900000,
               httpOnly: false
             });
             app.locals.user_id = user_id;
           }
+          session_id = req.cookies.session_id || "session" + timestamp;
+          res.cookie('session_id', user_id, {
+            maxAge: 60 * 60,
+            httpOnly: false
+          });
           return next();
         });
         app.use(app.router);
@@ -184,6 +191,7 @@
       app.get("/journey/:hash", backEnd.about.index);
       app.get("/add_email", backEnd.about.add_email);
       app.get("/about", backEnd.about.about);
+      app.get("/city", backEnd.content.city);
       app.get("/api/v2/autocomplete/:query", backEnd.api.autocomplete_v2);
       app.get("/api/v2/image/:country/:city", backEnd.api.image_v2);
       app.get("/api/v2/get_location", backEnd.api.get_location);

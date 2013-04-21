@@ -1,8 +1,3 @@
-# require('nodetime').profile({
-# 	accountKey: 'f68f618099c7801d1b070fd8abc8e1f9c6a19d8a'
-# 	appName: 'Node.js Application'
-# })
-
 _ 					= require "underscore"
 cluster     		= require "cluster"
 connect-redis		= require "connect-redis"
@@ -46,9 +41,9 @@ if cluster.isMaster
 
 	cluster.on 'exit', (worker, code, signal) ->
 		console.log "worker #{worker.process.pid} died"
-		
+
 		if ROLE is 'production'
-			cluster.fork()  
+			cluster.fork() 
 		else
 			process.exit()
 
@@ -58,22 +53,22 @@ else
 	database		= backEnd.database
 
 	# Globals
-	app     		= express()
+	app     		= express!
 	server  		= http.createServer app
 	io      		= socket.listen server
 
 	# Passport.js
-	facebookSettings = 
+	facebookSettings =
 		clientID    : FACEBOOK_ID
 		clientSecret: FACEBOOK_SECRET
 		callbackURL : "http://#{SITE_URL}/auth/facebook/callback"
 
 	postLogin = (accessToken, refreshToken, profile, done) ->
-		
+
 		(err, user) <- database.users.findOne do
 			provider	: profile.provider
 			id 			: profile.id
-		
+
 		profile.email = profile.emails[0].value if profile.emails
 
 		if (not user or err)
@@ -90,10 +85,10 @@ else
 
 			database.users.update {_id: user._id}, user
 			done null, user if user
-		
+
 	passport.use(new passport-facebook.Strategy(facebookSettings, postLogin))
-	
-	vkSettings = 
+
+	vkSettings =
 		clientID    : VK_ID
 		clientSecret: VK_SECRET
 		callbackURL : "http://#{SITE_URL}/auth/vkontakte/callback"
@@ -101,20 +96,20 @@ else
 	passport.use(new passport-vkontakte.Strategy(vkSettings, postLogin))
 
 	passport.serializeUser 		(user, done) -> done null, user.id
-	
+
 	passport.deserializeUser 	(id,   done) -> 
 		(error, user) <- database.users.findOne {id: id}
 
 		if user
-			delete user._id 	
-			delete user._json	
-			delete user._raw	
-		
-			done error, user 
+			delete user._id
+			delete user._json
+			delete user._raw
+
+			done error, user
 
 		else
 			done error, false
-	  
+
 	# Assets-Rack
 	assets = new rack.AssetRack([
 		new rack.LessAsset({
@@ -122,19 +117,19 @@ else
 			filename: __dirname + "/public/css/app.less"
 			paths	: [__dirname + "/public/css"]
 			compress: false
-		}), 
+		}),
 
 		new rack.SnocketsAsset({
 			url 	: "/libs.js"
 			filename: __dirname + "/app/client/libs.js"
 			compress: false
-		}), 
+		}),
 
 		new rack.SnocketsAsset({
 			url 	: "/app.js"
 			filename: __dirname + "/app/client/app.coffee"
 			compress: false
-		}), 
+		}),
 
 		new rack.JadeAsset({
 			url 			: "/views.js"
@@ -145,21 +140,21 @@ else
 		})
 	])
 
-	<- assets.on "complete" 
+	<- assets.on "complete"
 
 	sessionStore = new (connect-redis(express))
-		
+
 	# Configuration
 	app.configure ->
 		app.set "port",                 PORT
 		app.set "views",                __dirname + "/views/server"
 		app.set "view engine",          "jade"
-		
+
 		app.use assets
 		app.use express.static          __dirname + "/public"
 		app.use express.bodyParser!
 		app.use express.methodOverride!
-		
+
 		app.use express.cookieParser(SECRET)
 
 		app.use express.session do
@@ -173,16 +168,15 @@ else
 		# sets user to locals
 		app.use (req, res, next) ->
 			user = if req.user then req.user else null
-			
 			app.locals.user = user
 
 			if user
 				app.locals.user_id = user.displayName
-			
+
 			else
 				timestamp 		= Math.round((new Date()).getTime() / 1000)
 				cookie_user_id 	= req.cookies.user_id
-				user_id 		= cookie_user_id if cookie_user_id else "user#{timestamp}"
+				user_id 		= if cookie_user_id then cookie_user_id else "user#{timestamp}"
 				res.cookie 'user_id', user_id, maxAge: 900000, httpOnly: false
 				app.locals.user_id = user_id
 
@@ -191,9 +185,9 @@ else
 
 			next!
 
-		# app.use (req, res, next) -> 
+		# app.use (req, res, next) ->
 		# 	express-phantom.SEORender req, res, next, redisClient : redis.createClient()
-	
+
 		app.use app.router
 
 		# Locals
@@ -206,7 +200,7 @@ else
 		app.locals.__debug = true
 
 	# Routes
-	
+
 	# --- Static
 	app.get "/",                            		backEnd.about.index
 	app.get "/search/:hash",                		backEnd.about.index
@@ -214,7 +208,9 @@ else
 	app.get "/add_email",            		    	backEnd.about.add_email
 	app.get "/about",            		    		backEnd.about.about
 
-	# --- API --- 
+	app.get "/city",            		    		backEnd.content.city
+
+	# --- API ---
 	app.get "/api/v2/autocomplete/:query",  		backEnd.api.autocomplete_v2
 	app.get "/api/v2/image/:country/:city", 		backEnd.api.image_v2
 	app.get "/api/v2/get_location", 				backEnd.api.get_location
@@ -224,11 +220,11 @@ else
 	# --- Redirect ---
 	app.get "/redirect/:hash",						backEnd.redirect.redirect
 
-	# --- Dashboard --- 
+	# --- Dashboard ---
 	app.get "/dashboard",							backEnd.dashboard.dashboard
 
-	# --- login	
-	login = (provider, req, res) -> 
+	# --- login
+	login = (provider, req, res) ->
 
 		referer 	= req.header 'Referer'
 		tripHash 	= req.session.trip_hash
@@ -239,7 +235,7 @@ else
 
 		else if searchHash
 			redirectUrl = "/search/#{searchHash}"
-		
+
 		else if referer
 			redirectUrl = referer
 
@@ -247,10 +243,10 @@ else
 			redirectUrl = '/'
 
 		req.session.postLoginRedirect = redirectUrl
-		passport.authenticate(provider, { scope: ['email']})(req, res)
+		passport.authenticate(provider, scope: ['email'])(req, res)
 
 	callback = (req, res) ->
-		
+
 		if req.session.postLoginRedirect
 			res.redirect req.session.postLoginRedirect
 		else
@@ -261,7 +257,7 @@ else
 
 	app.get "/auth/vkontakte", 			(req, res) -> login('vkontakte', req, res)
 	app.get "/auth/vkontakte/callback", passport.authenticate('vkontakte'), callback
-	
+
 	app.get "/auth/logout", (req, res) ->
 		req.logout!
 		res.redirect '/'
@@ -270,7 +266,7 @@ else
 	app.get "*", backEnd.about.error
 
 	# --- SocketIO
-	
+
 	# Stuff
 	server.listen app.get("port"), ->
 		console.log "Express server listening on port " + app.get("port")
@@ -288,7 +284,7 @@ else
 	io.enable 'browser client minification'
 	io.enable 'browser client etag'
 	io.enable 'browser client gzip'
-	
+
 	io.set    'log level', 1
 
 	sessionSockets.on 'connection', backEnd.api.search
