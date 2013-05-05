@@ -133,6 +133,9 @@
         compress: false
       })
     ]);
+    assets.on("error", function(data){
+      return console.log(data);
+    });
     assets.on("complete", function(){
       var sessionStore, login, callback, redisStore, sessionSockets;
       sessionStore = new (connectRedis(express));

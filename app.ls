@@ -140,6 +140,9 @@ else
 		})
 	])
 
+	assets.on "error", (data) ->
+		console.log data
+
 	<- assets.on "complete"
 
 	sessionStore = new (connect-redis(express))
