@@ -1,0 +1,13 @@
+extends layout
+
+block content
+  section.p-addemail.l-wrap
+    header.p-a-header
+      h2 Последний шаг
+      strong Нам требуется ваша эл. почта для отправки вам деталей бронирования
+
+    form.p-a-form
+      span.m-validate-container(data-for="email")
+        input.p-a-input(type="email", name='email', placeholder="Ваш адрес эл. почты", autocorrect="off", autocapitalize="off", data-validate="true", data-filter="email", data-error="Введите правильный e-mail", data-errorpos="top", required)
+      button.button.orange.medium.p-a-submit Войти
+

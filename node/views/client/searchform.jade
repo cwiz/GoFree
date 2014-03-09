@@ -1,0 +1,63 @@
+section.v-searchform.l-wrap
+
+    //- h2.v-s-title
+    .logo
+
+    form.v-s-form
+
+      h2 Откуда
+
+      .v-s-initial
+
+        .vs-initial-place
+
+        .v-s-guests
+          select.m-input-select(name="adults")
+            - for (var i = 1; i <= 6; i++)
+              - var selected = (adults === i);
+              option(value=i, selected=selected)= app.utils.choosePlural(i, ['гость', 'гостя', 'гостей'])
+
+      .v-s-budget
+
+        label Бюджет, тысяч рублей
+
+        input.v-s-amount(type="text", name="budget", min=10, value=budget/1000, data-validate="true", data-error="Выберите бюджет", data-filter="number", required)
+
+
+      .destinations-wrapper
+
+        h2 Путешествие
+
+        ul.v-s-destinations
+
+        .v-s-t-stop.vs-final-place
+          .v-s-t-s-place
+            label
+
+          .vs-final-date
+
+        p.v-s-destinations-add
+          span.v-s-d-add.pointy.disabled &plus; добавить город
+
+
+
+      //- h2 Бюджет
+
+      //- .v-s-conditions
+      //-   .v-s-budget.m-validate-container(data-for="budget")
+      //-     input.v-s-amount(type="text", name="budget", min=10000, value=budget, data-validate="true", data-error="Выберите бюджет", data-filter="number", required)
+      //-     small руб
+
+
+      .v-s-error Пожалуйста, выберите города из выпадающих списков.
+
+      .v-s-submit
+        button.button.orange.v-s-submitform 
+          span Найти жилье и перелеты
+
+    .contacts
+      p GoFree &copy; 2013
+      p 
+        a(href='/about')о сайте
+        |  &nbsp;&nbsp;&nbsp;
+        a(href='http://blog.gofree.ru/')блог

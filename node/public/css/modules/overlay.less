@@ -1,0 +1,41 @@
+
+#l-overlay {
+  width: 100%;
+  height: 100%;
+
+  display: table;
+
+  opacity: 0;
+  .transition(opacity .2s linear);
+
+  position: absolute;
+  left: -100%;
+  top: -100%;
+
+  overflow: hidden;
+  z-index: 9000;
+
+  background: url('/img/layout/semi_trans.png');
+
+  &.active {
+    opacity: 1;
+
+    position: fixed;
+    left: 0;
+    top: 0;
+  }
+
+  .l-overlay-content {
+    display: table-cell;
+    vertical-align: middle;
+  }
+
+  .l-overlay-content > section, //retardproof development
+  .l-o-part {
+    display: none;
+
+    &.active {
+      display: block;
+    }
+  }
+}

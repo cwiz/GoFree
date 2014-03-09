@@ -1,0 +1,91 @@
+ul.v-selected-list
+  - var slen = selected.length, failed = 0;
+  each trip, i in selected
+    if trip.flight || trip.hotel
+      li.v-selected-item
+        .v-s-i-header
+          .v-s-i-h-location
+            strong.v-s-i-destination= trip.destination.place.name_ru
+            - if (i + 1 === slen)
+              span.v-s-i-dates= app.utils.humanizeDate(trip.origin.date)
+            - else
+              span.v-s-i-dates #{app.utils.humanizeDate(trip.origin.date)} &ndash; #{app.utils.humanizeDate(trip.destination.date)}
+          .v-s-i-h-price
+            if trip.flight && trip.hotel
+              strong.v-s-i-h-amount #{app.utils.formatNum(trip.flight.price + trip.hotel.price)} руб.
+            else if trip.flight
+              strong.v-s-i-h-amount #{app.utils.formatNum(trip.flight.price)} руб.
+            else if trip.hotel
+              strong.v-s-i-h-amount #{app.utils.formatNum(trip.hotel.price)} руб.
+
+        .v-s-i-content
+          
+          if trip.flight
+            .v-s-i-flight
+              strong.v-s-i-subheader Перелет &ndash; #{app.utils.formatNum(trip.flight.price)} руб.
+              a.v-s-i-booking.button.small.green(href="/redirect/#{trip.flight.hash}", target='_blank') Забронировать
+              .v-s-i-subcontent
+                p.v-s-i-c-meta
+                  span.v-s-i-c-carrier
+                    if trip.flight.carrier
+                      each item, i in trip.flight.carrier
+                        img(class='carrier-' + (i + 1), src='/img/airlines/' + item.iata + '.png', alt=item.name)
+                    else
+                      img(class='carrier-1', src='/img/airlines/default.png', alt='Ruskie airways')
+
+                - var counter = 0
+                for segment in trip.flight.segments
+                  .v-s-i-c-segment
+
+                    .v-s-i-c-flightdetails
+
+                      if trip.flight.segments.length > 1
+                        if counter === 0
+                          strong Прямой
+                        else
+                          strong Обратный
+                      
+                      if counter === 0
+                        .v-s-i-c-route #{trip.origin.place.name_ru} &ndash; #{trip.destination.place.name_ru}
+                      else
+                        .v-s-i-c-route #{trip.destination.place.name_ru} &ndash; #{trip.origin.place.name_ru}
+                      
+                      p.v-s-i-c-flighttime Вылет &ndash; 
+                        span= segment.departure
+                      p.v-s-i-c-flighttime Прилет &ndash; 
+                        span= segment.arrival
+
+                      p.v-s-i-c-stops
+                        if segment.stops
+                          =app.utils.choosePlural(segment.stops, ['пересадка', 'пересадки', 'пересадок'])
+                        else
+                          | Без пересадок
+                  - counter++
+
+          if trip.hotel
+            .v-s-i-hotel
+              strong.v-s-i-subheader Проживание &ndash; #{app.utils.formatNum(trip.hotel.price)} руб.
+              a.v-s-i-booking.button.small.green(href="/redirect/#{trip.hotel.hash}", target='_blank') Забронировать 
+              .v-s-i-subcontent
+                .v-s-i-c-hotelphoto(style='background: url(\'#{trip.hotel.photo}\') no-repeat center center')
+                .v-s-i-c-hoteldetails
+                  .v-s-i-c-hoteldata
+                    if trip.hotel.provider == 'airbnb'
+                      strong.v-s-i-c-name= app.utils.shortenString(trip.hotel.name, 30, 'right')
+                    else
+                      strong.v-s-i-c-name= app.utils.shortenString(trip.hotel.name, 20, 'right')
+                    span.v-s-i-c-stars!= app.utils.formatStars(trip.hotel.stars)
+
+    else 
+      - failed++
+
+  if failed == slen
+    li.v-s-emptyset Ничего не выбрано
+  
+  if total && selected.length > 1
+    li.v-selected-item
+      .v-s-i-header.total
+        .v-s-i-h-location
+          strong.v-s-i-destination Итого
+        .v-s-i-h-price
+            strong.v-s-i-h-amount #{app.utils.formatNum(total)} руб. 

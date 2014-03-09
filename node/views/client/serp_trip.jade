@@ -1,0 +1,96 @@
+//- .v-serp-trip
+.v-s-t-bg-wrap
+  .v-s-t-bg-container
+    img.v-s-t-bg-img(src="/img/views/searchform.jpg")
+
+.v-serp-trip-content.l-wrap
+  header.v-s-t-header
+    .v-s-t-meta
+      
+      if !destination.roundTrip
+        h2.v-s-t-places #{origin.place.name_ru} &ndash; #{destination.place.name_ru}
+      else
+        h2.v-s-t-places #{destination.place.name_ru}
+      
+      if origin.date < destination.date
+        small.v-s-t-dates #{app.utils.humanizeDatesSpan(origin.date, destination.date)}
+      else
+        small.v-s-t-dates #{app.utils.humanizeDate(origin.date)}
+
+    .v-s-t-totals
+      span.v-s-t-t-value
+        span.v-s-t-t-value-num
+        |  руб
+
+    //- .v-s-t-results
+    //-   if flights_signature
+    //-     .v-s-t-r-flight
+    //-       span.v-s-t-r-label Перелет:
+    //-       span.v-s-t-r-value
+    //-         span.v-s-t-r-value-num
+    //-         |  руб
+    //-       span.v-s-t-r-default не выбран
+
+    //-   if hotels_signature
+    //-     .v-s-t-r-hotel
+    //-       span.v-s-t-r-label Отель:
+    //-       spк  акая qw 3e4º–=pokjn an.v-s-t-r-value
+    //-         span.v-s-t-r-value-num
+    //-         |  руб
+    //-       span.v-s-t-r-default не выбран
+
+  if flights_signature
+    .v-s-t-flights
+      if !destination.roundTrip
+        h3.v-s-t-title Перелеты #{origin.nearest_airport.name_ru} &rarr; #{destination.nearest_airport.name_ru}
+      else
+        h3.v-s-t-title Перелеты #{origin.nearest_airport.name_ru} &rarr; #{destination.nearest_airport.name_ru} &rarr; #{origin.nearest_airport.name_ru}
+
+      .v-s-t-rowcontrols
+        ul.v-s-t-c-filters
+          li.v-s-t-c-filter.selected(data-filter="none") Все
+          li.v-s-t-c-filter(data-filter="convenient") Оптимальные
+          li.v-s-t-c-filter(data-filter="direct") Прямые
+
+        span.v-s-t-c-count 0/0
+
+      - var klass = (!destination.roundTrip ? 'v-s-t-carousel m-carousel' : 'v-s-t-carousel v-s-t-carousel-big m-carousel')
+      div(class=klass)
+        span.m-c-prev.m-c-control.disabled
+        span.m-c-next.m-c-control
+
+        div(class="m-c-coutainer")
+          ul.m-c-list
+          .v-s-t-c-loading
+            span Загрузка...
+          .v-s-t-c-emptyset
+            span Не нашлось перелетов с такими параметрами
+        
+  if hotels_signature
+    .v-s-t-hotels
+      h3.v-s-t-title.v-s-t-c-prefilters
+        span.v-s-t-c-prefilter.first.selected(data-filter="none") Все варианты проживания
+        i.sep |
+        span.v-s-t-c-prefilter(data-filter="hotels") отели
+        i.sep |
+        span.v-s-t-c-prefilter(data-filter="apartments") апартаменты
+        span.v-s-t-titlecontent в #{destination.place.name_ru_inflected}
+
+      .v-s-t-rowcontrols
+        ul.v-s-t-c-filters
+          li.v-s-t-c-filter.selected(data-filter="none") Все
+          li.v-s-t-c-filter(data-filter="convenient") Оптимальные
+          li.v-s-t-c-filter(data-filter="luxury") Лакшери
+
+        span.v-s-t-c-count 0/0
+
+      div.v-s-t-carousel.m-carousel
+        span.m-c-prev.m-c-control.disabled
+        span.m-c-next.m-c-control
+
+        .m-c-coutainer
+          ul.m-c-list
+          .v-s-t-c-loading
+            span Загрузка...
+          .v-s-t-c-emptyset
+            span Не удалось найти проживание с такими параметрами

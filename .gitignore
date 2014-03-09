@@ -1,0 +1,14 @@
+§*.gz
+*.log
+*.out
+*.pid
+*.pyc
+*.seed
+.DS_Store
+Cakefile.js
+logs
+node_modules
+npm-debug.log
+package.js
+pids
+results

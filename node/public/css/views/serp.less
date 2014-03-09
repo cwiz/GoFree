@@ -1,0 +1,55 @@
+@import 'serp_header.less';
+@import 'serp_trips.less';
+@import 'prebooking_overlay.less';
+@import 'hotel_overlay.less';
+
+#part-serp {
+  .helper_noselect;
+
+  .p-s-header-wrap {
+    background  : #1f2433 url('/img/layout/header.jpg');
+    position    : fixed;
+    width       : 100%;
+    z-index     : 100;
+    box-shadow  : 0 0 10px black;
+  }
+
+  .p-s-trips-wrap {
+    padding-top: 60px;
+  }
+
+  .p-s-t-loading,
+  .p-s-t-error {
+    height: 300px;
+
+    font-size: 24px;
+    line-height: 300px;
+    text-align: center;
+
+    color: #777;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 1);
+  }
+
+  .p-s-t-error,
+  .p-s-t-content {
+    display: none;
+  }
+
+  &.loaded {
+    .p-s-t-loading {
+      display: none;
+    }
+    .p-s-t-content {
+      display: block;
+    }
+  }
+
+  &.error {
+    .p-s-t-loading {
+      display: none;
+    }
+    .p-s-t-error {
+      display: block;
+    }
+  }
+}

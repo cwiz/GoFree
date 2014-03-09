@@ -1,0 +1,38 @@
+{
+    "name": "gofree"
+  , "version": "0.0.9"
+  , "private": true
+  , "dependencies": {
+      "asset-rack"        : "1.1.6",
+      "async"             : "*",
+      "chai"              : "1.5.0",
+      "coffee-script"     : "1.4.0",
+      "connect-redis"     : "1.4.5",
+      "csv"               : "0.2.4",
+      "express"           : "3.0.3",
+      "express-phantom"   : "0.1.2",
+      "geoip-lite"        : "1.0.10",
+      "hiredis"           : "*",
+      "jade"              : "0.27.7", 
+      "jsdom"             : "*",
+      "JSV"               : "4.0.2",
+      "livescript"        : "0.0.1",
+      "MD5"               : "1.0.3",
+      "moment"            : "1.7.2",
+      "mongolian"         : "0.1.18",
+      "node-guid"         : "*",
+      "passport"          : "0.1.15",
+      "passport-facebook" : "0.1.5",
+      "passport-vkontakte": "0.1.4",
+      "progress-bar"      : "0.1.1",
+      "redis"             : "*",
+      "request"           : "2.12.0",
+      "session.socket.io" : "*",
+      "socket.io"         : "*",
+      "socket.io-client"  : "0.9.11",
+      "string"            : "*",
+      "underscore"        : "1.4.4",
+      "winston"           : "*",
+      "xml2js"            : "0.2.2"
+  }
+}

@@ -1,0 +1,69 @@
+input,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+textarea {
+  margin: 0;
+  padding: 0;
+
+  outline: none;
+  
+  border: none;
+  -webkit-appearance: none; /* Remove default shadow */
+
+  border-radius: 0;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+textarea {
+  padding: 5px 10px;
+
+  background: #fff;
+
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 22px;
+  color: #565d61;
+
+  border-radius: 3px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .2) inset;
+
+  .box-sizing(border-box);
+  .placeholder-color(#ccc);
+
+  // &.valid {
+  //   background: #efffdd;
+  // }
+  &.invalid {
+    background: #f7dcdc;
+  }
+
+  &[disabled] {
+    opacity: .8;
+    background: darken(#fff, 5%);
+  }
+
+  &.small {
+    padding: 3px 8px;
+    font-size: 14px;
+    line-height: 18px;
+  }
+  &.tiny {
+    padding: 1px 4px;
+    font-size: 13px;
+    line-height: 16px;
+  }
+}
+
+textarea {
+  resize: none;
+}
+

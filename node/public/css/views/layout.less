@@ -1,0 +1,106 @@
+// Basics
+
+html,
+body {
+  height: 100%;
+  min-width: 960px;
+  background: #e7e7e7 url('/img/layout/html.jpg');
+
+  .helper_noselect;
+}
+
+body, select, input, button, textarea {
+  color: #333;
+  font: normal 13px 'Open Sans', Helvetica, Arial, sans-serif;
+  line-height: 1.4em;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+}
+
+::-moz-selection { background: #169fb8; color: #fff; text-shadow: none; }
+::selection { background: #169fb8; color: #fff; text-shadow: none; }
+a:link { -webkit-tap-highlight-color: rgba(0,0,0,0); }
+
+a, a:active, a:visited {
+  color: #169fb8;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+.pointy {
+  cursor: pointer;
+}
+
+.cf {
+  zoom: 1;
+
+  &:before,
+  &:after {
+    content: '';
+    display: table;
+  }
+  &:after {
+    clear: both;
+  }
+}
+
+.f-stars {
+    font-family: Helvetica, 'DejaVu Sans', 'Arial Unicode MS', 'Lucida Sans Unicode', sans-serif;
+    font-weight: normal;
+    font-style: normal;
+    font-size: 12px;
+    line-height: 12px;
+
+    color: #f5a209;
+
+    .helper_noselect;
+
+    > s {
+        text-decoration: none;
+        // color: #cacaca;
+    }
+}
+
+// fixing android2 terribleness
+.android2 * {
+  text-shadow: none !important;
+}
+
+.l-wrap {
+  width: 960px;
+  margin: 0 auto;
+}
+
+// Layout
+
+#l-header {
+  height: 60px;
+  position: relative;
+  z-index: 50;
+  .vertical-gradient(#3d3d3d, #303030);
+  box-shadow: 0 1px 5px rgba(0, 0 ,0, .7);
+
+  .l-h-logo {
+    font-weight: 400;
+    font-size: 40px;
+    line-height: 60px;
+    color: #fff;
+    text-shadow: 0 -1px 1px rgba(0, 0, 0, .7);
+  }
+}
+
+.l-loading {
+  .helper_noselect;
+  height: 300px;
+
+  font-size: 24px;
+  line-height: 300px;
+  text-align: center;
+
+  color: #777;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 1);
+}

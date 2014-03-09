@@ -1,0 +1,63 @@
+
+doctype 5
+html.no-js(lang="ru-RU")
+  head
+    include includes/analytics
+    meta(charset="UTF-8")
+    meta(http-equiv="X-UA-Compatible", content="IE=edge,chrome=1")
+
+    title GoFree
+    meta(name="description", content="Лучший планировщик путешествий в мире")
+    meta(name="author", content="GoFree")
+
+    meta(name="HandheldFriendly", content="True")
+    meta(name="MobileOptimized", content="960")
+    meta(name="viewport", content="width=960, initial-scale=0.75, maximum-scale=1, minimum-scale=0.75")
+    meta(name="format-detection", content="telephone=no")
+    meta(http-equiv="cleartype", content="on")
+
+    !=assets.tag('/app.css')
+
+  body
+    block body
+      block header
+        include ../client/header_index
+
+      block wrap
+        #l-content
+          block content
+      
+      //- block footer
+      //-   include includes/footer
+
+      block overlay
+        aslide#l-overlay
+          .l-overlay-content
+            block overlay_parts
+
+      script.
+        var app = {
+          env: {
+            debug: !{__debug}
+          },
+          api: {
+            root          : '/',
+            places        : '/api/v2/autocomplete/',
+            images        : '/api/v2/image/',
+            get_location  : '/api/v2/get_location',
+            email_auth    : '/api/v2/auth/add_email/',
+            hotel_info    : '/api/v2/hotels/details/'
+          },
+          user: !{JSON.stringify(user)},
+          models: {},
+          collections: {},
+          views: {},
+          modules: {},
+          utils: 
+        };
+
+      script(src='/socket.io/socket.io.js')
+      !=assets.tag('/views.js')
+      !=assets.tag('/libs.js')
+
+      !=assets.tag('/app.js')

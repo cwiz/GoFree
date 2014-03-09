@@ -1,0 +1,177 @@
+@import 'search_trips_stop.less';
+@import 'search_place_autocomplete.less';
+
+.v-searchform {
+  position: relative;
+  padding: 20px 0;
+
+  .logo {
+    background: url('/img/logo/logo-white-small.png');
+    height: 120px;
+    width: 97px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .contacts {
+      padding: 20px;
+      text-align: center;
+      text-shadow: 0 0 20px rgba(0, 0, 0, 0.4), 0 -1px 1px rgba(0, 0, 0, 0.4);
+
+      a {
+        color: white;
+      }
+  }
+  
+  .cf;
+  
+  .helper_noselect;
+
+  color: #fff;
+
+  .v-s-title {
+    font-weight: 600;
+    font-size: 60px;
+    line-height: 80px;
+    text-align: center;
+  }
+  .v-s-subtitle {
+    margin-top: 10px;
+    display: block;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 20px;
+    text-align: center;
+  }
+
+  .v-s-title,
+  .v-s-subtitle {
+    text-shadow: 0 0 20px rgba(0, 0, 0, .4), 0 -1px 1px rgba(0, 0, 0, .4);
+  }
+
+  .v-s-form {
+    width: 445px;
+    padding: 15px;
+
+    margin: 30px auto 0;
+
+    background: url('/img/layout/semi_trans.png');
+    border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .5);
+
+    .v-s-destinations-add {
+      margin-top: 10px;
+      font-weight: 300;
+      font-size: 11px;
+      text-align: left;
+      height: 34px;
+      line-height: 34px;
+      padding-left: 10px;
+
+      .v-s-d-add.disabled {
+        opacity: .5;
+        cursor: default;
+        .helper_noselect;
+      }
+    }
+
+    .v-s-budget {
+      input {
+        width: 115px;
+        font-size: 14px;
+        line-height: 22px;
+        color: #565d61;
+        font-weight: 300;
+      }
+
+      label {
+        width: 300px;
+        float: left;
+        display: block;
+        height: 34px;
+        line-height: 34px;
+        font-weight: bold;
+      }
+
+      margin-bottom: 10px;
+    }
+
+    .v-s-t-s-place {
+      width: 300px;
+      float: left;
+      position: relative;
+    
+      input {
+        width: 290px;
+      }
+    }
+
+    .v-s-initial {
+
+      .cf;
+      margin-bottom : 10px;
+      margin-top    : 10px;
+
+      .v-s-guests {
+        width       : 100px;
+        float       : left;
+      }
+      
+    }
+
+    .v-s-conditions {
+      margin-top    : 10px;
+      padding-bottom: 20px;
+      padding-left  : 55px;
+
+      .cf;
+
+      .v-s-budget {
+        float: right;
+      }
+
+      .v-s-adults {
+        width: 100px;
+      }
+      .v-s-amount {
+        width: 66px;
+        margin: 0 5px;
+      }
+    }
+
+    .v-s-error {
+      padding: 5px;
+
+      display: none;
+
+      background: #a00;
+      background: rgba(255, 0, 0, .7);
+
+      border: 1px solid #900;
+
+      border-radius: 3px;
+      text-align: center;
+    }
+
+    .v-s-submit {
+      margin-top: 20px;
+      text-align: center;
+    }
+  }
+
+  // .v-s-description {
+  //   margin-left: 440px;
+
+  //   header {
+  //     font-weight: 300;
+  //     font-size: 24px;
+  //     line-height: 32px;
+  //   }
+
+  //   p {
+  //     margin-top: 20px;
+  //     font-size: 16px;
+  //     line-height: 22px;
+  //   }
+  // }
+}

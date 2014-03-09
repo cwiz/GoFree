@@ -1,0 +1,168 @@
+div.m-input-calendar {
+  position: relative;
+  .helper_noselect();
+
+  .m-i-c-input {
+    display: none
+  }
+
+  .m-i-c-selected {
+    min-width: 100px;
+    padding: 6px 8px;
+
+    display: inline-block;
+
+    background: #fff;
+
+    font-weight: 300;
+    font-size: 14px;
+    line-height: 22px;
+    color: #565d61;
+
+    border-radius: 3px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .2) inset;
+
+    .box-sizing(border-box);
+
+    &.placeholder {
+      color: #ccc;
+    }
+  }
+   
+  .m-i-c-calwrap {
+    width: 210px;
+
+    display: none;
+
+    position: absolute;
+    left: 0;
+    top: 100%;
+    z-index: 100;
+
+     border-radius: 3px 0 3px 3px;
+
+    zoom: 1.2;
+  }
+  &.active {
+    .m-i-c-selected {
+      border-radius: 3px 3px 0 0;
+    }
+    .m-i-c-calwrap {
+      display: block;
+    }
+  }
+
+  .m-i-c-header {
+    background: #fff;
+    color: #333;
+
+    text-align: center;
+
+    border-radius: 0 3px 0 0;
+
+    .m-i-c-status {
+      padding-top: 5px;
+      position: relative;
+  
+      font-weight: bold;
+      font-size: 12px;
+      line-height: 16px;
+
+      .m-i-c-controls {
+        margin: 5px;
+
+        display: inline-block;
+
+        position: absolute;
+        left: 0;
+        top: 0;
+        text-align: center;
+        
+        cursor: pointer;
+
+        &.m-i-c-control-down {
+          left: auto;
+          right: 0;
+        }
+        &.disabled {
+          opacity: .5;
+        }
+      }
+    }
+
+    .m-i-c-day-labels {
+      overflow: hidden;
+  
+      font-weight: bold;
+      font-size: 10px;
+      color: #ccc;
+
+      li {
+        width: 30px;
+        display: inline-block;
+        float: left;
+
+        &.weekend {
+          color: #a00;
+        }
+      }
+    }
+  }
+  .m-i-c-datelistwrap {
+    height: 215px;
+    position: relative;
+
+    overflow: hidden;
+      
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .3);
+    border-radius: 0 0 3px 3px;
+      
+    .transition(height 0.2s ease-in);
+
+    .calendar-list {
+      width: 210px;
+      overflow: hidden;
+
+      position: absolute;
+      left: 0;
+      top: 0;
+  
+      font-weight: bold;
+      font-size: 10px;
+  
+      text-align: center;
+      background: #fff;
+
+      li {
+        width: 30px;
+        height: 20px;
+
+        display: block;
+        float: left;
+    
+        line-height: 20px;
+
+        color: #8f959e;
+        
+        &[data-date] {
+          cursor: pointer;
+        }
+
+        &.active {
+          color: #303b47;
+        }
+        &.weekend {
+          color: #a00;
+        }
+        &.past,
+        &.locked {
+          color: #ccc;
+          cursor: default;
+        }
+        &.selected {      
+          color: #89a5c0;
+        }
+      }
+    }
+  }
+}

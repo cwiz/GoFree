@@ -1,0 +1,39 @@
+extends ../splash
+
+block body
+  section.p-content.p-redirect
+
+    .p-c-content
+      h2 
+        span.gofree GOFREE.RU
+        span.arrow
+          img(src='/img/views/redirect-arrow.png')
+        span.provider=result.provider
+      h3 Мы перенаправляем вас на сайт #{result.provider} для покупки билетов.
+
+      .l-wrap
+        p После покупки возвращайтесь обратно, чтобы завершить составление путешествия.
+        p И не волнуйтесь, всё под контролем.
+
+        .loading
+          img(src='/img/views/loader.gif')
+          p Вы будете перенаправлены на сайт через 
+            span(id='timeLeft') 10
+            |  сек. Или просто перейдите по 
+            a(href=result.url) ссылке.
+
+  script
+
+    timeLeft = 10;
+    timeLeftElement = document.getElementById("timeLeft");
+
+    _kmq.push(['record', 'redirect']);
+    
+    setTimeout(function() { 
+      document.location.href="#{result.url}" 
+    }, 10000);
+
+    setInterval(function() {
+      timeLeftElement.innerHTML = timeLeft;
+      timeLeft -= 1;
+    }, 1000)

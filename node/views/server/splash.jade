@@ -1,0 +1,21 @@
+doctype 5
+html.no-js.splash(lang="ru-RU")
+  head
+    include includes/analytics
+    meta(charset="UTF-8")
+    meta(http-equiv="X-UA-Compatible", content="IE=edge,chrome=1")
+
+    title GoFree
+    meta(name="description", content="Лучший планировщик путешествий в мире")
+    meta(name="author", content="GoFree")
+
+    meta(name="HandheldFriendly", content="True")
+    meta(name="MobileOptimized", content="960")
+    meta(name="viewport", content="width=960, initial-scale=0.75, maximum-scale=1, minimum-scale=0.75")
+    meta(name="format-detection", content="telephone=no")
+    meta(http-equiv="cleartype", content="on")
+
+    !=assets.tag('/app.css')
+
+  body
+    block body

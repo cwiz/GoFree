@@ -1,0 +1,59 @@
+@import 'login.less';
+@import 'selected_list.less';
+
+.v-prebooking {
+  background-color: #fff;
+}
+
+.v-prebooking-wrap {
+  width: 600px;
+  height: 600px;
+  margin: 0 auto;
+
+  background: #fefefe;
+
+  box-shadow: 0 0 15px rgba(0, 0, 0, .6);
+
+  color: #333;
+
+  .v-p-header {
+    padding: 20px;
+    position: relative;
+
+    .v-p-headline {
+      font-weight: 600;
+      font-size: 30px;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .l-overlay-close {
+      margin: 10px;
+      position: absolute;
+      right: 0;
+      top: 0;
+      color: #169fb8;
+      cursor: pointer;
+
+      font-size: 12px;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .v-p-selected-container {
+    margin-top: 10px;
+    overflow-y: auto;
+
+    // .v-selected-item {
+    //   opacity: 0.5;
+    // }
+
+    .v-p-s-loading {
+      margin-top: 60px;
+      text-align: center;
+    }
+  }
+}

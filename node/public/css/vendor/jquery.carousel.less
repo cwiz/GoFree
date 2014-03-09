@@ -1,0 +1,43 @@
+.m-carousel {
+  position: relative;
+
+  .m-c-control {
+    position: absolute;
+    left: 0;
+    top: 0;
+    cursor: pointer;
+
+    &.m-c-next {
+      left: auto;
+      right: 0;
+    }
+
+    &.disabled {
+      cursor: default;
+    }
+  }
+
+  .m-c-coutainer {
+    margin: 0 auto;
+    overflow: hidden;
+    position: relative;
+
+    .m-c-list {
+      width: 999px;
+
+      position: absolute;
+      left: 0;
+      top: 0;
+
+      overflow: hidden;
+
+      .m-c-l-item {
+        float: left;
+
+        // width: 200px;
+        // height: 300px;
+        // margin-right: 20px;
+      }
+    }
+  }
+}

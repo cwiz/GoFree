@@ -1,0 +1,58 @@
+@import 'serp_trip.less';
+
+.v-serp-trips-progress {
+  height: 3px;
+  position: relative;
+  overflow: hidden;
+
+  background: #169fb8;
+
+  .v-s-t-p-meter {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+
+    background: #1f2433;
+  }
+}
+
+.v-serp-trips-budget {
+  height: 20px;
+  position: relative;
+  overflow: hidden;
+
+  .v-s-t-b-bg,
+  .v-s-t-b-meter {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+
+  .v-s-t-b-meter {
+    background: #aaa;
+    opacity: .7;
+
+    line-height: 20px;
+    font-weight: 400;
+    font-size: 12px;
+    white-space: nowrap;
+
+    .v-s-t-b-spent {
+      margin-right: 10px;
+      position: absolute;
+      right: 100%;
+      top: 0;
+
+      color: #fff;
+    }
+    .v-s-t-b-left {
+      margin-left: 10px;
+      display: inline-block;
+      color: #eee;
+    }
+  }
+}
